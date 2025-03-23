@@ -11,11 +11,9 @@ Source RoadMap:
 --------------------------------------------------------------------------------
 |   Directory     |         Description         |
 |-----------------|-----------------------------|
-| bin             | The binary executable file generated after the project is
-                  | compiled. |
+| bin             | The binary executable file generated after the project is compiled. |
 |-----------------|-----------------------------|
-| lib             | The static libaray file generated ater the project is
-                  | compiled. |
+| lib             | The static libaray file generated ater the project is compiled. |
 |-----------------|-----------------------------|
 | include         | Header files                |
 |-----------------|-----------------------------|
