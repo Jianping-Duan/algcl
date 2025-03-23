@@ -12,37 +12,17 @@ Source RoadMap:
 |   Directory     |         Description         |
 |-----------------|-----------------------------|
 | bin             | The binary executable file generated after the project is compiled. |
-|-----------------|-----------------------------|
 | lib             | The static libaray file generated ater the project is compiled. |
-|-----------------|-----------------------------|
 | include         | Header files                |
-|-----------------|-----------------------------|
 | common          | General modules of the porject. |
-|-----------------|-----------------------------|
 | utils           | The utility modules designed by this project. |
-|-----------------|-----------------------------|
 | linearlist      | Including Linked-List, Stack and Queue. |
-|-----------------|-----------------------------|
 | sort            | Including most of the classic sorting algorithms. |
-|-----------------|-----------------------------|
 | sequentialsearch | Sequential search implemented by linked-list. |
-|-----------------|-----------------------------|
 | binarysearch    | Binary search. |
-|-----------------|-----------------------------|
-| searchtree      | Including Binary search tree, Red-Black tree, AVL tree,
-                  | Splay tree and B+Tree. |
-|-----------------|-----------------------------|
-| heap            | Heap or priority. Including Binary heap, Binomial heap, 
-                  | Fibonacci heap and Pairing heap. |
-|-----------------|-----------------------------|
-| hashtable       | Uses linear detection method and linked-list methomd to
-|                 | implement. |
-|-----------------|-----------------------------|
+| searchtree      | Including Binary search tree, Red-Black tree, AVL tree, Splay tree and B+Tree. |
+| heap            | Heap or priority. Including Binary heap, Binomial heap, Fibonacci heap and Pairing heap. |
+| hashtable       | Uses linear detection method and linked-list methomd to implement. |
 | skiplist        | Skip list. |
-|-----------------|-----------------------------|
-| graphs          | Including Union-find, Undirected Graph, Directed Graph, 
-                  | Minimum Spanning Tree, The Shortest Path, Euler Graph and
-                  | Bipartite Graph. |
-|-----------------|-----------------------------|
-| strings         | Including String sort, Trie, Ternary search trie and most
-                  | String Matching algorithms. |
+| graphs          | Including Union-find, Undirected Graph, Directed Graph,  Minimum Spanning Tree, The Shortest Path, Euler Graph and Bipartite Graph. |
+| strings         | Including String sort, Trie, Ternary search trie and most String Matching algorithms. |
