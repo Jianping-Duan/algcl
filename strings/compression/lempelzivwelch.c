@@ -121,7 +121,8 @@ lzw_compress(const char *infile, const char *outfile)
  * 12-bit codewords from file input; expands them; and writes
  * the results to file output.
  */
-void lzw_expand(const char *infile, const char *outfile)
+void 
+lzw_expand(const char *infile, const char *outfile)
 {
 	struct binary_input bi;
 	struct binary_output bo;

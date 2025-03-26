@@ -123,8 +123,7 @@ huffman_compress(const char *infile, const char *outfile)
 					boutput_write_bool(&bo, true);
 					break;
 				default:
-					fprintf(stderr, "Illegal state.\n");
-					exit(EXIT_FAILURE);
+					errmsg_exit("Illegal state.\n");
 			}
 	}
 
