@@ -67,15 +67,10 @@ main(int argc, char *argv[])
 	if(optind < argc)
 		usage_info(argv[0]);
 
-	if(argc != 3) {
-		fprintf(stderr, "Usage: %s <regexp> <text>\n", argv[0]);
-		exit(EXIT_FAILURE);
-	}
-
 	regexp = (char *)algcalloc(strlen(pat) + 3, sizeof(char));
 	s[0] = '(', s[1] = '\0';
 	strcpy(regexp, s);
-	strcat(regexp, argv[1]);
+	strcat(regexp, pat);
 	s[0] = ')', s[1] = '\0';
 	strcat(regexp, s);
 
