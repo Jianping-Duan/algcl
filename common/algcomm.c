@@ -158,7 +158,7 @@ rand_string(short n)
 	else if(n > 1024)
 		n = 1024;
 	
-	str = (char *)malloc(sizeof(char) * (n + 1));
+	str = (char *)algmalloc(sizeof(char) * (n + 1));
 	for(i = 0; i < n; i++)
 		switch(rand() % 3) {
 			case 0:
