@@ -203,6 +203,5 @@ binsearch_keys(const struct binary_search *bs, const char *lokey,
 		enqueue(qp, &(bs->items[i]));
 	
 	if(binsearch_get(bs, hikey) != NULL)
-		enqueue(qp,
-			&(bs->items[binsearch_rank(bs, hikey)]));
+		enqueue(qp, &(bs->items[binsearch_rank(bs, hikey)]));
 }
