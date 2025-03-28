@@ -169,7 +169,7 @@ slist_delete(struct single_list *slist, const void *key)
 
 /* Changes the specified key SKEY become to TKEY. */
 void 
-slist_change(struct single_list *slist, const void *skey, void *tkey)
+slist_change(struct single_list *slist, const void *skey, const void *tkey)
 {
 	struct slist_node *current;
 
@@ -181,7 +181,7 @@ slist_change(struct single_list *slist, const void *skey, void *tkey)
 	current = slist->first;
 	while(current != NULL) {
 		if(slist->equal(current->key, skey)) {
-			slist->keysize == 0 ? current->key = tkey :
+			slist->keysize == 0 ? current->key = (void *)tkey :
 				memcpy(current->key, tkey, slist->keysize);
 		}
 		current = current->next;

@@ -134,7 +134,8 @@ long slist_contains(const struct single_list *slist, const void *key);
 void slist_delete(struct single_list *slist, const void *key);
 
 /* Changes the specified key SKEY become to TKEY. */
-void slist_change(struct single_list *slist, const void *skey, void *tkey);
+void slist_change(struct single_list *slist, const void *skey,
+				const void *tkey);
 
 /* Reverses this single linked-list. */
 void slist_reverse(struct single_list *slist);
