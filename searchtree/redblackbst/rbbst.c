@@ -87,8 +87,7 @@ main(int argc, char *argv[])
 	close_file(fp);
 	end_time = clock();
 	printf("Read completed, estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 	
 	printf("The height of the Red-Black BST is: %ld\n", RBBST_HEIGHT(&bst));
@@ -102,8 +101,7 @@ main(int argc, char *argv[])
 	printf("The red-black BST of maximum key is: %s\n",	rbbst_max(&bst));
 	end_time = clock();
 	printf("Estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	
 	printf("Begin delete the minimum key and the "
 		"maximum key from the Red-Black BST...\n");
@@ -112,8 +110,7 @@ main(int argc, char *argv[])
 	rbbst_delete_max(&bst);
 	end_time = clock();
 	printf("Deletion completed, estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 	
 	check(&bst);
@@ -126,8 +123,7 @@ main(int argc, char *argv[])
 		printf("Not found.\n");
 	end_time = clock();
 	printf("Search completed, estimated time(s): %.3f\n", 
-			(double)(end_time - start_time) /
-			(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 	
 	printf("The rank of key '%s' is %ld\n\n", key, rbbst_rank(&bst, key));
@@ -139,8 +135,7 @@ main(int argc, char *argv[])
 	end_time = clock();
 	printf("Key: %s, value: %ld\n", el->key, el->value);
 	printf("Estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	
 	len = (int)strlen(key);
 	rand_key = rand_string(len);
@@ -153,8 +148,7 @@ main(int argc, char *argv[])
 		printf("The given key '%s' is too small.\n", rand_key);
 	end_time = clock();
 	printf("Estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	ALGFREE(rand_key);
 	
 	rand_key = rand_string(len);
@@ -167,8 +161,7 @@ main(int argc, char *argv[])
 		printf("The given key '%s' is too large.\n", rand_key);
 	end_time = clock();
 	printf("Estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	ALGFREE(rand_key);
 	
 	printf("Begin delete key: %s\n", key);
@@ -176,8 +169,7 @@ main(int argc, char *argv[])
 	rbbst_delete(&bst, key);
 	end_time = clock();
 	printf("Deletion completed, estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 	
 	check(&bst);
@@ -201,8 +193,7 @@ check(struct redblack_bst *bst)
 	rbbst_check(bst);
 	end_time = clock();
 	printf("Check completed, estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 }
 

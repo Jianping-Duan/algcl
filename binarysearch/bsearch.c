@@ -91,8 +91,7 @@ main(int argc, char *argv[])
 	fclose(fp);
 	end_time = clock();
 	printf("Read completed, estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	
 	printf("The ordered array of minimum key: %s\n", BINSEARCH_MIN(&bs));
 	printf("The ordered array of maximum key: %s\n\n", BINSEARCH_MAX(&bs));
@@ -122,8 +121,7 @@ main(int argc, char *argv[])
 		printf("Not found.\n");
 	end_time = clock();
 	printf("Search completed, estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 	
 	printf("Begin delete key: %s\n", key);
@@ -131,8 +129,7 @@ main(int argc, char *argv[])
 	binsearch_delete(&bs, key);
 	end_time = clock();
 	printf("Deletion completed, estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 	
 	printf("Following output this ordered array:\n");

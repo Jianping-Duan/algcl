@@ -38,7 +38,8 @@ static int less(const void *, const void *);
 static void (*sort_fptr)(void *, long, long, unsigned int, algcomp_ft *);
 static void sort(int *, int, int);
 
-int main(void)
+int
+main(void)
 {
 	int array[MAX_SORTS][MAX_ITEMS], i;
 

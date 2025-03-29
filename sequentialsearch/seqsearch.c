@@ -84,8 +84,7 @@ main(int argc, char *argv[])
 	close_file(fp);
 	end_time = clock();
 	printf("Read completed, estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) / 
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	
 	printf("Begin search key: %s\n", key);
 	start_time = clock();
@@ -95,16 +94,14 @@ main(int argc, char *argv[])
 		printf("Not found.\n");
 	end_time = clock();
 	printf("Search completed, estimated time(s): %.3f\n\n", 
-			(double)(end_time - start_time) / 
-			(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	
 	printf("Begin delete key: %s\n", key);
 	start_time = clock();
 	seqlist_delete(&slist, key);
 	end_time = clock();
 	printf("Deletion completed, estimated time(s): %.3f\n\n", 
-			(double)(end_time - start_time) / 
-			(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	
 	printf("Total elements: %ld\n", SEQLIST_LENGTH(&slist));
 	

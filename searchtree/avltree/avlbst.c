@@ -87,8 +87,7 @@ int main(int argc, char *argv[])
 	close_file(fp);
 	end_time = clock();
 	printf("Read completed, estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	
 	printf("The height of the AVL BST is: %ld\n", AVLBST_HEIGHT(&bst));
 	printf("The number of nodes in this AVL BST is: %ld\n\n",
@@ -101,8 +100,7 @@ int main(int argc, char *argv[])
 	printf("The AVL BST of maximum key is: %s\n", avlbst_max(&bst));
 	end_time = clock();
 	printf("Estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	
 	printf("Begin delete the minimum key and "
 		"the maximum key from the AVL BST...\n");
@@ -111,8 +109,7 @@ int main(int argc, char *argv[])
 	avlbst_delete_max(&bst);
 	end_time = clock();
 	printf("Deletion completed, estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 	
 	check(&bst);
@@ -125,8 +122,7 @@ int main(int argc, char *argv[])
 		printf("Not found.\n");
 	end_time = clock();
 	printf("Search completed, estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 	
 	start_time = clock();
@@ -134,8 +130,7 @@ int main(int argc, char *argv[])
 	end_time = clock();
 	printf("The rank of key '%s' is %ld\n", key, rank);
 	printf("Estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	
 	rank = rand_range_integer(0, AVLBST_SIZE(&bst));
 	printf("The element of rank %ld is:\n", rank);
@@ -144,8 +139,7 @@ int main(int argc, char *argv[])
 	end_time = clock();
 	printf("Key: %s, value: %ld\n", el->key, el->value);
 	printf("Estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	
 	len = (int)strlen(key);
 	rand_key = rand_string(len);
@@ -158,8 +152,7 @@ int main(int argc, char *argv[])
 		printf("The given key '%s' is too small.\n", rand_key);
 	end_time = clock();
 	printf("Estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	ALGFREE(rand_key);
 	
 	rand_key = rand_string(len);
@@ -172,8 +165,7 @@ int main(int argc, char *argv[])
 		printf("The given key '%s' is too large.\n", rand_key);
 	end_time = clock();
 	printf("Estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	ALGFREE(rand_key);
 	
 	printf("Begin delete key: %s\n", key);
@@ -181,8 +173,7 @@ int main(int argc, char *argv[])
 	avlbst_delete(&bst, key);
 	end_time = clock();
 	printf("Deletion completed, estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 	
 	check(&bst);
@@ -200,14 +191,12 @@ check(const struct avl_tree *bst)
 {
 	clock_t start_time, end_time;
 	
-	printf("Begin checks the integrity of "
-		"AVL BST data structure......\n");
+	printf("Begin checks the integrity of AVL BST data structure......\n");
 	start_time = clock();
 	avlbst_check(bst);
 	end_time = clock();
 	printf("Check completed, estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 }
 

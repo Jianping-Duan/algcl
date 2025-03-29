@@ -86,8 +86,7 @@ main(int argc, char *argv[])
 	close_file(fp);
 	end_time = clock();
 	printf("Read completed, estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	
 	printf("The number of nodes in this splay tree is: %lu\n\n",
 		SPLAYT_SIZE(&bst));
@@ -101,8 +100,7 @@ main(int argc, char *argv[])
 	printf("The maximum key of the splay tree: %s\n", splayt_max(&bst));
 	end_time = clock();
 	printf("Estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("Please enter a key need to be deleted: ");
 	
 	printf("Begin search key: %s\n", key);
@@ -115,8 +113,7 @@ main(int argc, char *argv[])
 		printf("Not found.\n");
 	end_time = clock();
 	printf("Search completed, estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 	
 	if(!dflag) {
@@ -130,8 +127,7 @@ main(int argc, char *argv[])
 	splayt_delete(&bst, key);
 	end_time = clock();
 	printf("Deletion completed, estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 	
 	printf("prints this splay tree:\n");

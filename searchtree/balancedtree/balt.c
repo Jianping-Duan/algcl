@@ -99,8 +99,7 @@ main(int argc, char *argv[])
 	}
 	end_time = clock();
 	printf("Inserted done, estimated time(s): %.3f\n", 
-			(double)(end_time - start_time) /
-			(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 
 	printf("Begin random query %d keys and print associated value.\n", j);
@@ -114,8 +113,7 @@ main(int argc, char *argv[])
 	ALGFREE(keys);
 	end_time = clock();
 	printf("Estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 
 	printf("The size: %lu\n", BTREE_SIZE(&bt));

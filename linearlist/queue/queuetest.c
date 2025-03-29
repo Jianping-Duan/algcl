@@ -33,7 +33,8 @@
 
 #define MAX_KEYS	10
 
-int main(void)
+int
+main(void)
 {
 	int el, i;
 	int *key;
