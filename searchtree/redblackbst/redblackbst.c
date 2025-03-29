@@ -445,7 +445,8 @@ put_node(struct rbbst_node *hnode,
 	return balance(hnode);
 }
 
-static void postorder_nodes(struct rbbst_node *root, 
+static void 
+postorder_nodes(struct rbbst_node *root, 
 				void (*release)(struct rbbst_node *node))
 {
 	if(root != NULL) {
@@ -455,7 +456,8 @@ static void postorder_nodes(struct rbbst_node *root,
 	}
 }
 
-static inline void release_node(struct rbbst_node *node)
+static inline void 
+release_node(struct rbbst_node *node)
 {
 	ALGFREE(node);
 }
