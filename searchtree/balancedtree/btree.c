@@ -958,10 +958,12 @@ remove_entry(struct btree *bt, struct btree_node *x, const void *key,
 			if(x->parent == NULL)
 				return;
 
+#if BT_FREE_NDOE == 1
 			if(x->parent->sz >= MAX_CHILDREN) {
-				printf("~Warning 3#: This is a bug.\n");
+				printf("--------!!! Warning 2#: This is a bug.\n");
 				return;
 			}
+#endif
 
 			for(i = 0; i < (int)x->parent->sz; i++) {
 				if(x->parent->children[i]->next == x) {
