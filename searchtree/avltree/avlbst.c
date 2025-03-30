@@ -35,7 +35,8 @@
 static void usage_info(const char *);
 static void check(const struct avl_tree *);
 
-int main(int argc, char *argv[])
+int 
+main(int argc, char *argv[])
 {
 	FILE *fp;
 	struct avl_tree bst;
