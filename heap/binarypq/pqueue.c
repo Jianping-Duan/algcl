@@ -34,7 +34,8 @@
 static void show_keys(int **, int);
 static int greater(const void *, const void *);
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
 	int **keys, *key, el, i;
 	int sz = 0, n = 0;

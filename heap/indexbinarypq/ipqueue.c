@@ -87,7 +87,8 @@ main(void)
 	return 0;
 }
 
-static int compare(const void *el1, const void *el2)
+static int
+compare(const void *el1, const void *el2)
 {
 	const char *strs1 = (char *)el1, *strs2 = (char *)el2;
 	return strcmp(strs1, strs2) > 0;

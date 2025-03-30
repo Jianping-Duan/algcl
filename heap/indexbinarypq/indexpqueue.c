@@ -151,7 +151,8 @@ ipqueue_change(struct index_pqueue *ipq, unsigned long i, const void *key)
  * Decrease the key associated with index i to 
  * the specified value. 
  */
-void ipqueue_decrkey(struct index_pqueue *ipq, unsigned long i, const void *key)
+void
+ipqueue_decrkey(struct index_pqueue *ipq, unsigned long i, const void *key)
 {
 	if(!IPQUEUE_CONTAINS(ipq, i))
 		return;
