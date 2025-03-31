@@ -36,7 +36,7 @@
 
 struct index_binom_node {
 	void *key;	/* key contained by the node */
-	unsigned long index;	/* Index associated  with the Key */
+	unsigned long index;	/* Index associated with the Key */
 	unsigned int degree;	/* the degree of the Binomial Tree rooted by this
 							   node */
 	struct index_binom_node *parent;	/* parent of this node */
