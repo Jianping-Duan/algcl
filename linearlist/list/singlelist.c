@@ -278,8 +278,7 @@ clone_node(struct slist_node *node, struct slist_node **last,
 		*last = node;
 	
 	current = make_node(node->key, ksize);
-	current->next = clone_node(node->next, 
-		&node->next, ksize);
+	current->next = clone_node(node->next, &node->next, ksize);
 	
 	return current;
 }
