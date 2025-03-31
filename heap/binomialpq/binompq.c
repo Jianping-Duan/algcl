@@ -67,8 +67,7 @@ main(int argc, char *argv[])
 	end_time = clock();
 	printf("Inserted done, total elements are %lu.\n", binompq_size(&pq));
 	printf("Estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	show_keys(&pq);
 
 	printf("Gets the minimum key from this binomial priority queue.\n");
@@ -87,8 +86,7 @@ main(int argc, char *argv[])
 	end_time = clock();
 	printf("\n");
 	printf("Estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	show_keys(&pq);
 	
 	printf("Total elements are %lu\n\n", binompq_size(&pq));

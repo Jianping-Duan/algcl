@@ -67,8 +67,7 @@ main(int argc, char *argv[])
 	end_time = clock();
 	printf("Inserted done, total elements are %lu.\n", FIBPQ_SIZE(&pq));
 	printf("Estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) / 
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	show_keys(&pq);
 	printf("\n");
 
@@ -88,8 +87,7 @@ main(int argc, char *argv[])
 	end_time = clock();
 	printf("\n");
 	printf("Estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) / 
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	show_keys(&pq);
 	printf("\n");
 	

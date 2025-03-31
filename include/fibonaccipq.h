@@ -63,8 +63,7 @@ struct fibonaccipq {
  * Gets the minimum or maximum key currently in the queue,
  * worst case is O(1). 
  */
-#define FIBPQ_GETKEY(fpq)		((fpq)->size != 0 ? \
-	(fpq)->result->key : NULL)
+#define FIBPQ_GETKEY(fpq)	((fpq)->size != 0 ? (fpq)->result->key : NULL)
 
 struct queue;
 

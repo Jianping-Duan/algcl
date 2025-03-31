@@ -60,16 +60,15 @@ struct index_binompq {
  * contains the index i? worst case is O(1). 
  */
 #define IBINOMPQ_CONTAINS(pq, i)	\
-	(((i) < (pq)->capacity && ((pq)->nodes[i] != NULL)) \
-	? 1 : 0)
+	(((i) < (pq)->capacity && ((pq)->nodes[i] != NULL)) ? 1 : 0)
 
 /* 
  * Gets the key associated with index i, 
  * worst case is O(1) 
  */
 #define IBINOMPQ_KEYOF(pq, i)	\
-	(((i) >= 0 && (i) < (pq)->capacity && \
-	ibinompq_contains(pq, i)) ? pq->nodes[i] : NULL)
+	(((i) >= 0 && (i) < (pq)->capacity && ibinompq_contains(pq, i)) \
+		? pq->nodes[i] : NULL)
 
 struct queue;
 
@@ -103,7 +102,7 @@ void * ibinompq_get_key(const struct index_binompq *pq);
 unsigned long ibinompq_get_index(const struct index_binompq *pq);
 
 /* Traverses this indexed binomial heap. */
-void ibinompq_traverse(const struct index_binompq *pq, struct queue *keys, 
+void ibinompq_traverse(const struct index_binompq *pq, struct queue *keys,
 						struct queue *indexes);
 
 /* Clears this indexed binomial heap. */

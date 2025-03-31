@@ -209,7 +209,7 @@ combine_siblings(const struct pairing_heap *ph, struct pairing_node *fsib,
 		return fsib;
 
 	forest = (struct pairing_node **)
-	algmalloc(deg * sizeof(struct pairing_node *));
+		algmalloc(deg * sizeof(struct pairing_node *));
 	for(i = 0; i < deg; i++)
 		forest[i] = NULL;
 
