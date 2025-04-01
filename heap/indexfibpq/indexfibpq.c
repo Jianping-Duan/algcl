@@ -113,8 +113,7 @@ ifibpq_delete(struct index_fibpq *fpq)
 			/* detach everyone child's parent pointer */
 			current->parent = NULL;
 			current = current->next;
-		} while(current != NULL && 
-			current != fpq->result->child);
+		} while(current != NULL && current != fpq->result->child);
 
 		fpq->head = meld_node(fpq->head, current);
 		fpq->result->child = NULL;
