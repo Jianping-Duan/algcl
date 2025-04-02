@@ -402,7 +402,7 @@ meld_node(struct index_fibpq_node *root1, struct index_fibpq_node *root2)
 	else if(root2 == NULL)
 		return root1;
 	else {
-			if(root2->next == NULL && root2->prev == NULL) {
+		if(root2->next == NULL && root2->prev == NULL) {
 			if(root1->prev != NULL) {
 				assert(root1->next != NULL);
 				root1->prev->next = root2;
