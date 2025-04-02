@@ -197,8 +197,10 @@ insert_node(struct fibonacci_node *node, struct fibonacci_node *head)
 	}
 	else {
 		if(head->prev == NULL && head->next == NULL) {
-			node->prev = node;
-			node->next = node;
+			node->prev = head;
+			node->next = head;
+			head->prev = node;
+			head->next = node;
 			return node;
 		}
 
@@ -260,10 +262,39 @@ meld_node(struct fibonacci_node *root1, struct fibonacci_node *root2)
 	else if(root2 == NULL)
 		return root1;
 	else {
-		if(root2->next == NULL && root2->prev == NULL)
+		if(root2->next == NULL && root2->prev == NULL) {
+			if(root1->prev != NULL) {
+				assert(root1->next != NULL);
+				root1->prev->next = root2;
+				root2->next = root1;
+				root2->prev = root1->prev;
+				root1->prev = root2;
+			}
+			else {
+				root1->next = root2;
+				root2->prev = root1;
+				root1->prev = root2;
+				root2->next = root1;
+			}
 			return root1;
-		if(root1->prev == NULL && root1->next == NULL)
+		}
+
+		if(root1->prev == NULL && root1->next == NULL) {
+			if(root2->prev != NULL) {
+				assert(root2->next != NULL);
+				root2->prev->next = root1;
+				root1->next = root2;
+				root1->prev = root2->prev;
+				root2->prev = root1;
+			}
+			else {
+				root2->next = root1;
+				root1->prev = root2;
+				root2->prev = root1;
+				root1->next = root2;
+			}
 			return root2;
+		}
 
 		root1->prev->next = root2->next;
 		root2->next->prev = root1->prev;
@@ -303,7 +334,8 @@ consolidate(struct fibonaccipq *fpq)
 	rootptr = NULL;
 	root = NULL;
 	do {
-		rootptr = current;
+		if((rootptr = current) == NULL)
+			break;
 		current = current->next;
 		
 		/* 
@@ -323,7 +355,7 @@ consolidate(struct fibonaccipq *fpq)
 		}
 		
 		rootlist[d] = rootptr;
-	} while(current != fpq->head);
+	} while(current != NULL && current != fpq->head);
 
 	/* reshapes the tree using root lists heap */
 	fpq->head = NULL;
@@ -341,6 +373,9 @@ static void
 traverse(const struct fibonacci_node *node, struct queue *keys)
 {
 	const struct fibonacci_node *current;
+
+	if(node == NULL)
+		return;
 	
 	current = node;
 	do {
@@ -348,13 +383,16 @@ traverse(const struct fibonacci_node *node, struct queue *keys)
 		if(current->child != NULL)
 			traverse(current->child, keys);
 		current = current->next;
-	} while(current != node);
+	} while(current != NULL && current != node);
 }
 
 static void 
 release_node(struct fibonacci_node *node, unsigned int ksize)
 {
 	struct fibonacci_node *current, *next;
+
+	if(node == NULL)
+		return;
 	
 	current = node;
 	do {
@@ -365,5 +403,5 @@ release_node(struct fibonacci_node *node, unsigned int ksize)
 			release_node(current->child, ksize);
 		ALGFREE(current);
 		current = next;
-	} while(node != next);
+	} while(current != NULL && node != next);
 }

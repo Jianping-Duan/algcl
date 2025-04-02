@@ -61,7 +61,7 @@ main(int argc, char *argv[])
 		"inserts those to the fibonacci priority queue:\n");
 	start_time = clock();
 	for(i = 0; i < sz; i++) {
-		el = rand_range_integer(1, sz * 10);
+		el = rand_range_integer(1, sz < 100 ? sz * 2 : sz);
 		fibpq_insert(&pq, &el);
 	}
 	end_time = clock();
