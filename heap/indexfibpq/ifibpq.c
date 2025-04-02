@@ -61,7 +61,7 @@ main(int argc, char *argv[])
 		"and inserts then to the indexed fibonacci priority queue:\n");
 	for(i = 0; i < sz; i++)
 		if(!IFIBPQ_ISFULL(&fpq)) {
-			el = rand_range_integer(1, sz * 10);
+			el = rand_range_integer(1, sz < 100 ? sz * 2 : sz);
 			printf("%d-%d  ", i, el);
 			ifibpq_insert(&fpq, i, &el);
 		}
