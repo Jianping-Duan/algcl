@@ -110,7 +110,7 @@ fibpq_insert(struct fibonaccipq *fpq, const void *key)
 void * 
 fibpq_delete(struct fibonaccipq *fpq)
 {
-	struct fibonacci_node *child;
+	struct fibonacci_node *childp, *nextp;
 	void *key;
 	
 	if(FIBPQ_ISEMPTY(fpq))
@@ -118,15 +118,21 @@ fibpq_delete(struct fibonaccipq *fpq)
 	
 	fpq->head = cut_node(fpq->result, fpq->head);
 	key = fpq->result->key;
-	child = fpq->result->child;
-	
-	if(child != NULL) {
-		/* concatenate its children nodes into root list */
-		fpq->head = meld_node(fpq->head, child);
+
+	if((childp = fpq->result->child) != NULL) {
+		/*
+		 * Write each of its child nodes into the root linked list
+		 * where it is located.
+		 */
+		do {
+			nextp = childp->next;
+			fpq->head = insert_node(childp, fpq->head);
+			childp = nextp;
+		} while(nextp != NULL && nextp != fpq->result->child);
 		/* detach child pointer */
 		fpq->result->child = NULL;
 	}
-	
+
 	ALGFREE(fpq->result);
 	fpq->size--;
 	
@@ -191,25 +197,16 @@ make_node(const void *key, unsigned int ksize)
 static struct fibonacci_node * 
 insert_node(struct fibonacci_node *node, struct fibonacci_node *head)
 {
-	if(head == NULL) {		/* links itself */
-		node->prev = node;
-		node->next = node;
-	}
-	else {
-		if(head->prev == NULL && head->next == NULL) {
-			node->prev = head;
-			node->next = head;
-			head->prev = node;
-			head->next = node;
-			return node;
-		}
+	node->prev = node;
+	node->next = node;
 
+	if(head != NULL) {
 		head->prev->next = node;
 		node->next = head;
 		node->prev = head->prev;
 		head->prev = node;
 	}
-	
+
 	return node;
 }
 
@@ -236,17 +233,10 @@ cut_node(struct fibonacci_node *node, struct fibonacci_node *head)
 		node->prev = NULL;
 		node->next = NULL;
 		
-		if(head == node) {
-			/* 
-			 * ALGFREE(node);
-			 * free delay in order to get its children nodes.
-			 */
+		if(head == node)
 			return ret;
-		}
-		else {
-			/* ALGFREE(node); */
+		else 
 			return head;
-		}
 	}
 }
 
@@ -262,6 +252,7 @@ meld_node(struct fibonacci_node *root1, struct fibonacci_node *root2)
 	else if(root2 == NULL)
 		return root1;
 	else {
+#if 0
 		if(root2->next == NULL && root2->prev == NULL) {
 			if(root1->prev != NULL) {
 				assert(root1->next != NULL);
@@ -295,11 +286,18 @@ meld_node(struct fibonacci_node *root1, struct fibonacci_node *root2)
 			}
 			return root2;
 		}
-
+/*
 		root1->prev->next = root2->next;
 		root2->next->prev = root1->prev;
 		root1->prev = root2;
 		root2->next = root1;
+*/
+#endif
+		root1->prev->next = root2;
+		root2->prev->next = root1;
+		root2->prev = root1->prev;
+		root1->prev = root2->prev;
+
 		return root1;
 	}
 }
@@ -321,7 +319,7 @@ consolidate(struct fibonaccipq *fpq)
 {
 	unsigned int maxdegrees = 0, i, d;
 	struct fibonacci_node **rootlist;
-	struct fibonacci_node *current, *rootptr, *root, *node;
+	struct fibonacci_node *current, *rootptr, *root, *node, *headp;
 	
 	maxdegrees = (int)ceil(log2((double)fpq->size));
 	rootlist = (struct fibonacci_node **)
@@ -330,6 +328,7 @@ consolidate(struct fibonaccipq *fpq)
 		rootlist[i] = NULL;
 	
 	current = fpq->head;
+	headp = fpq->head;
 	fpq->result = fpq->head;
 	rootptr = NULL;
 	root = NULL;
@@ -355,7 +354,7 @@ consolidate(struct fibonaccipq *fpq)
 		}
 		
 		rootlist[d] = rootptr;
-	} while(current != NULL && current != fpq->head);
+	} while(current != NULL && current != headp);
 
 	/* reshapes the tree using root lists heap */
 	fpq->head = NULL;

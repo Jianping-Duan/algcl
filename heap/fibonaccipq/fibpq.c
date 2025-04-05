@@ -79,9 +79,9 @@ main(int argc, char *argv[])
 	printf("Deletes %d keys from this fibonacci priority "
 		"queue and output it.\n", n);
 	start_time = clock();
-	for(i = 0; i < n; i++) {
+	for(i = 0; i < n && !FIBPQ_ISEMPTY(&pq); i++) {
 		key = (int *)fibpq_delete(&pq);
-		printf("%d ", *key);
+		printf("%d, %d\n", i, *key);
 		ALGFREE(key);
 	}
 	end_time = clock();
