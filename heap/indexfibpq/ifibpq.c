@@ -73,7 +73,7 @@ main(int argc, char *argv[])
 		"the indexed fibonacci priority queue:\n");
 	show_keys(&fpq);
 	printf("\n");
-	
+
 	printf("Gets the minimum key and its associated index "
 		"from this fibonacci priority queue.\n");
 	key = (int *)IFIBPQ_GETKEY(&fpq);
@@ -86,8 +86,7 @@ main(int argc, char *argv[])
 	for(i = 0; i < n; i++) {
 		ifibpq_remove(&fpq, rand_range_integer(0, sz - 1));
 	}
-	printf("Removed completely.\n\n");
-	
+	printf("Removed completely.\n");
 	printf("Total elements are %lu\n", IFIBPQ_SIZE(&fpq));
 	printf("\n");
 

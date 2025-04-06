@@ -40,8 +40,10 @@ static struct index_fibpq_node * insert_node(struct index_fibpq_node *,
 static struct index_fibpq_node * cut_node(struct index_fibpq_node *, 
 	struct index_fibpq_node *);
 static void cut_index(struct index_fibpq *, unsigned long);
+#if 0
 static struct index_fibpq_node * meld_node(struct index_fibpq_node *,
 	struct index_fibpq_node *);
+#endif
 static inline void link_node(struct index_fibpq_node *,
 	struct index_fibpq_node *);
 static void consolidate(struct index_fibpq *);
@@ -98,27 +100,28 @@ ifibpq_insert(struct index_fibpq *fpq, unsigned long i, const void *key)
 unsigned long 
 ifibpq_delete(struct index_fibpq *fpq)
 {
-	struct index_fibpq_node *current;
+	struct index_fibpq_node *childp, *nextp;
 	unsigned long ind;
 
 	fpq->head = cut_node(fpq->result, fpq->head);
-	current = fpq->result->child;
 	ind = fpq->result->index;
+	
+	if((childp = fpq->result->child) != NULL) {
+		/*
+		 * Write each of its child nodes into the root linked list
+		 * where it is located.
+		 */
+		do {
+			nextp = childp->next;
+			childp->parent = NULL;	/* detach child's parent pointer */
+			fpq->head = insert_node(childp, fpq->head);
+			childp = nextp;
+		} while(nextp != NULL && nextp != fpq->result->child);
+		fpq->result->child = NULL;	/* detach child pointer */
+	}
 
 	if(fpq->keysize != 0)
 		ALGFREE(fpq->result->key);
-	
-	if(current != NULL) {
-		do {
-			/* detach everyone child's parent pointer */
-			current->parent = NULL;
-			current = current->next;
-		} while(current != NULL && current != fpq->result->child);
-
-		fpq->head = meld_node(fpq->head, current);
-		fpq->result->child = NULL;
-	}
-	
 	fpq->size--;
 	fpq->nodes[ind] = NULL;
 	ALGFREE(fpq->result);
@@ -158,7 +161,7 @@ ifibpq_clear(struct index_fibpq *fpq)
 void 
 ifibpq_remove(struct index_fibpq *fpq, unsigned long i)
 {
-	struct index_fibpq_node *current, *pchild, *pnext;
+	struct index_fibpq_node *current, *childp, *nextp, *chead;
 	
 	if(i >= fpq->capacity)
 		return;
@@ -179,26 +182,29 @@ ifibpq_remove(struct index_fibpq *fpq, unsigned long i)
 		cut_index(fpq, i); 
 		
 	fpq->head = cut_node(current, fpq->head);
-	if((pchild = current->child) != NULL) {
-		current->child = NULL;
-		pnext = pchild;
+	if((childp = current->child) != NULL) {
+		chead = childp;
+		/*
+		 * Write each of its child nodes into the root linked list
+		 * where it is located.
+		 */
 		do {
-			pnext->parent = NULL;
-			pnext = pnext->next;
-		} while(pnext != pchild);
-		
-		fpq->head = meld_node(fpq->head, pchild);
+			nextp = childp->next;
+			childp->parent = NULL;	/* detach child's parent pointer */
+			fpq->head = insert_node(childp, fpq->head);
+			childp = nextp;
+		} while(nextp != NULL && nextp != chead);
+		current->child = NULL;	/* detach child pointer */
 	}
 
 	fpq->size--;
+	ALGFREE(current);
+	fpq->nodes[i] = NULL;
 	
 	if(!IFIBPQ_ISEMPTY(fpq))
 		consolidate(fpq);
 	else
 		fpq->result = NULL;
-	
-	ALGFREE(current);
-	fpq->nodes[i] = NULL;
 }
 
 /* 
@@ -225,8 +231,7 @@ ifibpq_decrkey(struct index_fibpq *fpq, unsigned long i, const void *key)
 	else
 		current->key = (void *)key;
 
-	if(current->parent != NULL && 
-	   fpq->cmp(current->parent->key, key))
+	if(current->parent != NULL && fpq->cmp(current->parent->key, key))
 		cut_index(fpq, i);
 }
 
@@ -316,25 +321,16 @@ make_node(unsigned long ind, const void *key, unsigned int ksize)
 static struct index_fibpq_node * 
 insert_node(struct index_fibpq_node *node, struct index_fibpq_node *head)
 {
-	if(head == NULL) {		/* links itself */
-		node->prev = node;
-		node->next = node;
-	}
-	else {
-		if(head->prev == NULL && head->next == NULL) {
-			node->prev = head;
-			node->next = head;
-			head->prev = node;
-			head->next = node;
-			return node;
-		}
+	node->prev = node;
+	node->next = node;
 
+	if(head != NULL) {
 		head->prev->next = node;
 		node->next = head;
 		node->prev = head->prev;
 		head->prev = node;
 	}
-	
+
 	return node;
 }
 
@@ -347,7 +343,7 @@ cut_node(struct index_fibpq_node *node, struct index_fibpq_node *head)
 {
 	struct index_fibpq_node *ret;
 
-	if(node->next == node) {
+	if(node->next == node && node == head) {
 		node->prev = NULL;
 		node->next = NULL;
 		return NULL;
@@ -379,7 +375,8 @@ cut_index(struct index_fibpq *fpq, unsigned long i)
 	struct index_fibpq_node *current, *pparent;
 
 	current = fpq->nodes[i];
-	pparent = current->parent;
+	if((pparent = current->parent) == NULL)
+		return;
 	pparent->child = cut_node(current, pparent->child);
 	current->parent = NULL;
 	pparent->degree--;
@@ -390,6 +387,7 @@ cut_index(struct index_fibpq *fpq, unsigned long i)
 		cut_index(fpq, pparent->index);
 }
 
+#if 0
 /* 
  * Merges two root lists together, 
  * root1 becomes new the root. 
@@ -402,47 +400,14 @@ meld_node(struct index_fibpq_node *root1, struct index_fibpq_node *root2)
 	else if(root2 == NULL)
 		return root1;
 	else {
-		if(root2->next == NULL && root2->prev == NULL) {
-			if(root1->prev != NULL) {
-				assert(root1->next != NULL);
-				root1->prev->next = root2;
-				root2->next = root1;
-				root2->prev = root1->prev;
-				root1->prev = root2;
-			}
-			else {
-				root1->next = root2;
-				root2->prev = root1;
-				root1->prev = root2;
-				root2->next = root1;
-			}
-			return root1;
-		}
-
-		if(root1->prev == NULL && root1->next == NULL) {
-			if(root2->prev != NULL) {
-				assert(root2->next != NULL);
-				root2->prev->next = root1;
-				root1->next = root2;
-				root1->prev = root2->prev;
-				root2->prev = root1;
-			}
-			else {
-				root2->next = root1;
-				root1->prev = root2;
-				root2->prev = root1;
-				root1->next = root2;
-			}
-			return root2;
-		}
-
-		root1->prev->next = root2->next;
-		root2->next->prev = root1->prev;
-		root1->prev = root2;
-		root2->next = root1;
+		root1->prev->next = root2;
+		root2->prev->next = root1;
+		root2->prev = root1->prev;
+		root1->prev = root2->prev;
 		return root1;
 	}
 }
+#endif
 
 /* 
  * Assuming root1 holds a greater or less key than root2,
@@ -462,7 +427,7 @@ consolidate(struct index_fibpq *fpq)
 {
 	unsigned int maxdegrees = 0, i, d;
 	struct index_fibpq_node **rootab;
-	struct index_fibpq_node *current, *rootptr;
+	struct index_fibpq_node *current, *rootptr, *headp;
 	struct index_fibpq_node *root, *node;
 
 	maxdegrees = (int)ceil(log2((double)fpq->size));
@@ -472,6 +437,7 @@ consolidate(struct index_fibpq *fpq)
 		rootab[i] = NULL;
 	
 	current = fpq->head;
+	headp = fpq->head;
 	fpq->result = fpq->head;
 	rootptr = NULL;
 	root = NULL;
@@ -497,7 +463,7 @@ consolidate(struct index_fibpq *fpq)
 		}
 		
 		rootab[d] = rootptr;
-	} while(current != NULL && current != fpq->head);
+	} while(current != NULL && current != headp);
 	
 	/* reshapes the tree using root lists heap */
 	fpq->head = NULL;
