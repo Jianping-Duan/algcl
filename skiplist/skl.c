@@ -80,7 +80,7 @@ main(int argc, char *argv[])
 	
 	skipl_init(&sl, sz);
 	
-	printf("Start read data from \"%s\" file to the skip list...\n", argv[1]);
+	printf("Start read data from \"%s\" file to the skip list...\n", fname);
 	start_time = clock();
 	fp = open_file(fname, "rb");
 	rewind(fp);
@@ -92,8 +92,7 @@ main(int argc, char *argv[])
 	close_file(fp);
 	end_time = clock();
 	printf("Read completed, estimated time(s): %.3f\n\n",
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 
 	printf("show all key-value pairs for this skip list:\n");
 	skipl_traverse(&sl, print);
@@ -113,8 +112,7 @@ main(int argc, char *argv[])
 		printf("The given key '%s' is too small.\n", rand_key);
 	end_time = clock();
 	printf("Estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	ALGFREE(rand_key);
 	
 	rand_key = rand_string(len);
@@ -129,8 +127,7 @@ main(int argc, char *argv[])
 		printf("The given key '%s' is too large.\n", rand_key);
 	end_time = clock();
 	printf("Estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	ALGFREE(rand_key);
 	
 	printf("Begin search key: %s\n", key);
@@ -143,8 +140,7 @@ main(int argc, char *argv[])
 		printf("Not found.\n");
 	end_time = clock();
 	printf("Search completed, estimated time(s): %.3f\n\n",
-			(double)(end_time - start_time) /
-			(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	
 	if(!dflag) {
 		ALGFREE(key);
@@ -157,8 +153,7 @@ main(int argc, char *argv[])
 	skipl_delete(&sl, key);
 	end_time = clock();
 	printf("Deletion completed, estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 
 	printf("show all key-value pairs for this skip list:\n");

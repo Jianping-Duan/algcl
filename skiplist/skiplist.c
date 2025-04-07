@@ -96,9 +96,10 @@ skipl_get(const struct skip_list *sl, const char *key)
 			current = current->forward[i];
 		}
 
-	if((current = current->forward[0]) != NULL && 
-	   strcmp(current->item.key, key) == 0)
+	if((current = current->forward[0]) != NULL &&
+		strcmp(current->item.key, key) == 0) {
 		return &(current->item);
+	}
 	return NULL;
 }
 
@@ -134,16 +135,14 @@ skipl_put(struct skip_list *sl, const struct element *item)
 	current = sl->head;	
 	for(i = sl->level; i >= 0; i--) {
 		while(current->forward[i] != NULL && 
-			  strcmp(current->forward[i]->item.key,
-				item->key) < 0) {
+			  strcmp(current->forward[i]->item.key, item->key) < 0) {
 			current = current->forward[i];
 		}
 		update[i] = current;
 	}
 
 	current = current->forward[0];
-	if(current == NULL || 
-		strcmp(current->item.key, item->key) != 0) {
+	if(current == NULL || strcmp(current->item.key, item->key) != 0) {
 		lvl = random_level(SL_PROBABILITY, sl->maxlevel);
 		if(lvl > sl->level) {
 			for(i = sl->level + 1; i <= lvl; i++)
@@ -189,15 +188,14 @@ skipl_delete(struct skip_list *sl, const char *key)
 	current = sl->head;	
 	for(i = sl->level; i >= 0; i--) {
 		while(current->forward[i] != NULL && 
-			strcmp(current->forward[i]->item.key,	key) < 0) {
+			strcmp(current->forward[i]->item.key, key) < 0) {
 			current = current->forward[i];
 		}
 		update[i] = current;
 	}
 
 	current = current->forward[0];
-	if(current != NULL && 
-		strcmp(current->item.key, key) == 0) {
+	if(current != NULL && strcmp(current->item.key, key) == 0) {
 		for(i = 0; i <= sl->level; i++) {
 			if(update[i]->forward[i] != current)
 				break;
