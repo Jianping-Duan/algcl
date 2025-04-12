@@ -205,8 +205,7 @@ ibinompq_delete(struct index_binompq *pq)
 	
 	result = get_node1(pq);
 	index = result->index;
-	current = result->child == NULL 
-		? result : result->child;
+	current = result->child == NULL ? result : result->child;
 	if(result->child != NULL) {
 		/* 
 		 * detach children nodes, now result is only itself.
@@ -571,8 +570,7 @@ swim(struct index_binompq *pq, unsigned long i)
 	if(current != NULL)
 		parent = current->parent;
 	
-	if(parent != NULL &&
-		pq->cmp(parent->key, current->key)) {
+	if(parent != NULL && pq->cmp(parent->key, current->key)) {
 		exchange_node(pq, current, parent);
 		swim(pq, i);
 	}
