@@ -41,7 +41,7 @@ main(int argc, char *argv[])
 	int el, i, *key;
 	unsigned long index;
 	struct index_binompq pq;
-	int sz = 0, n = 0;
+	int sz = 0, n = 0, cnt = 0;
 
 	if(argc != 2)
 		errmsg_exit("Usage: %s <size>\n", argv[0]);
@@ -60,8 +60,10 @@ main(int argc, char *argv[])
 	printf("Following output a series of Index-Key pairs "
 		"and inserts then to the indexed binomial priority queue:\n");
 	for(i = 0; i < sz; i++) {
-		el = rand_range_integer(1, sz * 10);
-		printf("%d-%d  ", i, el);
+		el = rand_range_integer(1, sz < 100 ? sz * 2 : sz);
+		printf("%3d-%-3d  ", i, el);
+		if(++cnt % 5 == 0)
+			printf("\n");
 		ibinompq_insert(&pq, i, &el);
 	}
 	printf("Inserted done, total elements are %lu.\n", ibinompq_size(&pq));
@@ -79,10 +81,15 @@ main(int argc, char *argv[])
 	n = rand_range_integer(1, sz);
 	printf("Deletes %d keys from this indexed binomial "
 		"priority queue and output its index.\n", n);
+	cnt = 0;
 	for(i = 0; i < n; i++) {
 		index = ibinompq_delete(&pq);
-		printf("The %d index: %lu.\n", i, index);
+		printf("%-3lu ", index);
+		if(++cnt % 10 == 0)
+			printf("\n");
 	}
+	printf("\n");
+	printf("Total elements are %lu\n", ibinompq_size(&pq));
 	printf("\n");
 	
 	i = rand_range_integer(0, sz);
@@ -103,7 +110,7 @@ main(int argc, char *argv[])
 	printf("Following outputs all Index-Key pairs for "
 		"the indexed binomial priority queue:\n");
 	show_keys(&pq);
-	printf("\n");
+	printf("Total elements are %lu\n", ibinompq_size(&pq));
 	
 	ibinompq_clear(&pq);
 	
@@ -121,7 +128,7 @@ static void
 show_keys(const struct index_binompq *pq)
 {
 	struct queue qkeys, qinds;
-	int *key, *k;
+	int *key, *k, cnt = 0;
 
 	QUEUE_INIT(&qkeys, 0);
 	QUEUE_INIT(&qinds, 0);
@@ -129,7 +136,9 @@ show_keys(const struct index_binompq *pq)
 	while(!QUEUE_ISEMPTY(&qkeys) && !QUEUE_ISEMPTY(&qinds)) {
 		dequeue(&qkeys, (void **)&key);
 		dequeue(&qinds, (void **)&k);
-		printf("%d-%d  ", *k, *key);
+		printf("%3d-%-3d  ", *k, *key);
+		if(++cnt % 5 == 0)
+			printf("\n");
 	}
 	printf("\n");
 	queue_clear(&qkeys);
