@@ -35,12 +35,13 @@
 static int cmp(const void *, const void *);
 static void show_keys(const struct pairing_heap *);
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
 	int *key, el, i;
 	struct pairing_heap ph;
 	clock_t start_time, end_time;
-	int sz = 0, n = 0;
+	int sz = 0, n = 0, cnt = 0;
 
 	if(argc != 2)
 		errmsg_exit("Usage: %s <size>\n", argv[0]);
@@ -59,7 +60,7 @@ int main(int argc, char *argv[])
 		"inserts those to the pairing priority queue:\n");
 	start_time = clock();
 	for(i = 0; i < sz; i++) {
-		el = rand_range_integer(1, sz * 10);
+		el = rand_range_integer(1, sz < 100 ? sz * 2 : sz);
 		pheap_insert(&ph, &el);
 	}
 	end_time = clock();
@@ -77,17 +78,20 @@ int main(int argc, char *argv[])
 	printf("Deletes %d keys from this pairing priority "
 		"queue and output it.\n", n);
 	start_time = clock();
-	for(i = 0; i < n; i++) {
+	for(i = 0; i < n && !PHEAP_ISEMPTY(&ph); i++) {
 		key = (int *)pheap_delete(&ph);
-		printf("%d ", *key);
+		printf("%3d ", *key);
+		if(++cnt % 10 == 0)
+			printf("\n");
 		ALGFREE(key);
 	}
 	end_time = clock();
-	printf("\n");;
+	if(cnt % 10 != 0)
+		printf("\n");
 	printf("Estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
+	printf("Prints this pairing heap.\n");
 	show_keys(&ph);
-	printf("\n");
 
 	printf("Total elements are %lu\n\n", PHEAP_SIZE(&ph));
 
@@ -113,13 +117,16 @@ show_keys(const struct pairing_heap *pq)
 {
 	struct single_list list;
 	struct slist_node *nptr;
-	int *key;
+	int *key, cnt = 0;
 
 	slist_init(&list, 0, NULL);
 	pheap_keys(pq, &list);
 	SLIST_FOREACH(&list, nptr, int, key) {
-		printf("%d ", *key);
+		printf("%3d ", *key);
+		if(++cnt % 10 == 0)
+			printf("\n");
 	}
-	printf("\n");
+	if(cnt % 10 != 0)
+		printf("\n");
 	slist_clear(&list);
 }
