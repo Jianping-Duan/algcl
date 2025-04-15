@@ -118,7 +118,8 @@ ipheap_traverse(const struct index_pheap *iph, struct single_list *keys,
 }
 
 /* Clears this indexed pairing heap. */
-void ipheap_clear(struct index_pheap *iph)
+void
+ipheap_clear(struct index_pheap *iph)
 {
 	if(IPHEAP_ISEMPTY(iph))
 		return;
