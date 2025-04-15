@@ -291,7 +291,8 @@ rbbst_select(const struct redblack_bst *bst, unsigned long rank)
  * Returns all keys in the Red-Black BST in 
  * the given range in ascending order. 
  */
-void rbbst_keys(const struct redblack_bst *bst, const char *lokey,
+void
+rbbst_keys(const struct redblack_bst *bst, const char *lokey,
 				const char *hikey, struct queue *keys)
 {
 	keys_range(bst->root, lokey ,hikey, keys);
