@@ -45,7 +45,7 @@ main(void)
 
 	SET_RANDOM_SEED;
 	
-	for(i = 0; i < MAX_ITEMS; i++) {
+	for (i = 0; i < MAX_ITEMS; i++) {
 		array[0][i] = rand_range_integer(0, MAX_ITEMS * 2);
 		array[1][i] = rand_range_integer(0, MAX_ITEMS * 2);
 		array[2][i] = rand_range_integer(0, MAX_ITEMS * 2);
@@ -96,9 +96,9 @@ less(const void *k1, const void *k2)
 {
 	int *x = (int *)k1, *y = (int *)k2;
 
-	if(*x < *y)
+	if (*x < *y)
 		return 1;
-	else if(*x > *y)
+	else if (*x > *y)
 		return -1;
 	else
 		return 0;
@@ -109,7 +109,7 @@ sort(int *array, int sz, int flag)
 {
 	clock_t start_time, end_time;
 	
-	switch(flag) {
+	switch (flag) {
 		case 0:
 			sort_fptr = selection_sort_range;
 			break;
@@ -144,9 +144,8 @@ sort(int *array, int sz, int flag)
 	sort_fptr(array, 0, sz - 1, sizeof(int), less);
 	end_time = clock();
 	printf("Estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
-	if(CHECK_ORDERED(array, sz, sizeof(int), less))
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
+	if (CHECK_ORDERED(array, sz, sizeof(int), less))
 		printf("Sort successful.\n");
 	else
 		printf("Sort failure.\n");

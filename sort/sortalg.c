@@ -44,8 +44,8 @@ check_ordered_range(const void *base, long lo, long hi,
 {
 	long i;
 
-	for(i = lo + 1; i <= hi; i++)
-		if(cmp(base + i * size, base + (i - 1) * size) == 1)
+	for (i = lo + 1; i <= hi; i++)
+		if (cmp(base + i * size, base + (i - 1) * size) == 1)
 			return 0;
 	return 1;
 }
@@ -60,11 +60,11 @@ insertion_sort_range(void *base, long lo, long hi,
 {
 	long i, j;
 
-	for(i = lo; i <= hi; i++)
-		for(j = i; j > lo && cmp(base + j * size, 
-			base + (j - 1) * size) == 1; j--)
-			exch(base + j * size, base + (j - 1) * size,
-				size);
+	for (i = lo; i <= hi; i++)
+		for (j = i; j > lo && cmp(base + j * size, base + (j - 1) * size) == 1;
+			j--) {
+			exch(base + j * size, base + (j - 1) * size, size);
+		}
 }
 
 /* 
@@ -77,12 +77,12 @@ selection_sort_range(void *base, long lo, long hi,
 {
 	long i, j, min;
 
-	for(i = lo; i <= hi; i++) {
+	for (i = lo; i <= hi; i++) {
 		min = i;
-		for(j = i + 1; j <= hi; j++)
-			if(cmp(base + j * size, base + min * size) == 1)
+		for (j = i + 1; j <= hi; j++)
+			if (cmp(base + j * size, base + min * size) == 1)
 				min = j;
-		if(cmp(base + i * size, base + min * size) != 0)
+		if (cmp(base + i * size, base + min * size) != 0)
 			exch(base + i * size, base + min * size, size);
 	}
 }
@@ -103,16 +103,16 @@ shell_sort_range(void *base, long lo, long hi,
 	 */
 	h = 1;
 	n = hi - lo + 1;
-	while(h < n/3)
+	while (h < n/3)
 		h = h * 3 + 1;
 
-	while(h >= 1) {
+	while (h >= 1) {
 		/* h-sort array */
-		for(i = lo + h; i <= hi; i++)
-			for(j = i; j >= lo + h && cmp(base + j * size, 
-				base + (j - h) * size) == 1; j -= h)
-				exch(base + j * size, base + (j - h) * size,
-					size);
+		for (i = lo + h; i <= hi; i++)
+			for (j = i; j >= lo + h && cmp(base + j * size,
+				base + (j - h) * size) == 1; j -= h) {
+				exch(base + j * size, base + (j - h) * size, size);
+			}
 		h /= 3;
 	}
 }
@@ -131,11 +131,11 @@ quick_sort_range(void *base, long lo, long hi,
 {
 	long j;
 
-	if(lo >= hi)
+	if (lo >= hi)
 		return;
 
 	/* cutoff to insertion-sort for small array. */
-	if(lo + INSERTION_SORT_CUTOFF >= hi) {
+	if (lo + INSERTION_SORT_CUTOFF >= hi) {
 		insertion_sort_range(base, lo, hi, size, cmp);
 		return;
 	}
@@ -157,10 +157,10 @@ quick_3way_sort_range(void *base, long lo, long hi,
 	void *v;
 	int cmprlt;
 
-	if(lo >= hi)
+	if (lo >= hi)
 		return;
 
-	if(lo + INSERTION_SORT_CUTOFF >= hi) {
+	if (lo + INSERTION_SORT_CUTOFF >= hi) {
 		insertion_sort_range(base, lo, hi, size, cmp);
 		return;
 	}
@@ -171,26 +171,23 @@ quick_3way_sort_range(void *base, long lo, long hi,
 	/* value copy. It can't be "v = base + lo * size" */
 	valcpy(v, base + lo * size, size); 	
 
-	while(i <= gt) {
+	while (i <= gt) {
 		cmprlt = cmp(base + i * size, v); 
-		if(cmprlt == 1) {
+		if (cmprlt == 1) {
 			exch(base + i * size, base + lt * size, size);
 			i++;
 			lt++;
-		}
-		else if(cmprlt == -1) {
+		} else if (cmprlt == -1) {
 			exch(base + i * size, base + gt * size, size);
 			gt--;
-		}
-		else
+		} else
 			i++;
 	}
 
 	ALGFREE(v);
 	
 	/* 
-	 * base[lo..lt-1] < v = base[lt..gt] 
-	 * < base[gt+1..hi]. 
+	 * base[lo..lt-1] < v = base[lt..gt] < base[gt+1..hi]. 
 	 */
 	quick_3way_sort_range(base, lo, lt - 1, size, cmp);
 	quick_3way_sort_range(base, gt + 1, hi, size, cmp);
@@ -207,25 +204,22 @@ ordered_merge(void *base, void *aux, long lo, long mid,
 	long i, j, k;
 
 	/* copy to aux[] */
-	for(k = lo; k <= hi; k++)
+	for (k = lo; k <= hi; k++)
 		valcpy(aux + k * size, base + k * size, size); 
 	
 	/* merge back to base[] */
 	i = lo, j = mid + 1;
-	for(k = lo; k <= hi; k++) {
-		if(i > mid) {
+	for (k = lo; k <= hi; k++) {
+		if (i > mid) {
 			valcpy(base + k * size, aux + j * size, size);
 			j++;
-		}
-		else if(j > hi) {
+		} else if (j > hi) {
 			valcpy(base + k * size, aux + i * size, size);
 			i++;
-		}
-		else if(cmp(aux + j * size, aux + i * size) == 1) {
+		} else if (cmp(aux + j * size, aux + i * size) == 1) {
 			valcpy(base + k * size, aux + j * size, size);
 			j++;
-		}
-		else {
+		} else {
 			valcpy(base + k * size, aux + i * size, size);
 			i++;
 		}
@@ -261,8 +255,8 @@ merge_sort_bottomup(void *base, long lo, long hi,
 	n = hi - lo + 1;
 	aux = algcalloc(n, size);
 
-	for(len = 1; len < n; len *= 2)
-		for(i = lo; i < hi + 1 - len; i += len + len) {
+	for (len = 1; len < n; len *= 2)
+		for (i = lo; i < hi + 1 - len; i += len + len) {
 			mid = i + len - 1;
 			j = MIN(i + len + len -1, hi);
 			ordered_merge(base, aux, i, mid, j, size, cmp);
@@ -282,7 +276,7 @@ binary_isort_range(void *base, long lo, long hi,
 	long i, j, llo, mid, lhi;
 	void *v;
 	
-	for(i = lo + 1; i <= hi; i++) {
+	for (i = lo + 1; i <= hi; i++) {
 		/*  
 		 * binary search to determine index j 
 		 * at which to insert arr[i].
@@ -290,22 +284,20 @@ binary_isort_range(void *base, long lo, long hi,
 		v = algmalloc(size);
 		valcpy(v, base + i * size, size);
 		llo = lo, lhi = i;
-		while(llo < lhi) {
+		while (llo < lhi) {
 			mid = llo + (lhi - llo) / 2;
-			if(cmp(v, base + mid * size) == 1)
+			if (cmp(v, base + mid * size) == 1)
 				lhi = mid;
 			else
 				llo = mid + 1;
 		}
 		
 		/* 
-		 * insertion sort with "half exchanges" 
-         * (insert a[i] at index j and shift 
-		 * a[j], ..., a[i-1] to right) 
+		 * insertion sort with "half exchanges"
+         * (insert a[i] at index j and shift a[j], ..., a[i-1] to right)
 		 */
-		for(j = i; j > llo; j--)
-			valcpy(base + j * size, base + (j - 1) * size,
-				size);
+		for (j = i; j > llo; j--)
+			valcpy(base + j * size, base + (j - 1) * size, size);
 		valcpy(base + llo * size, v, size);
 
 		ALGFREE(v);
@@ -319,7 +311,7 @@ exch(void *e1, void *e2, unsigned int size)
 {
 	char *k1 = (char *)e1, *k2 = (char *)e2, swap;
 
-	while(size--) {
+	while (size--) {
 		swap = *k1;
 		*k1++ = *k2;
 		*k2++ = swap;
@@ -332,7 +324,7 @@ valcpy(void *tg, const void * restrict sr, unsigned int size)
 {
 	char *x = (char *)tg, *y = (char *)sr;
 
-	while(size--)
+	while (size--)
 		*x++ = *y++;
 }
 
@@ -350,22 +342,22 @@ partition(void *base, long lo, long hi, unsigned int size, algcomp_ft *cmp)
 	i = lo,	j = hi + 1;
 	v = base + lo * size;
 	
-	while(1) {
+	while (1) {
 		/* find item on lo to swap */
 		do {
 			i++;
-		} while(cmp(base + i * size, v) == 1 && i != hi);
+		} while (cmp(base + i * size, v) == 1 && i != hi);
 
 		/* find item on hi to swap */
 		do {
 			j--;
-		} while(cmp(v, base + j * size) == 1 && j != lo);
+		} while (cmp(v, base + j * size) == 1 && j != lo);
 
 		/* check if pointers cross */
-		if(i >= j)
+		if (i >= j)
 			break;
 		
-		if(cmp(base + i * size, base + j * size) != 0)
+		if (cmp(base + i * size, base + j * size) != 0)
 			exch(base + i * size, base + j * size, size);
 	}
 	
@@ -385,10 +377,10 @@ merge_sort_aux(void *base, void *aux, long lo,
 {
 	long mid;
 
-	if(lo >= hi)
+	if (lo >= hi)
 		return;
 
-	if(lo + INSERTION_SORT_CUTOFF >= hi) {
+	if (lo + INSERTION_SORT_CUTOFF >= hi) {
 		insertion_sort_range(base, lo, hi, size, cmp);
 		return;
 	}
