@@ -65,11 +65,11 @@ typedef int algcomp_ft(const void *key1, const void *key2);
 
 /* The encapsulation of free() */
 #define	ALGFREE(ptr)	do {	\
-	if(ptr != NULL) {			\
+	if (ptr != NULL) {			\
 		free(ptr);				\
 		ptr = NULL;				\
 	}							\
-}while(0)
+} while (0)
 
 /* Prints error message and exit. */
 void errmsg_exit(const char *fmt, ...);

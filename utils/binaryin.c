@@ -52,13 +52,13 @@ binput_read_bool(struct binary_input *bin)
 {
 	bool bit;
 
-	if(BINPUT_ISEMPTY(bin))
+	if (BINPUT_ISEMPTY(bin))
 		errmsg_exit("Reading from empty input stream.\n");
 
 	bin->size--;
 	bit = ((bin->buffer >> bin->size) & 1) == 1;
 
-	if(bin->size == 0)
+	if (bin->size == 0)
 		fill_buffer(bin);
 
 	return bit;
@@ -74,11 +74,11 @@ binput_read_char(struct binary_input *bin)
 	int ch;
 	int n;
 
-	if(BINPUT_ISEMPTY(bin))
+	if (BINPUT_ISEMPTY(bin))
 		errmsg_exit("Reading from empty input stream.\n");
 
 	/* special case when aligned byte */
-	if(bin->size == 8) {
+	if (bin->size == 8) {
 		ch = bin->buffer;
 		fill_buffer(bin);
 		return (char)(ch & 0xff);
@@ -93,7 +93,7 @@ binput_read_char(struct binary_input *bin)
 	n = bin->size;
 
 	fill_buffer(bin);
-	if(BINPUT_ISEMPTY(bin))
+	if (BINPUT_ISEMPTY(bin))
 		errmsg_exit("Reading from empty input stream.\n");
 
 	bin->size = n;
@@ -119,18 +119,18 @@ binput_read_char_r(struct binary_input *bin, int r)
 	bool bit;
 	int i;
 
-	if(r < 1 || r > 8)
+	if (r < 1 || r > 8)
 		errmsg_exit("Illegal value of r = %d\n", r);
 
 	/* optimize r = 8 case */
-	if(r == 8)
+	if (r == 8)
 		return binput_read_char(bin);
 
 	ch = 0;
-	for(i = 0; i < r; i++) {
+	for (i = 0; i < r; i++) {
 		ch <<= 1;
 		bit = binput_read_bool(bin);
-		if(bit)
+		if (bit)
 			ch |= 1;
 	}
 
@@ -158,7 +158,7 @@ binput_read_string(struct binary_input *bin)
 
 	str = (char *)algmalloc(sz * sizeof(char));
 	fseek(bin->istream, loc, SEEK_SET);
-	while(!BINPUT_ISEMPTY(bin)) {
+	while (!BINPUT_ISEMPTY(bin)) {
 		ch = binput_read_char(bin);
 		*(str + i++) = ch;
 	}
@@ -179,7 +179,7 @@ binput_read_short(struct binary_input *bin)
 	int i;
 
 	x = 0;
-	for(i = 0; i < 2; i++) {
+	for (i = 0; i < 2; i++) {
 		c = (unsigned char)binput_read_char(bin);
 		x <<= 8;
 		x |= c;
@@ -199,7 +199,7 @@ binput_read_int(struct binary_input *bin)
 	unsigned char c;
 
 	x = 0;
-	for(i = 0; i < 4; i++) {
+	for (i = 0; i < 4; i++) {
 		c = (unsigned char)binput_read_char(bin);
 		x <<= 8;
 		x |= c;
@@ -218,18 +218,18 @@ binput_read_int_r(struct binary_input *bin, int r)
 	int x, i;
 	bool bit;
 
-	if(r < 1 || r > 32)
+	if (r < 1 || r > 32)
 		errmsg_exit("Illegal value of r = %d\n", r);
 
 	/* optimize r = 32 case */
-	if(r == 32)
+	if (r == 32)
 		return binput_read_int(bin);
 
 	x = 0;
-	for(i = 0; i < r; i++) {
+	for (i = 0; i < r; i++) {
 		x <<= 1;
 		bit = binput_read_bool(bin);
-		if(bit)
+		if (bit)
 			x |= 1;
 	}
 
@@ -248,7 +248,7 @@ binput_read_long(struct binary_input *bin)
 	unsigned char c;
 
 	x = 0;
-	for(i = 0; i < 8; i++) {
+	for (i = 0; i < 8; i++) {
 		c = (unsigned char)binput_read_char(bin);
 		x <<= 8;
 		x |= c;
@@ -261,11 +261,10 @@ binput_read_long(struct binary_input *bin)
 static inline void
 fill_buffer(struct binary_input *bin)
 {
-	if(!feof(bin->istream)) {
+	if (!feof(bin->istream)) {
 		bin->buffer = fgetc(bin->istream);
 		bin->size = 8;
-	}
-	else {
+	} else {
 		bin->buffer = EOF;
 		bin->size = -1;
 	}

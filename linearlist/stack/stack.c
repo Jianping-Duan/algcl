@@ -52,7 +52,7 @@ stack_push(struct stack *st, const void *key)
 void *
 stack_peek(const struct stack *st)
 {
-	if(STACK_ISEMPTY(st))
+	if (STACK_ISEMPTY(st))
 		return NULL;
 	return st->first->key;
 }
@@ -66,16 +66,16 @@ stack_pop(struct stack *st, void **key)
 {
 	struct stack_node *oldfirst;
 	
-	if(STACK_ISEMPTY(st))
+	if (STACK_ISEMPTY(st))
 		return;
 	
-	if(st->keysize == 0)
+	if (st->keysize == 0)
 		*key = st->first->key;
 	else
 		memmove(*key, st->first->key, st->keysize);
 	oldfirst = st->first;
 	st->first = st->first->next;
-	if(st->keysize != 0)
+	if (st->keysize != 0)
 		ALGFREE(oldfirst->key);
 	ALGFREE(oldfirst);
 	st->size--;
@@ -87,13 +87,13 @@ stack_clear(struct stack *st)
 {
 	void *key = NULL;
 
-	if(st->keysize != 0)
+	if (st->keysize != 0)
 		key = algmalloc(st->keysize);
 
-	while(!STACK_ISEMPTY(st))
+	while (!STACK_ISEMPTY(st))
 		stack_pop(st, &key);
 
-	if(st->keysize != 0)
+	if (st->keysize != 0)
 		ALGFREE(key);
 
 }
@@ -107,7 +107,7 @@ make_node(const void *key, unsigned short ksize)
 	
 	current = (struct stack_node *)algmalloc(sizeof(struct stack_node));
 	
-	if(ksize == 0)
+	if (ksize == 0)
 		current->key = (void *)key;
 	else {
 		current->key = algmalloc(ksize);

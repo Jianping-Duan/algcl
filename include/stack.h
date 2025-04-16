@@ -56,7 +56,7 @@ struct stack {
 	(st)->first = NULL;					\
 	(st)->size = 0;						\
 	(st)->keysize = ksize;				\
-} while(0)
+} while (0)
 
 /* Adds the key to this stack. */
 void stack_push(struct stack *st, const void *key);

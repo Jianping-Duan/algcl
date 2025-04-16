@@ -49,21 +49,21 @@ main(int argc, char *argv[])
 	
 	SET_RANDOM_SEED;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 's':
-				if(sscanf(optarg, "%d", &start_item) != 1)
+				if (sscanf(optarg, "%d", &start_item) != 1)
 					errmsg_exit("Illegal number. -s %s\n", optarg);
 				break;
 			case 'e':
-				if(sscanf(optarg, "%d", &end_item) != 1)
+				if (sscanf(optarg, "%d", &end_item) != 1)
 					errmsg_exit("Illegal number. -e %s\n", optarg);
 				break;
 			case 'n':
-				if(sscanf(optarg, "%d", &num) != 1)
+				if (sscanf(optarg, "%d", &num) != 1)
 					errmsg_exit("Illegal number. -n %s\n", optarg);
 				break;
 			default: 
@@ -72,13 +72,13 @@ main(int argc, char *argv[])
 		}
 	}
 
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 	
 	fp = open_file(argv[1], "w+b");
 	
-	while(num > 0) {
-		for(i = 0; i < MIN(num, 128); i++) {
+	while (num > 0) {
+		for (i = 0; i < MIN(num, 128); i++) {
 			items[i] = rand_range_integer(start_item, end_item);
 			cnt++;
 		}

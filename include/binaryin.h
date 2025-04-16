@@ -49,7 +49,7 @@ struct binary_input {
 	close_file((bin)->istream);		\
 	(bin)->buffer = EOF;			\
 	(bin)->size = -1;				\
-} while(0)
+} while (0)
 
 /* Returns true if file input stream is empty */
 #define BINPUT_ISEMPTY(bin)		((bin)->buffer == EOF)

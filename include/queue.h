@@ -59,7 +59,7 @@ struct queue {
 	(qp)->rear = NULL;					\
 	(qp)->size = 0;						\
 	(qp)->keysize = ksize;				\
-} while(0)
+} while (0)
 
 /* Adds the key to this queue. */
 void enqueue(struct queue *qp, const void *key);

@@ -53,20 +53,20 @@ main(int argc, char *argv[])
 	
 	SET_RANDOM_SEED;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'f':
 				fname = optarg;
 				break;
 			case 'l':
-				if(sscanf(optarg, "%d", &keylen) != 1)
+				if (sscanf(optarg, "%d", &keylen) != 1)
 					errmsg_exit("Illegal number. -l %s\n", optarg);
 				break;
 			case 'n':
-				if(sscanf(optarg, "%d", &num) != 1)
+				if (sscanf(optarg, "%d", &num) != 1)
 					errmsg_exit("Illegal number. -n %s\n", optarg);
 				break;
 			default: 
@@ -75,29 +75,28 @@ main(int argc, char *argv[])
 		}
 	}
 
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 	
 	fp = open_file(fname, "w+b");
 	
-	if(keylen < MIN_KEY_LEN)
+	if (keylen < MIN_KEY_LEN)
 		keylen = MIN_KEY_LEN;
-	else if(keylen > MAX_KEY_LEN)
+	else if (keylen > MAX_KEY_LEN)
 		keylen = MAX_KEY_LEN;
 	
-	if(num < 0)
+	if (num < 0)
 		num = 0;
-	else if(num > 0 && num <= 10000) {
+	else if (num > 0 && num <= 10000) {
 		startval = 1;
 		endval = 10000;
-	}
-	else {
+	} else {
 		startval = 100;
 		endval = num;
 	}
 	
 	rewind(fp);
-	for(i = 0; i < num; i++) {
+	for (i = 0; i < num; i++) {
 		key = rand_string(keylen);
 		val = rand_range_integer(startval, endval);
 		strcpy(el.key, key);

@@ -75,7 +75,7 @@ struct single_list {
  * Before use it, you must declare 'nptr' pointer.
  */
 #define SLIST_FOREACH(slist, nptr, dtyp, key)		\
-	for((nptr) = (slist)->first,					\
+	for ((nptr) = (slist)->first,					\
 		(key) = (dtyp *)_SLIST_NODE_KEY(nptr);		\
 		(nptr) != NULL;								\
 		(nptr) = (nptr)->next,						\
@@ -101,7 +101,7 @@ slist_next_key(struct slist_node **loc)
 {
 	void *key;
 
-	if(loc == NULL || (*loc) == NULL)
+	if (loc == NULL || (*loc) == NULL)
 		return NULL;
 
 	key = (*loc)->key;

@@ -60,7 +60,7 @@ boutput_write_bool(struct binary_output *bo, bool bit)
 {
 	/* add bit to buffer */
 	bo->buffer <<= 1;
-	if(bit)
+	if (bit)
 		bo->buffer |= 1;
 
 	/* 
@@ -68,7 +68,7 @@ boutput_write_bool(struct binary_output *bo, bool bit)
 	 * write out as a single byte.
 	 */
 	bo->size++;
-	if(bo->size == 8)
+	if (bo->size == 8)
 		clear_buffer(bo);
 }
 
@@ -80,13 +80,13 @@ boutput_write_char(struct binary_output *bo, char x)
 	bool bit;
 
 	/* optimized if byte-aligned */
-	if(bo->size == 0) {
+	if (bo->size == 0) {
 		fputc(x, bo->ostream);
 		return;
 	}
 	
 	/* otherwise write one bit at a time */
-	for(i = 0; i < 8; i++) {
+	for (i = 0; i < 8; i++) {
 		bit = (((unsigned char)x >> (8 - i - 1)) & 1) == 1;
 		boutput_write_bool(bo, bit);
 	}
@@ -99,18 +99,18 @@ boutput_write_char_r(struct binary_output *bo, char x, int r)
 	int i;
 	bool bit;
 
-	if(r == 8) {
+	if (r == 8) {
 		boutput_write_char(bo, x);
 		return;
 	}
 
-	if(r < 1 || r > 8)
+	if (r < 1 || r > 8)
 		errmsg_exit("Illegal value of r = %d\n", r);
 
-	if(x >= (1 << r))
+	if (x >= (1 << r))
 		errmsg_exit("Illegal %d-bits char = %c\n", r,  x);
 	
-	for(i = 0; i < r; i++) {
+	for (i = 0; i < r; i++) {
 		bit = (((unsigned char)x >> (r - i - 1)) & 1) == 1;
 		boutput_write_bool(bo, bit);
 	}
@@ -123,7 +123,7 @@ boutput_write_string(struct binary_output *bo, const char *s)
 	int i, n;
 
 	n = strlen(s);
-	for(i = 0; i < n; i++)
+	for (i = 0; i < n; i++)
 		boutput_write_char(bo, s[i]);
 }
 
@@ -134,7 +134,7 @@ boutput_write_string_r(struct binary_output *bo, const char *s, int r)
 	int i, n;
 
 	n = strlen(s);
-	for(i = 0; i < n; i++)
+	for (i = 0; i < n; i++)
 		boutput_write_char_r(bo, s[i], r);
 }
 
@@ -163,18 +163,18 @@ boutput_write_int_r(struct binary_output *bo, int x, int r)
 	int i;
 	bool bit;
 
-	if(r == 32) {
+	if (r == 32) {
 		boutput_write_int(bo, x);
 		return;
 	}
 
-	if(r < 1 || r > 32)
+	if (r < 1 || r > 32)
 		errmsg_exit("Illegal value of r = %d\n", r);
 
-	if(x >= (1 << r))
+	if (x >= (1 << r))
 		errmsg_exit("Illegal %d-bits int = %c\n", r,  x);
 	
-	for(i = 0; i < r; i++) {
+	for (i = 0; i < r; i++) {
 		bit = (((unsigned int)x >> (r - i - 1)) & 1) == 1;
 		boutput_write_bool(bo, bit);
 	}
@@ -201,13 +201,13 @@ boutput_write_long(struct binary_output *bo, long x)
 static void
 clear_buffer(struct binary_output *bo)
 {
-	if(bo->size == 0)
+	if (bo->size == 0)
 		return;
 
-	if(bo->size > 0)
+	if (bo->size > 0)
 		bo->buffer <<= (8 - bo->size);
 	
-	if(fputc(bo->buffer, bo->ostream) == -1)
+	if (fputc(bo->buffer, bo->ostream) == -1)
 		errmsg_exit("Write buffer to file error, %s\n", strerror(errno));
 
 	bo->buffer = 0;

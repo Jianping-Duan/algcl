@@ -47,7 +47,7 @@ main(int argc, char *argv[])
 	long count = 0;
 	char c;
 
-	switch(argc) {
+	switch (argc) {
 		case 3:
 			sscanf(argv[1], "%d", &width);
 			binput_init(&bi, argv[2]);
@@ -59,16 +59,16 @@ main(int argc, char *argv[])
 			errmsg_exit("Usage: %s [bits per lines] <infile>\n", argv[0]);
 	}
 
-	while(!BINPUT_ISEMPTY(&bi)) {
-		if(width <= 0) {
+	while (!BINPUT_ISEMPTY(&bi)) {
+		if (width <= 0) {
 			binput_read_char(&bi);
 			continue;
 		}
 
-		if(count == 0)
+		if (count == 0)
 			/* eliminate blank space in the front of line */
-			while(0);
-		else if(count % width == 0)
+			while (0);
+		else if (count % width == 0)
 			printf("%ld\n", count);
 		else
 			printf(" ");
@@ -79,7 +79,7 @@ main(int argc, char *argv[])
 		count++;
 	}
 	
-	if(width > 0)
+	if (width > 0)
 		printf("\n");
 	printf("%ld bits\n", count * 8);	
 	
