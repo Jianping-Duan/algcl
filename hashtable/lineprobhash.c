@@ -49,9 +49,9 @@ lphash_get(const struct line_prob_hash *lph, const char *key)
 {
 	unsigned long i;
 	
-	for(i = hash_code(key, lph->size); !isnull(&(lph->items[i]));
+	for (i = hash_code(key, lph->size); !isnull(&(lph->items[i]));
 		i = (i + 1) % lph->size) {
-		if(strcmp(lph->items[i].key, key) == 0)
+		if (strcmp(lph->items[i].key, key) == 0)
 			return &(lph->items[i]);
 	}
 
@@ -73,9 +73,9 @@ lphash_put(struct line_prob_hash *lph, const struct element *item)
 	assert(item != NULL);
 	
 	/* find empty location*/
-	for(i = hash_code(item->key, lph->size); !isnull(&(lph->items[i])); 
+	for (i = hash_code(item->key, lph->size); !isnull(&(lph->items[i]));
 	    i = (i + 1) % lph->size) {
-		if(strcmp(lph->items[i].key, item->key) == 0) {
+		if (strcmp(lph->items[i].key, item->key) == 0) {
 			/* 
 			 * Overwriting the old value with 
 			 * the new value if already contains.
@@ -100,12 +100,12 @@ lphash_delete(struct line_prob_hash *lph, const char *key)
 	unsigned long i;
 	struct element item;
 	
-	if(lphash_get(lph, key) == NULL)
+	if (lphash_get(lph, key) == NULL)
 		return;
 	
 	/* find position i of key */
 	i = hash_code(key, lph->size);
-	while(strcmp(key, lph->items[i].key) != 0)
+	while (strcmp(key, lph->items[i].key) != 0)
 		i = (i + 1) % lph->size;
 	
 	/* clear items[i] */
@@ -116,7 +116,7 @@ lphash_delete(struct line_prob_hash *lph, const char *key)
 	 * avoid empty location.
 	 */
 	i = (i + 1) % lph->size;
-	while(!isnull(&(lph->items[i]))) {
+	while (!isnull(&(lph->items[i]))) {
 		item = lph->items[i];
 		memset(&(lph->items[i]), 0, sizeof(struct element));
 		lph->pairs--;
@@ -133,8 +133,8 @@ lphash_keys(const struct line_prob_hash *lph, struct queue *keys)
 {
 	unsigned long i;
 	
-	for(i = 0; i < lph->size; i++)
-		if(!isnull(&(lph->items[i])))
+	for (i = 0; i < lph->size; i++)
+		if (!isnull(&(lph->items[i])))
 			enqueue(keys, lph->items[i].key);
 }
 
@@ -152,11 +152,11 @@ hash_code(const char *key, unsigned long htsize)
 	
 	assert(key != NULL && (len = strlen(key)) > 0);
 	
-	if(strcmp(hash_buffer.key, key) == 0)
+	if (strcmp(hash_buffer.key, key) == 0)
 		return hash_buffer.hash;
 	else {
 		hash = 0;
-		for(i = 0; i < len; i++)
+		for (i = 0; i < len; i++)
 			hash = (R * hash + string_char_at(key, i)) % htsize;
 		
 		strncpy(hash_buffer.key, key, MAX_KEY_LEN);
@@ -169,9 +169,9 @@ hash_code(const char *key, unsigned long htsize)
 static int
 isnull(struct element *el)
 {
-	if(el == NULL)
+	if (el == NULL)
 		return 1;
-	if(strlen(el->key) == 0 && el->value == 0)
+	if (strlen(el->key) == 0 && el->value == 0)
 		return 1;
 	else
 		return 0;

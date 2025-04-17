@@ -54,7 +54,7 @@ struct seqlist {
 #define SEQLIST_INIT(slist)		do {	\
 	(slist)->first = NULL;				\
 	(slist)->len = 0;					\
-} while(0)
+} while (0)
 
 /* Avoid includs the "queue.h" header file. */
 struct queue;

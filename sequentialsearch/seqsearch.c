@@ -49,11 +49,11 @@ main(int argc, char *argv[])
 	extern char *optarg;
 	extern int optind;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'f':
 				fname = optarg;
 				break;
@@ -66,7 +66,7 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 
 	fp = open_file(fname, "rb");
@@ -77,8 +77,8 @@ main(int argc, char *argv[])
 		"the single linked list...\n", fname);
 	start_time = clock();
 	rewind(fp);
-	while(!feof(fp)) {
-		if(fread(&item, sizeof(struct element), 1, fp) > 0)
+	while (!feof(fp)) {
+		if (fread(&item, sizeof(struct element), 1, fp) > 0)
 			seqlist_put(&slist, &item);
 	}
 	close_file(fp);
@@ -88,7 +88,7 @@ main(int argc, char *argv[])
 	
 	printf("Begin search key: %s\n", key);
 	start_time = clock();
-	if((el = seqlist_get(&slist, key)) != NULL)
+	if ((el = seqlist_get(&slist, key)) != NULL)
 		printf("It's value: %ld\n", el->value);
 	else
 		printf("Not found.\n");

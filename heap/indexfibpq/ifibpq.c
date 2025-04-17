@@ -151,8 +151,7 @@ show_keys(const struct index_fibpq *fpq)
 	key = (int *)algmalloc(sizeof(int));
 	ind = (unsigned long *)algmalloc(sizeof(long));
 	
-	while(!QUEUE_ISEMPTY(&qkeys) && 
-		!QUEUE_ISEMPTY(&qinds)) {
+	while (!QUEUE_ISEMPTY(&qkeys) && !QUEUE_ISEMPTY(&qinds)) {
 		dequeue(&qkeys, (void **)&key);
 		dequeue(&qinds, (void **)&ind);
 		printf("%3lu-%-3d  ", *ind, *key);

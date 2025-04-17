@@ -51,11 +51,11 @@ main(int argc, char *argv[])
 	extern char *optarg;
 	extern int optind;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'f':
 				fname = optarg;
 				break;
@@ -68,7 +68,7 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 	
 	fp = open_file(fname, "rb");
@@ -81,8 +81,8 @@ main(int argc, char *argv[])
 		"the linear-probing hash table...\n", fname);
 	start_time = clock();
 	rewind(fp);
-	while(!feof(fp)) {
-		if(fread(&item, sizeof(struct element), 1, fp) > 0 && 
+	while (!feof(fp)) {
+		if (fread(&item, sizeof(struct element), 1, fp) > 0 &&
 			!LPHASH_ISFULL(&lph)) {
 			lphash_put(&lph, &item);
 		}
@@ -90,33 +90,30 @@ main(int argc, char *argv[])
 	close_file(fp);
 	end_time = clock();
 	printf("Read completed, estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	
 	printf("Begin search key: %s\n", key);
 	start_time = clock();
-	if((el = lphash_get(&lph, key)) != NULL)
+	if ((el = lphash_get(&lph, key)) != NULL)
 		printf("It's value: %ld\n", el->value);
 	else
 		printf("Not found.\n");
 	end_time = clock();
 	printf("Search completed, estimated time(s): %.3f\n\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	
 	printf("Begin delete key: %s\n", key);
 	start_time = clock();
 	lphash_delete(&lph, key);
 	end_time = clock();
 	printf("Deletion completed, estimated time(s): %.3f\n",
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 	
 	printf("Following output this linear-probing hash table:\n");
 	QUEUE_INIT(&qu, 0);
 	lphash_keys(&lph, &qu);
-	while(!QUEUE_ISEMPTY(&qu)) {
+	while (!QUEUE_ISEMPTY(&qu)) {
 		dequeue(&qu, (void **)&key);
 		el = lphash_get(&lph, key);
 		printf("%s\t%ld\n", key, el->value);

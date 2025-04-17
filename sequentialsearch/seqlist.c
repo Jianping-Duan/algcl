@@ -44,7 +44,7 @@ seqlist_put(struct seqlist *slist, const struct element *item)
 	struct seqlist_node *newnode;
 	
 	newnode = make_node(item);
-	if(slist->first != NULL)
+	if (slist->first != NULL)
 		newnode->next = slist->first;
 	slist->first = newnode;
 	slist->len++;
@@ -61,9 +61,9 @@ seqlist_get(const struct seqlist *slist, const char *key)
 	struct element *el;
 	
 	pnode = slist->first;
-	while(pnode != NULL) {
+	while (pnode != NULL) {
 		el = &(pnode->item);
-		if(strcmp(el->key, key) == 0)
+		if (strcmp(el->key, key) == 0)
 			return el;
 		pnode = pnode->next;
 	}
@@ -80,34 +80,33 @@ seqlist_delete(struct seqlist *slist, const char *key)
 {
 	struct seqlist_node *pnode, *pnext;
 	
-	if(slist != NULL && slist->len > 0) {
+	if (slist != NULL && slist->len > 0) {
 		/* only one node */
-		if(slist->first->next == NULL && 
+		if (slist->first->next == NULL && 
 			strcmp(slist->first->item.key, key) == 0) {
 			ALGFREE(slist->first);
 			slist->len = 0;
 		}
 		/* key equals the first node. */
-		else if(slist->first->next != NULL && 
+		else if (slist->first->next != NULL && 
 			strcmp(slist->first->item.key, key) == 0) {
 			pnode = slist->first;
 			slist->first = slist->first->next;
 			ALGFREE(pnode);
 			slist->len--;
-		}
-		else {
+		} else {
 			pnode = slist->first;
-			while(pnode != NULL) {
+			while (pnode != NULL) {
 				/* from second node begin. */
 				pnext = pnode->next; 
 				
 				/* pointer ended and pnode is last node. */
-				if(pnext == NULL)
+				if (pnext == NULL)
 					return;
 				
-				if(strcmp(pnext->item.key, key) == 0) {
+				if (strcmp(pnext->item.key, key) == 0) {
 					/* key is the last node. */
-					if(pnext->next == NULL) 
+					if (pnext->next == NULL) 
 						pnode->next = NULL;
 					else
 						pnode->next = pnext->next;
@@ -131,8 +130,8 @@ seqlist_change(struct seqlist *slist, const char *key,
 	struct seqlist_node *pnode;
 	
 	pnode = slist->first;
-	while(pnode != NULL) {
-		if(strcmp(pnode->item.key, key) == 0)
+	while (pnode != NULL) {
+		if (strcmp(pnode->item.key, key) == 0)
 			pnode->item.value = item->value;
 		pnode = pnode->next;
 	}
@@ -145,7 +144,7 @@ seqlist_keys(const struct seqlist *slist, struct queue *keys)
 	struct seqlist_node *pnode;
 	
 	pnode = slist->first;
-	while(pnode != NULL) {
+	while (pnode != NULL) {
 		enqueue(keys, pnode->item.key);
 		pnode = pnode->next;
 	}
@@ -158,7 +157,7 @@ seqlist_clear(struct seqlist *slist)
 	struct seqlist_node *pnode, *current;
 	
 	pnode = slist->first;
-	while(pnode != NULL) {
+	while (pnode != NULL) {
 		current = pnode;
 		pnode = pnode->next;
 		ALGFREE(current);

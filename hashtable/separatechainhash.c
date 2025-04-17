@@ -52,7 +52,7 @@ schash_init(struct schain_hash *sch, unsigned long htsize)
 	sch->lists = (struct seqlist *)algmalloc(htsize * sizeof(struct seqlist));
 	
 	/* initializes every linked-list */
-	for(i = 0; i < htsize; i++)
+	for (i = 0; i < htsize; i++)
 		SEQLIST_INIT(&(sch->lists[i]));
 }
 
@@ -65,7 +65,7 @@ schash_get(const struct schain_hash *sch, const char *key)
 {
 	long hash;
 	
-	if(key == NULL)
+	if (key == NULL)
 		return NULL;
 	
 	hash = hash_code(key, sch->size);
@@ -83,7 +83,7 @@ schash_put(struct schain_hash *sch, const struct element *item)
 	
 	assert(item != NULL);
 	
-	if(schash_get(sch, item->key) == NULL)
+	if (schash_get(sch, item->key) == NULL)
 		sch->pairs++;
 	else {
 		hash = hash_code(item->key, sch->size);
@@ -104,10 +104,10 @@ schash_delete(struct schain_hash *sch, const char *key)
 {
 	long hash;
 	
-	if(key == NULL)
+	if (key == NULL)
 		return;
 	
-	if(schash_get(sch, key) != NULL)
+	if (schash_get(sch, key) != NULL)
 		sch->pairs--;
 	
 	hash = hash_code(key, sch->size);
@@ -122,13 +122,13 @@ schash_keys(const struct schain_hash *sch, struct queue *keys)
 	void *key;
 	struct queue lq;
 	
-	for(i = 0; i < sch->size; i++) {
-		if(SEQLIST_ISEMPTY(&(sch->lists[i])))
+	for (i = 0; i < sch->size; i++) {
+		if (SEQLIST_ISEMPTY(&(sch->lists[i])))
 			continue;
 		
 		QUEUE_INIT(&lq, 0);
 		seqlist_keys(&(sch->lists[i]), &lq);
-		while(!QUEUE_ISEMPTY(&lq)) {
+		while (!QUEUE_ISEMPTY(&lq)) {
 			dequeue(&lq, &key);
 			enqueue(keys, key);
 		}
@@ -142,8 +142,8 @@ schash_clear(struct schain_hash *sch)
 {
 	unsigned long i;
 	
-	for(i = 0; i < sch->size; i++) {
-		if(SEQLIST_ISEMPTY(&(sch->lists[i])))
+	for (i = 0; i < sch->size; i++) {
+		if (SEQLIST_ISEMPTY(&(sch->lists[i])))
 			continue;
 		seqlist_clear(&(sch->lists[i]));
 		sch->pairs--;
@@ -166,13 +166,12 @@ hash_code(const char *key, unsigned long htsize)
 	
 	assert(key != NULL && (len = strlen(key)) > 0);
 	
-	if(strcmp(hash_buffer.key, key) == 0)
+	if (strcmp(hash_buffer.key, key) == 0)
 		return hash_buffer.hash;
 	else {
 		hash = 0;
-		for(i = 0; i < len; i++) {
+		for (i = 0; i < len; i++)
 			hash = (R * hash + string_char_at(key, i)) % htsize;
-		}
 		
 		strncpy(hash_buffer.key, key, MAX_KEY_LEN);
 		hash_buffer.hash = hash;
