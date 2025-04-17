@@ -41,15 +41,15 @@ main(int argc, char *argv[])
 	int *key, el, i;
 	struct binomialpq pq;
 	clock_t start_time, end_time;
-	int sz = 0, n = 0;
+	int sz = 0, n = 0, cnt = 0;
 
-	if(argc != 2)
+	if (argc != 2)
 		errmsg_exit("Usage: %s <size>\n", argv[0]);
 
-	if(sscanf(argv[1], "%d", &sz) != 1)
+	if (sscanf(argv[1], "%d", &sz) != 1)
 		errmsg_exit("Not a integer number, %s.\n", argv[1]);
 
-	if(sz <= 0)
+	if (sz <= 0)
 		errmsg_exit("Given a integer number must be greater than 0.\n");
 	
 	SET_RANDOM_SEED;
@@ -60,8 +60,8 @@ main(int argc, char *argv[])
 	printf("Following output a series of numbers and "
 		"inserts those to the binomial priority queue:\n");
 	start_time = clock();
-	for(i = 0; i < sz; i++) {
-		el = rand_range_integer(1, sz * 10);
+	for (i = 0; i < sz; i++) {
+		el = rand_range_integer(1, sz < 100 ? sz * 2 : sz);
 		binompq_insert(&pq, &el);
 	}
 	end_time = clock();
@@ -78,18 +78,23 @@ main(int argc, char *argv[])
 	printf("Deletes %d keys from this binomial priority queue and "
 		"output it.\n", n);
 	start_time = clock();
-	for(i = 0; i < n; i++) {
+	for (i = 0; i < n && !BINOMPQ_ISEMPTY(&pq); i++) {
 		key = (int *)binompq_delete(&pq);
-		printf("%d ", *key);
+		printf("%-3d ", *key);
+		if (++cnt % 10 == 0)
+			printf("\n");
 		ALGFREE(key);
 	}
 	end_time = clock();
-	printf("\n");
-	printf("Estimated time(s): %.3f\n\n", 
+	if (cnt % 10 != 0)
+		printf("\n");
+	printf("Estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
+	printf("Prints this binomial heap.\n");
 	show_keys(&pq);
 	
-	printf("Total elements are %lu\n\n", binompq_size(&pq));
+	printf("Total elements are %lu\n", binompq_size(&pq));
+	printf("\n");
 	
 	binompq_clear(&pq);
 	
@@ -108,13 +113,16 @@ show_keys(const struct binomialpq *pq)
 {
 	struct single_list list;
 	struct slist_node *nptr;
-	int *key;
+	int *key, cnt = 0;
 
 	slist_init(&list, 0, NULL);
 	binompq_keys(pq, &list);
 	SLIST_FOREACH(&list, nptr, int, key) {
-		printf("%d ", *key);
+		printf("%-3d ", *key);
+		if (++cnt % 10 == 0)
+			printf("\n");
 	}
-	printf("\n");
+	if (cnt % 10 != 0)
+		printf("\n");
 	slist_clear(&list);
 }

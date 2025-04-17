@@ -36,7 +36,7 @@
 
 struct index_binom_node {
 	void *key;	/* key contained by the node */
-	unsigned long index;	/* Index associated with the Key */
+	unsigned long index;	/* Index associated  with the Key */
 	unsigned int degree;	/* the degree of the Binomial Tree rooted by this
 							   node */
 	struct index_binom_node *parent;	/* parent of this node */
@@ -86,8 +86,7 @@ void ibinompq_init(struct index_binompq *pq, unsigned long n,
 unsigned long ibinompq_size(const struct index_binompq *pq);
 
 /* Associates a key with an index. */
-void ibinompq_insert(struct index_binompq *pq, unsigned long i,
-					const void *key);
+int ibinompq_insert(struct index_binompq *pq, unsigned long i, const void *key);
 
 /* 
  * Gets the minimum or maximum key currently in 
@@ -115,27 +114,26 @@ void ibinompq_clear(struct index_binompq *pq);
 unsigned long ibinompq_delete(struct index_binompq *pq);
 
 /* Deletes the key associated the given index. */
-void ibinompq_remove(struct index_binompq *pq, unsigned long i);
+int ibinompq_remove(struct index_binompq *pq, unsigned long i);
 
 /* 
  * Decreases the key associated with 
  * index i to the given key. 
  */
-void ibinompq_decrkey(struct index_binompq *pq, unsigned long i,
+int ibinompq_decrkey(struct index_binompq *pq, unsigned long i,
 					const void *key);
 
 /* 
  * Increases the key associated with 
  * index i to the given key. 
  */
-void ibinompq_incrkey(struct index_binompq *pq, unsigned long i,
+int ibinompq_incrkey(struct index_binompq *pq, unsigned long i,
 					const void *key);
 
 /* 
  * Changes the key associated with 
  * index i to the given key. 
  */
-void ibinompq_change(struct index_binompq *pq, unsigned long i,
-					const void *key);
+int ibinompq_change(struct index_binompq *pq, unsigned long i, const void *key);
 
 #endif	/* _INDEXBINOMPQ_H_ */

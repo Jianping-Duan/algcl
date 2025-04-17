@@ -40,7 +40,7 @@
 	root1->sibling = root2->child;				\
 	root2->child = root1;						\
 	root2->degree++;							\
-} while(0)
+} while (0)
 	
 static struct binomial_node * make_node(const void *, unsigned int);
 static struct binomial_node * merge_node(struct binomial_node *,
@@ -72,7 +72,7 @@ binompq_size(const struct binomialpq *pq)
 	struct binomial_node *current;
 	
 	current = pq->head;
-	while(current != NULL) {
+	while (current != NULL) {
 		tmp = 1 << current->degree;	/* 2^k */
 		sz |= tmp;
 		current = current->sibling;
@@ -100,18 +100,16 @@ binompq_union(struct binomialpq *spq, const struct binomialpq *tpq)
 	current = spq->head;
 	prev = NULL;
 	next = current->sibling;
-	while(next != NULL) {
-		if(current->degree < next->degree || (next->sibling != NULL &&
+	while (next != NULL) {
+		if (current->degree < next->degree || (next->sibling != NULL &&
 		    next->sibling->degree == current->degree)) { /* Nothing do it. */
 			prev = current;
 			current = next;
-		}
-		else if(spq->cmp(next->key, current->key)) {
+		} else if (spq->cmp(next->key, current->key)) {
 			current->sibling = next->sibling;
 			BINOMPQ_LINK(next, current);	/* links next to current */
-		}
-		else {	/* !spq->com */
-			if(prev == NULL)
+		} else {	/* !spq->com */
+			if (prev == NULL)
 				spq->head = next;	/* moves head pointer */
 			else
 				prev->sibling = next;
@@ -152,8 +150,8 @@ binompq_get(const struct binomialpq *pq)
 	
 	result = pq->head;
 	current = pq->head;
-	while(current->sibling != NULL) {
-		if(pq->cmp(result->key, current->sibling->key))
+	while (current->sibling != NULL) {
+		if (pq->cmp(result->key, current->sibling->key))
 			result = current->sibling;
 		current = current->sibling;
 	}
@@ -174,7 +172,7 @@ binompq_delete(struct binomialpq *pq)
 	result = get_node(pq);
 	key = result->key;
 	current = result->child == NULL ? result : result->child;
-	if(result->child != NULL) {
+	if (result->child != NULL) {
 		/* 
 		 * detach children nodes, 
 		 * now result is only itself.
@@ -184,7 +182,7 @@ binompq_delete(struct binomialpq *pq)
 		/* reverse roots list for the children of result */
 		prev = NULL;
 		next = current->sibling;
-		while(next != NULL) {
+		while (next != NULL) {
 			current->sibling = prev;
 			prev = current;
 			current = next;
@@ -205,14 +203,14 @@ binompq_delete(struct binomialpq *pq)
 void 
 binompq_keys(const struct binomialpq *pq, struct single_list *keys)
 {
-	if(!BINOMPQ_ISEMPTY(pq))
+	if (!BINOMPQ_ISEMPTY(pq))
 		traverse(pq->head, keys);
 }
 
 void 
 binompq_clear(struct binomialpq *pq)
 {
-	if(!BINOMPQ_ISEMPTY(pq))
+	if (!BINOMPQ_ISEMPTY(pq))
 		release_node(pq->head, pq->keysize);
 }
 
@@ -229,11 +227,10 @@ make_node(const void *key, unsigned int ksize)
 
 	current = (struct binomial_node *)algmalloc(sizeof(struct binomial_node));
 	
-	if(ksize != 0) {
+	if (ksize != 0) {
 		current->key = algmalloc(ksize);
 		memcpy(current->key, key, ksize);
-	}
-	else
+	} else
 		current->key = (void *)key;
 
 	current->degree = 0;
@@ -251,13 +248,13 @@ static struct binomial_node *
 merge_node(struct binomial_node *hnode, struct binomial_node *xnode, 
 		struct binomial_node *ynode)
 {
-	if(xnode == NULL && ynode == NULL)
+	if (xnode == NULL && ynode == NULL)
 		return hnode;
-	else if(xnode == NULL)
+	else if (xnode == NULL)
 		hnode->sibling = merge_node(ynode, NULL, ynode->sibling);
-	else if(ynode == NULL)
+	else if (ynode == NULL)
 		hnode->sibling = merge_node(xnode, xnode->sibling, NULL);
-	else if(xnode->degree < ynode->degree)
+	else if (xnode->degree < ynode->degree)
 		hnode->sibling = merge_node(xnode, xnode->sibling, ynode);
 	else 
 		hnode->sibling = merge_node(ynode, xnode, ynode->sibling);
@@ -276,18 +273,18 @@ get_node(struct binomialpq *pq)
 	current = pq->head;
 	result = pq->head;
 	prev = NULL;
-	while(current->sibling != NULL) {
-		if(pq->cmp(result->key, current->sibling->key)) {
+	while (current->sibling != NULL) {
+		if (pq->cmp(result->key, current->sibling->key)) {
 			prev = current;
 			result = current->sibling;
 		}
 		current = current->sibling;
 	}
 	
-	if(pq->head == result)	
+	if (pq->head == result)	
 		pq->head = result->sibling;	/* head is minimum or maximum key */
 	/* the last node is minimum or maximum key */
-	else if(result->sibling == NULL)
+	else if (result->sibling == NULL)
 		prev->sibling = NULL;
 	else
 		prev->sibling = result->sibling;
@@ -301,9 +298,9 @@ traverse(const struct binomial_node *node, struct single_list *keys)
 	const struct binomial_node *current;
 	
 	current = node;
-	while(current != NULL) {
+	while (current != NULL) {
 		slist_append(keys, current->key);
-		if(current->child != NULL)
+		if (current->child != NULL)
 			traverse(current->child, keys);
 		current = current->sibling;
 	}
@@ -315,10 +312,10 @@ release_node(struct binomial_node *node, unsigned int ksize)
 	struct binomial_node *current, *next;
 	
 	current = node;
-	while(current != NULL) {
-		if(ksize != 0)
+	while (current != NULL) {
+		if (ksize != 0)
 			ALGFREE(current->key);
-		if(current->child != NULL)
+		if (current->child != NULL)
 			release_node(current->child, ksize);
 		next = current->sibling;
 		ALGFREE(current);

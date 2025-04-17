@@ -41,7 +41,7 @@
 	root1->parent = root2;						\
 	root2->child = root1;						\
 	root2->degree++;							\
-} while(0)
+} while (0)
 
 static struct index_binom_node * merge_node(struct index_binom_node *,
 	struct index_binom_node *, struct index_binom_node *);
@@ -77,7 +77,7 @@ ibinompq_init(struct index_binompq *pq,	unsigned long n, unsigned int ksize,
 
 	pq->nodes = (struct index_binom_node **)
 		algmalloc(n * sizeof(struct index_binom_node *));
-	for(i = 0; i < n; i++)
+	for (i = 0; i < n; i++)
 		pq->nodes[i] = NULL;
 }
 
@@ -92,7 +92,7 @@ ibinompq_size(const struct index_binompq *pq)
 	struct index_binom_node *current;
 	
 	current = pq->head;
-	while(current != NULL) {
+	while (current != NULL) {
 		/* 2^k the degrees of the root list.*/
 		tmp = 1 << current->degree;	
 		sz |= tmp;
@@ -106,17 +106,16 @@ ibinompq_size(const struct index_binompq *pq)
  * Associates a key with an index, 
  * worst case is O(log(n)) 
  */
-void 
+int
 ibinompq_insert(struct index_binompq *pq, unsigned long i, const void *key)
 {
 	struct index_binom_node *current;
 	struct index_binompq tpq, *spq;
 	
-	if(IBINOMPQ_CONTAINS(pq, i))
-		return;
-	
-	if(i >= pq->capacity)
-		return;
+	if (i >= pq->capacity)
+		return -1;
+	if (IBINOMPQ_CONTAINS(pq, i))
+		return -2;
 	
 	current = make_node(i, key, pq->keysize);
 	pq->nodes[i] = current;
@@ -124,11 +123,12 @@ ibinompq_insert(struct index_binompq *pq, unsigned long i, const void *key)
 	
 	spq = ibinompq_union(pq, &tpq);
 	pq->head = spq->head;
+
+	return 0;
 }
 
 /* 
- * Gets the minimum or maximum key currently in 
- * the binomial priority queue, 
+ * Gets the minimum or maximum key currently in the binomial priority queue.
  * worst case is O(log(n)) 
  */
 void * 
@@ -136,13 +136,13 @@ ibinompq_get_key(const struct index_binompq *pq)
 {
 	struct index_binom_node *result, *current;
 	
-	if(IBINOMPQ_ISEMPTY(pq))
+	if (IBINOMPQ_ISEMPTY(pq))
 		return NULL;
 	
 	result = pq->head;
 	current = pq->head;
-	while(current->sibling != NULL) {
-		if(pq->cmp(result->key, current->sibling->key))
+	while (current->sibling != NULL) {
+		if (pq->cmp(result->key, current->sibling->key))
 			result = current->sibling;
 		current = current->sibling;
 	}
@@ -151,8 +151,8 @@ ibinompq_get_key(const struct index_binompq *pq)
 }
 
 /* 
- * Gets the index associated with the minimum 
- * or maximum key, worst case is O(log(n)) 
+ * Gets the index associated with the minimum or maximum key.
+ * worst case is O(log(n)) 
  */
 unsigned long 
 ibinompq_get_index(const struct index_binompq *pq)
@@ -163,8 +163,8 @@ ibinompq_get_index(const struct index_binompq *pq)
 	
 	result = pq->head;
 	current = pq->head;
-	while(current->sibling != NULL) {
-		if(pq->cmp(result->key, current->sibling->key))
+	while (current->sibling != NULL) {
+		if (pq->cmp(result->key, current->sibling->key))
 			result = current->sibling;
 		current = current->sibling;
 	}
@@ -176,14 +176,14 @@ void
 ibinompq_traverse(const struct index_binompq *pq, struct queue *keys,
 				struct queue *indexes)
 {
-	if(!IBINOMPQ_ISEMPTY(pq))
+	if (!IBINOMPQ_ISEMPTY(pq))
 		traverse(pq->head, keys, indexes);
 }
 
 void 
 ibinompq_clear(struct index_binompq *pq)
 {
-	if(!IBINOMPQ_ISEMPTY(pq))
+	if (!IBINOMPQ_ISEMPTY(pq))
 		release_node(pq->head, pq->keysize);
 	
 	ALGFREE(pq->nodes);
@@ -191,8 +191,8 @@ ibinompq_clear(struct index_binompq *pq)
 }
 
 /* 
- * Deletes the minimum or maximum key and 
- * returns its index, worst case is O(log(n)) 
+ * Deletes the minimum or maximum key and returns its index.
+ * Worst case is O(log(n)) 
  */
 unsigned long 
 ibinompq_delete(struct index_binompq *pq)
@@ -206,7 +206,7 @@ ibinompq_delete(struct index_binompq *pq)
 	result = get_node1(pq);
 	index = result->index;
 	current = result->child == NULL ? result : result->child;
-	if(result->child != NULL) {
+	if (result->child != NULL) {
 		/* 
 		 * detach children nodes, now result is only itself.
 		 */
@@ -214,7 +214,7 @@ ibinompq_delete(struct index_binompq *pq)
 		/* reverse roots list for the children of result */
 		prev = NULL;
 		next = current->sibling;
-		while(next != NULL) {
+		while (next != NULL) {
 			current->parent = NULL;
 			current->sibling = prev;
 			prev = current;
@@ -230,7 +230,7 @@ ibinompq_delete(struct index_binompq *pq)
 	}
 	
 	pq->nodes[index] = NULL;
-	if(pq->keysize != 0)
+	if (pq->keysize != 0)
 		ALGFREE(result->key);
 	ALGFREE(result);
 	
@@ -239,31 +239,30 @@ ibinompq_delete(struct index_binompq *pq)
 
 /* 
  * Deletes the key associated the given index, 
- * worst case is O(log(n)). 
+ * Worst case is O(log(n)). 
  */
-void 
+int
 ibinompq_remove(struct index_binompq *pq, unsigned long i)
 {
 	struct index_binom_node *prev, *current, *result, *next;
 	struct index_binompq tpq, *spq;
 	
-	if(i >= pq->capacity)
-		return;
-	
-	if(!IBINOMPQ_CONTAINS(pq, i))
-		return;
+	if (i >= pq->capacity)
+		return -1;
+	if (!IBINOMPQ_CONTAINS(pq, i))
+		return -2;
 	
 	toroot(pq, i);
 	result = get_node2(pq, i);
 	pq->nodes[i] = NULL;
 	
-	if(result->child != NULL) {
+	if (result->child != NULL) {
 		current = result->child;
 		result->child = NULL;
 		
 		prev = NULL;
 		next = current->sibling;
-		while(next != NULL) {
+		while (next != NULL) {
 			current->parent = NULL;
 			current->sibling = prev;
 			prev = current;
@@ -278,72 +277,85 @@ ibinompq_remove(struct index_binompq *pq, unsigned long i)
 		pq->head = spq->head;
 	}
 	
-	if(pq->keysize != 0)
+	if (pq->keysize != 0)
 		ALGFREE(result->key);
 	ALGFREE(result);
+
+	return 0;
 }
 
 /* 
- * Decreases the key associated with index i to 
- * the given key, worst case is O(log(n)). 
+ * Decreases the key associated with index i to the given key.
+ * Worst case is O(log(n)). 
  */
-void
+int
 ibinompq_decrkey(struct index_binompq *pq, unsigned long i, const void *key)
 {
 	struct index_binom_node *node;
-	
-	if(!IBINOMPQ_CONTAINS(pq, i))
-		return;
+
+	if (i >= pq->capacity)
+		return -1;
+	if (!IBINOMPQ_CONTAINS(pq, i))
+		return -2;
 	
 	node = pq->nodes[i];
-	if(pq->cmp(key, node->key))
-		return;
+	if (pq->cmp(key, node->key))
+		return -3;
 	
-	if(pq->keysize != 0)
+	if (pq->keysize != 0)
 		memcpy(node->key, key, pq->keysize);
 	else
 		node->key = (void *)key;
 
 	swim(pq, i);
+
+	return 0;
 }
 
 /* 
- * Increases the key associated with index i to 
- * the given key, worst case is O(log(n)). 
+ * Increases the key associated with index i to the given key.
+ * Worst case is O(log(n)). 
  */
-void 
+int
 ibinompq_incrkey(struct index_binompq *pq, unsigned long i, const void *key)
 {
 	struct index_binom_node *node;
-	
-	if(!IBINOMPQ_CONTAINS(pq, i))
-		return;
+
+	if (i >= pq->capacity)
+		return -1;
+	if (!IBINOMPQ_CONTAINS(pq, i))
+		return -2;
 	
 	node = pq->nodes[i];
-	if(pq->cmp(node->key, key))
-		return;
+	if (pq->cmp(node->key, key))
+		return -3;
 	
-	ibinompq_remove(pq, i);
+	if (ibinompq_remove(pq, i) != 0)
+		return -4;
 	ibinompq_insert(pq, i, key);
+
+	return 0;
 }
 
 /*
  * Changes the key associated with index i to 
  * the given key, worst case is O(log(n)). 
  */
-void 
+int
 ibinompq_change(struct index_binompq *pq, unsigned long i, const void *key)
 {
 	struct index_binom_node *node;
-	
-	if(!IBINOMPQ_CONTAINS(pq, i))
-		return;
+
+	if (i >= pq->capacity)
+		return -1;
+	if (!IBINOMPQ_CONTAINS(pq, i))
+		return -2;
 	
 	node = pq->nodes[i];
-	if(pq->cmp(node->key, key))
-		ibinompq_decrkey(pq, i, key);
+	if (pq->cmp(node->key, key))
+		return ibinompq_decrkey(pq, i, key);
 	else
-		ibinompq_incrkey(pq, i, key);
+		return ibinompq_incrkey(pq, i, key);
 }
 
 /******************** static function boundary ********************/
@@ -357,13 +369,13 @@ merge_node(struct index_binom_node *hnode,
 			struct index_binom_node *xnode, 
 			struct index_binom_node *ynode)
 {
-	if(xnode == NULL && ynode == NULL)
+	if (xnode == NULL && ynode == NULL)
 		return hnode;
-	else if(xnode == NULL)
+	else if (xnode == NULL)
 		hnode->sibling = merge_node(ynode, NULL, ynode->sibling);
-	else if(ynode == NULL)
+	else if (ynode == NULL)
 		hnode->sibling = merge_node(xnode, xnode->sibling, NULL);
-	else if(xnode->degree < ynode->degree)
+	else if (xnode->degree < ynode->degree)
 		hnode->sibling = merge_node(xnode, xnode->sibling, ynode);
 	else 
 		hnode->sibling = merge_node(ynode, xnode, ynode->sibling);
@@ -383,11 +395,10 @@ make_node(unsigned long ind, const void *key, unsigned int ksize)
 	current = (struct index_binom_node *)
 		algmalloc(sizeof(struct index_binom_node));
 	
-	if(ksize != 0) {
+	if (ksize != 0) {
 		current->key = algmalloc(ksize);
 		memcpy(current->key, key, ksize);
-	}
-	else
+	} else
 		current->key = (void *)key;
 	
 	current->index = ind;
@@ -418,20 +429,17 @@ ibinompq_union(struct index_binompq *spq, const struct index_binompq *tpq)
 	current = spq->head;
 	prev = NULL;
 	next = current->sibling;
-	while(next != NULL) {
+	while (next != NULL) {
 		/* Nothing do it*/
-		if(current->degree < next->degree || 
-		   (next->sibling != NULL && 
+		if (current->degree < next->degree || (next->sibling != NULL &&
 		    next->sibling->degree == current->degree)) {
 			prev = current;
 			current = next;
-		}
-		else if(spq->cmp(next->key, current->key)) {
+		} else if (spq->cmp(next->key, current->key)) {
 			current->sibling = next->sibling;
 			IBINOMPQ_LINK(next, current);	/* links next to current */
-		}
-		else {	/* !spq->cmp */
-			if(prev == NULL)
+		} else {	/* !spq->cmp */
+			if (prev == NULL)
 				spq->head = next;	/* moves head pointer */
 			else
 				prev->sibling = next;
@@ -451,10 +459,10 @@ traverse(const struct index_binom_node *node, struct queue *keys,
 	const struct index_binom_node *current;
 	
 	current = node;
-	while(current != NULL) {
+	while (current != NULL) {
 		enqueue(keys, current->key);
 		enqueue(indexes, &(current->index));
-		if(current->child != NULL)
+		if (current->child != NULL)
 			traverse(current->child, keys, indexes);
 		current = current->sibling;
 	}
@@ -466,10 +474,10 @@ release_node(struct index_binom_node *node, unsigned int ksize)
 	struct index_binom_node *current, *next;
 	
 	current = node;
-	while(current != NULL) {
-		if(ksize != 0)
+	while (current != NULL) {
+		if (ksize != 0)
 			ALGFREE(current->key);
-		if(current->child != NULL)
+		if (current->child != NULL)
 			release_node(current->child, ksize);
 		next = current->sibling;
 		ALGFREE(current);
@@ -491,8 +499,8 @@ get_node1(struct index_binompq *pq)
 	current = pq->head;
 	result = pq->head;
 	prev = NULL;
-	while(current->sibling != NULL) {
-		if(pq->cmp(result->key, current->sibling->key)) {
+	while (current->sibling != NULL) {
+		if (pq->cmp(result->key, current->sibling->key)) {
 			prev = current;
 			result = current->sibling;
 		}
@@ -500,10 +508,10 @@ get_node1(struct index_binompq *pq)
 	}
 	
 	/* head is minimum or maximum key */
-	if(pq->head == result)
+	if (pq->head == result)
 		pq->head = result->sibling;
 	/* the last node is minimum or maximum key */
-	else if(result->sibling == NULL)
+	else if (result->sibling == NULL)
 		prev->sibling = NULL;
 	else
 		prev->sibling = result->sibling;
@@ -524,12 +532,12 @@ get_node2(struct index_binompq *pq, unsigned long i)
 	current = pq->head;
 	prev = NULL;
 	
-	while(ref != current) {
+	while (ref != current) {
 		prev = current;
 		current = current->sibling;
 	}
 	
-	if(pq->head == ref)		/* equal to the head node */
+	if (pq->head == ref)		/* equal to the head node */
 		pq->head = pq->head->sibling;
 	else
 		prev->sibling = current->sibling;
@@ -567,10 +575,10 @@ swim(struct index_binompq *pq, unsigned long i)
 	struct index_binom_node *current, *parent = NULL;
 	
 	current = pq->nodes[i];
-	if(current != NULL)
+	if (current != NULL)
 		parent = current->parent;
 	
-	if(parent != NULL && pq->cmp(parent->key, current->key)) {
+	if (parent != NULL && pq->cmp(parent->key, current->key)) {
 		exchange_node(pq, current, parent);
 		swim(pq, i);
 	}
@@ -587,10 +595,10 @@ toroot(struct index_binompq *pq, unsigned long i)
 	struct index_binom_node *current, *parent = NULL;
 	
 	current = pq->nodes[i];
-	if(current != NULL)
+	if (current != NULL)
 		parent = current->parent;
 	
-	if(parent != NULL) {
+	if (parent != NULL) {
 		exchange_node(pq, current, parent);
 		toroot(pq, i);
 	}

@@ -38,18 +38,18 @@ static void show_keys(const struct index_binompq *);
 int 
 main(int argc, char *argv[])
 {
-	int el, i, *key;
+	int el, i, j, *key;
 	unsigned long index;
 	struct index_binompq pq;
 	int sz = 0, n = 0, cnt = 0;
 
-	if(argc != 2)
+	if (argc != 2)
 		errmsg_exit("Usage: %s <size>\n", argv[0]);
 
-	if(sscanf(argv[1], "%d", &sz) != 1)
+	if (sscanf(argv[1], "%d", &sz) != 1)
 		errmsg_exit("Not a integer number, %s.\n", argv[1]);
 
-	if(sz <= 0)
+	if (sz <= 0)
 		errmsg_exit("Given a integer number must be greater than 0.\n");
 	
 	SET_RANDOM_SEED;
@@ -59,13 +59,15 @@ main(int argc, char *argv[])
 	
 	printf("Following output a series of Index-Key pairs "
 		"and inserts then to the indexed binomial priority queue:\n");
-	for(i = 0; i < sz; i++) {
+	for (i = 0; i < sz; i++) {
 		el = rand_range_integer(1, sz < 100 ? sz * 2 : sz);
 		printf("%3d-%-3d  ", i, el);
-		if(++cnt % 5 == 0)
+		if (++cnt % 5 == 0)
 			printf("\n");
 		ibinompq_insert(&pq, i, &el);
 	}
+	if (cnt % 5 != 0)
+		printf("\n");
 	printf("Inserted done, total elements are %lu.\n", ibinompq_size(&pq));
 	printf("\n");
 	
@@ -82,35 +84,52 @@ main(int argc, char *argv[])
 	printf("Deletes %d keys from this indexed binomial "
 		"priority queue and output its index.\n", n);
 	cnt = 0;
-	for(i = 0; i < n; i++) {
+	for (i = 0; i < n && !IBINOMPQ_ISEMPTY(&pq); i++) {
 		index = ibinompq_delete(&pq);
 		printf("%-3lu ", index);
-		if(++cnt % 10 == 0)
+		if (++cnt % 10 == 0)
 			printf("\n");
 	}
-	printf("\n");
+	if (cnt % 10 != 0)
+		printf("\n");
 	printf("Total elements are %lu\n", ibinompq_size(&pq));
 	printf("\n");
 	
-	i = rand_range_integer(0, sz);
-	printf("Start removes randomly the index is the key of %d:\n", i);
-	ibinompq_remove(&pq, i);
-	printf("Removed completely.\n");
-	
+	printf("Start randomly deleting the keys and associated with the index.\n");
+	for (i = 0; i < sz / 2; i++) {
+		n = rand_range_integer(0, sz);
+		if (ibinompq_remove(&pq, n) == 0)
+			printf("The index %d and its key have been deleted.\n", n);
+	}
 	printf("Total elements are %lu\n", ibinompq_size(&pq));
 	printf("\n");
 	
-	i = rand_range_integer(0, sz);
-	el = rand_range_integer(sz * 20, sz * 30);
-	printf("Start changes randomly the index is the key of %d, "
-		"target key is %d.\n", i, el);
-	ibinompq_change(&pq, i, &el);
-	printf("Changed completely.\n\n");
-	
-	printf("Following outputs all Index-Key pairs for "
-		"the indexed binomial priority queue:\n");
+	printf("Start randomly changing this indexed binomial heap of key.\n");
+	for (i = 0; i < sz; i++) {
+		j = rand_range_integer(0, sz - 1);
+		el = rand_range_integer(0, sz * 2);
+		if (ibinompq_change(&pq, j, &el) == 0) {
+			printf("Changed successfully, "
+				"new index-key pairs: %3d-%-3d\n", j, el);
+		}
+	}
 	show_keys(&pq);
+	printf("\n");
+
+	printf("Deletes all keys from this indexed pairing heap and returns its "
+		"index.\n");
+	cnt = 0;
+	while (!IBINOMPQ_ISEMPTY(&pq)) {
+		index = ibinompq_delete(&pq);
+		printf("%-3lu  ", index);
+		if (++cnt % 10 == 0)
+			printf("\n");
+	}
+	if (cnt % 10 != 0)
+		printf("\n");
+
 	printf("Total elements are %lu\n", ibinompq_size(&pq));
+	printf("\n");
 	
 	ibinompq_clear(&pq);
 	
@@ -133,14 +152,15 @@ show_keys(const struct index_binompq *pq)
 	QUEUE_INIT(&qkeys, 0);
 	QUEUE_INIT(&qinds, 0);
 	ibinompq_traverse(pq, &qkeys, &qinds);
-	while(!QUEUE_ISEMPTY(&qkeys) && !QUEUE_ISEMPTY(&qinds)) {
+	while (!QUEUE_ISEMPTY(&qkeys) && !QUEUE_ISEMPTY(&qinds)) {
 		dequeue(&qkeys, (void **)&key);
 		dequeue(&qinds, (void **)&k);
 		printf("%3d-%-3d  ", *k, *key);
-		if(++cnt % 5 == 0)
+		if (++cnt % 5 == 0)
 			printf("\n");
 	}
-	printf("\n");
+	if (cnt % 5 != 0)
+		printf("\n");
 	queue_clear(&qkeys);
 	queue_clear(&qinds);
 }
