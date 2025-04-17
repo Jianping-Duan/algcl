@@ -41,7 +41,7 @@ main(int argc, char *argv[])
 	int *key, el, i;
 	struct fibonaccipq pq;
 	clock_t start_time, end_time;
-	int sz = 0, n = 0;
+	int sz = 0, n = 0, cnt = 0;
 
 	if (argc != 2)
 		errmsg_exit("Usage: %s <size>\n", argv[0]);
@@ -81,13 +81,17 @@ main(int argc, char *argv[])
 	start_time = clock();
 	for (i = 0; i < n && !FIBPQ_ISEMPTY(&pq); i++) {
 		key = (int *)fibpq_delete(&pq);
-		printf("%d, %d\n", i, *key);
+		printf("%-3d ", *key);
+		if (++cnt % 10 == 0)
+			printf("\n");
 		ALGFREE(key);
 	}
+	if (cnt % 10 != 0)
+		printf("\n");
 	end_time = clock();
-	printf("\n");
 	printf("Estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
+	printf("Prints this fibonacci heap.\n");
 	show_keys(&pq);
 	printf("\n");
 	
@@ -110,13 +114,17 @@ show_keys(const struct fibonaccipq *pq)
 {
 	int *key;
 	struct queue qu;
+	int cnt = 0;
 
 	QUEUE_INIT(&qu, 0);
 	fibpq_keys(pq, &qu);
 	while (!QUEUE_ISEMPTY(&qu)) { 
 		dequeue(&qu, (void **)&key);
-		printf("%d  ", *key);
+		printf("%-3d  ", *key);
+		if (++cnt % 10 == 0)
+			printf("\n");
 	}
-	printf("\n");
+	if (cnt % 10 != 0)
+		printf("\n");
 	queue_clear(&qu);
 }

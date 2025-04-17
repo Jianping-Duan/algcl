@@ -41,15 +41,15 @@ main(int argc, char *argv[])
 	int *key, el, i, j;
 	unsigned long index;
 	struct index_fibpq fpq;
-	int sz = 0, n = 0;
+	int sz = 0, n = 0, cnt = 0;
 
-	if(argc != 2)
+	if (argc != 2)
 		errmsg_exit("Usage: %s <size>\n", argv[0]);
 
-	if(sscanf(argv[1], "%d", &sz) != 1)
+	if (sscanf(argv[1], "%d", &sz) != 1)
 		errmsg_exit("Not a integer number, %s.\n", argv[1]);
 
-	if(sz <= 0)
+	if (sz <= 0)
 		errmsg_exit("Given a integer number must be greater than 0.\n");
 	
 	SET_RANDOM_SEED;
@@ -59,13 +59,16 @@ main(int argc, char *argv[])
 	
 	printf("Following output a series of Index-Key pairs "
 		"and inserts then to the indexed fibonacci priority queue:\n");
-	for(i = 0; i < sz; i++)
-		if(!IFIBPQ_ISFULL(&fpq)) {
+	for (i = 0; i < sz; i++)
+		if (!IFIBPQ_ISFULL(&fpq)) {
 			el = rand_range_integer(1, sz < 100 ? sz * 2 : sz);
-			printf("%d-%d  ", i, el);
+			printf("%3d-%-3d  ", i, el);
+			if (++cnt % 5 == 0)
+				printf("\n");
 			ifibpq_insert(&fpq, i, &el);
 		}
-	printf("\n");
+	if (cnt % 5 != 0)
+		printf("\n");
 	printf("Inserted done, total elements are %lu.\n", IFIBPQ_SIZE(&fpq));
 	printf("\n");
 	
@@ -81,23 +84,25 @@ main(int argc, char *argv[])
 	printf("The Index-Key pair is %lu-%d\n", index, *key);
 	printf("\n");
 	
-	printf("Start removes randomly the index and it associated key.\n");
-	n = rand_range_integer(1, sz);
-	for(i = 0; i < n; i++) {
-		ifibpq_remove(&fpq, rand_range_integer(0, sz - 1));
+	printf("Start randomly deleting the keys and associated with the index.\n");
+	for (i = 0; i < sz / 2; i++) {
+		n = rand_range_integer(1, sz);
+		if (ifibpq_remove(&fpq, n) == 0)
+			printf("The index %d and its key have been deleted.\n", n);
 	}
-	printf("Removed completely.\n");
 	printf("Total elements are %lu\n", IFIBPQ_SIZE(&fpq));
 	printf("\n");
 
-	printf("Start changes randomly this indexed fibonacci priority queue "
+	printf("Start randomly changing this indexed fibonacci priority queue "
 		"key.\n");
-	for(i = 0; i < n; i++) {
+	for (i = 0; i < n; i++) {
 		j = rand_range_integer(0, sz - 1);
-		el = rand_range_integer(sz * 20, sz * 30);
-		ifibpq_change(&fpq, j, &el);
+		el = rand_range_integer(0, sz * 2);
+		if (ifibpq_change(&fpq, j, &el) == 0) {
+			printf("Changed successfully, "
+				"new index-key pairs: %3d-%-3d\n", j, el);
+		}
 	}
-	printf("Changed completely.\n\n");
 	
 	printf("Following outputs all Index-Key pairs for "
 		"the indexed fibonacci priority queue:\n");
@@ -106,11 +111,15 @@ main(int argc, char *argv[])
 
 	printf("Deletes all keys from this indexed fibonacci "
 		"priority queue and returns its index.\n");
-	while(!IFIBPQ_ISEMPTY(&fpq)) {
+	cnt = 0;
+	while (!IFIBPQ_ISEMPTY(&fpq)) {
 		index = ifibpq_delete(&fpq);
-		printf("%lu  ", index);
+		printf("%-3lu  ", index);
+		if (++cnt % 10 == 0)
+			printf("\n");
 	}
-	printf("\n");
+	if (cnt % 10 != 0)
+		printf("\n");
 
 	printf("Total elements are %lu\n", IFIBPQ_SIZE(&fpq));
 	printf("\n");
@@ -133,6 +142,7 @@ show_keys(const struct index_fibpq *fpq)
 	int *key;
 	unsigned long *ind;
 	struct queue qkeys, qinds;
+	int cnt = 0;
 	
 	QUEUE_INIT(&qkeys, sizeof(int));
 	QUEUE_INIT(&qinds, sizeof(long));
@@ -145,13 +155,15 @@ show_keys(const struct index_fibpq *fpq)
 		!QUEUE_ISEMPTY(&qinds)) {
 		dequeue(&qkeys, (void **)&key);
 		dequeue(&qinds, (void **)&ind);
-		printf("%lu-%d  ", *ind, *key);
+		printf("%3lu-%-3d  ", *ind, *key);
+		if (++cnt % 5 == 0)
+			printf("\n");
 	}
+	if (cnt % 5 != 0)
+		printf("\n");
 	queue_clear(&qkeys);
 	queue_clear(&qinds);
 	
 	ALGFREE(key);
 	ALGFREE(ind);
-	
-	printf("\n");
 }
