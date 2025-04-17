@@ -63,7 +63,7 @@ pheap_insert(struct pairing_heap *ph, const void *key)
 	struct pairing_node *current;
 
 	current = make_node(key, ph->keysize);
-	if(ph->root == NULL)
+	if (ph->root == NULL)
 		ph->root = current;
 	else
 		ph->root = compare_link(ph, ph->root, current);
@@ -81,13 +81,13 @@ pheap_delete(struct pairing_heap *ph)
 	struct pairing_node *current;
 	void *key;
 
-	if(PHEAP_ISEMPTY(ph))
+	if (PHEAP_ISEMPTY(ph))
 		errmsg_exit("The pairing heap is empty.\n");
 	
 	current = ph->root;
 	key = current->key;
 
-	if(current->child != NULL)
+	if (current->child != NULL)
 		ph->root = combine_siblings(ph, current->child,	current->degree);
 	else
 		ph->root = NULL;
@@ -103,7 +103,7 @@ void
 pheap_keys(const struct pairing_heap *ph, struct single_list *keys)
 {
 	slist_init(keys, ph->keysize, NULL);
-	if(!PHEAP_ISEMPTY(ph))
+	if (!PHEAP_ISEMPTY(ph))
 		traverse(ph->root, keys);
 }
 
@@ -111,7 +111,7 @@ pheap_keys(const struct pairing_heap *ph, struct single_list *keys)
 void 
 pheap_clear(struct pairing_heap *ph)
 {
-	if(!PHEAP_ISEMPTY(ph)) {
+	if (!PHEAP_ISEMPTY(ph)) {
 		release_node(ph->root, ph->keysize);
 		ph->root = NULL;
 		ph->size = 0;
@@ -133,11 +133,10 @@ make_node(const void *key, unsigned int ksize)
 
 	current = (struct pairing_node *)algmalloc(sizeof(struct pairing_node));
 	
-	if(ksize != 0) {
+	if (ksize != 0) {
 		current->key = algmalloc(ksize);
 		memcpy(current->key, key, ksize);
-	}
-	else
+	} else
 		current->key = (void *)key;
 
 	current->degree = 0;
@@ -158,33 +157,32 @@ static struct pairing_node *
 compare_link(const struct pairing_heap *ph, struct pairing_node *first,
 		  struct pairing_node *second)
 {
-	if(second == NULL)
+	if (second == NULL)
 		return first;
 	else {
-		if(ph->cmp(first->key, second->key) == 1 || 
+		if (ph->cmp(first->key, second->key) == 1 || 
 		   ph->cmp(first->key, second->key) == 0) {
 			/* 
 			 * attach second as the leftmost child of first.
 			 */
 			second->prev = first;
 			first->sibling = second->sibling;
-			if(first->sibling != NULL)
+			if (first->sibling != NULL)
 				first->sibling->prev = first;
 			second->sibling = first->child;
-			if(second->sibling != NULL)
+			if (second->sibling != NULL)
 				second->sibling->prev = second;
 			first->child = second;
 			first->degree++;
 			return first;
-		}
-		else {
+		} else {
 			/* 
 			 * attach first as the leftmost child of second.
 			 */
 			second->prev = first->prev;
 			first->prev = second;
 			first->sibling = second->child;
-			if(first->sibling != NULL)
+			if (first->sibling != NULL)
 				first->sibling->prev = first;
 			second->child = first;
 			second->degree++;
@@ -205,16 +203,16 @@ combine_siblings(const struct pairing_heap *ph, struct pairing_node *fsib,
 	struct pairing_node **forest, *current;
 
 	/* If only one tree, return it */
-	if(fsib->sibling == NULL)
+	if (fsib->sibling == NULL)
 		return fsib;
 
 	forest = (struct pairing_node **)
 		algmalloc(deg * sizeof(struct pairing_node *));
-	for(i = 0; i < deg; i++)
+	for (i = 0; i < deg; i++)
 		forest[i] = NULL;
 
 	/* Place each subtree to forest */
-	for(current = fsib, i = 0; current != NULL; i++) {
+	for (current = fsib, i = 0; current != NULL; i++) {
 		forest[i] = current;
 		current->prev->sibling = NULL;	/* break links */
 		current = current->sibling;
@@ -225,14 +223,14 @@ combine_siblings(const struct pairing_heap *ph, struct pairing_node *fsib,
 	 * Combine the subtrees two at a time.
 	 * going left to right.
 	 */
-	for(i = 0; i + 1 < deg; i += 2)
+	for (i = 0; i + 1 < deg; i += 2)
 		forest[i] = compare_link(ph, forest[i], forest[i + 1]);
 
 	/* 
 	 * j has the result of the last compare_link
 	 * if an odd number of trees, get the last one. 
 	 */
-	if((j = i - 2) == deg - 3)
+	if ((j = i - 2) == deg - 3)
 		forest[j] = compare_link(ph, forest[j], forest[j + 2]);
 
 	/* 
@@ -240,7 +238,7 @@ combine_siblings(const struct pairing_heap *ph, struct pairing_node *fsib,
 	 * merging last one tree with next to last.
 	 * The result becomes the new last. 
 	 */
-	while(j >= 2) {
+	while (j >= 2) {
 		forest[j - 2] = compare_link(ph, forest[j - 2], forest[j]);
 		j -= 2;
 	}
@@ -255,7 +253,7 @@ combine_siblings(const struct pairing_heap *ph, struct pairing_node *fsib,
 static void 
 traverse(const struct pairing_node *node, struct single_list *keys)
 {
-	if(node != NULL) {
+	if (node != NULL) {
 		slist_append(keys, node->key);
 		traverse(node->child, keys);
 		traverse(node->sibling, keys);
@@ -266,10 +264,10 @@ traverse(const struct pairing_node *node, struct single_list *keys)
 static void 
 release_node(struct pairing_node *node, unsigned int ksize)
 {
-	if(node != NULL) {
+	if (node != NULL) {
 		release_node(node->child, ksize);
 		release_node(node->sibling, ksize);
-		if(ksize != 0)
+		if (ksize != 0)
 			ALGFREE(node->key);
 		ALGFREE(node);
 	}

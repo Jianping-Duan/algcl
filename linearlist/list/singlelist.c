@@ -33,7 +33,7 @@
 
 static struct slist_node * make_node(const void *, unsigned int);
 static struct slist_node * clone_node(struct slist_node *, struct slist_node **,
-									unsigned int);
+	unsigned int);
 
 void
 slist_init(struct single_list *slist, unsigned int ksize, algcomp_ft *equal)

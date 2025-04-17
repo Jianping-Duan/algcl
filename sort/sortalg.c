@@ -294,7 +294,7 @@ binary_isort_range(void *base, long lo, long hi,
 		
 		/* 
 		 * insertion sort with "half exchanges"
-         * (insert a[i] at index j and shift a[j], ..., a[i-1] to right)
+		 * (insert a[i] at index j and shift a[j], ..., a[i-1] to right)
 		 */
 		for (j = i; j > llo; j--)
 			valcpy(base + j * size, base + (j - 1) * size, size);
