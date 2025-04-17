@@ -95,7 +95,7 @@ fibpq_insert(struct fibonaccipq *fpq, const void *key)
 	fpq->size++;
 	
 	/* update minimum or maximum pointer */
-	if(fpq->result == NULL)
+	if (fpq->result == NULL)
 		fpq->result = fpq->head;
 	else {
 		fpq->result = fpq->cmp(fpq->result->key, key)
@@ -113,13 +113,13 @@ fibpq_delete(struct fibonaccipq *fpq)
 	struct fibonacci_node *childp, *nextp;
 	void *key;
 	
-	if(FIBPQ_ISEMPTY(fpq))
+	if (FIBPQ_ISEMPTY(fpq))
 		return NULL;
 	
 	fpq->head = cut_node(fpq->result, fpq->head);
 	key = fpq->result->key;
 
-	if((childp = fpq->result->child) != NULL) {
+	if ((childp = fpq->result->child) != NULL) {
 		/*
 		 * Write each of its child nodes into the root linked list
 		 * where it is located.
@@ -128,7 +128,7 @@ fibpq_delete(struct fibonaccipq *fpq)
 			nextp = childp->next;
 			fpq->head = insert_node(childp, fpq->head);
 			childp = nextp;
-		} while(nextp != NULL && nextp != fpq->result->child);
+		} while (nextp != NULL && nextp != fpq->result->child);
 		/* detach child pointer */
 		fpq->result->child = NULL;
 	}
@@ -136,7 +136,7 @@ fibpq_delete(struct fibonaccipq *fpq)
 	ALGFREE(fpq->result);
 	fpq->size--;
 	
-	if(!FIBPQ_ISEMPTY(fpq))
+	if (!FIBPQ_ISEMPTY(fpq))
 		consolidate(fpq);	/* reshapes the tree */
 	else
 		fpq->result = NULL;	/* only one node */
@@ -147,7 +147,7 @@ fibpq_delete(struct fibonaccipq *fpq)
 void 
 fibpq_keys(const struct fibonaccipq *fpq, struct queue *keys)
 {
-	if(FIBPQ_ISEMPTY(fpq))
+	if (FIBPQ_ISEMPTY(fpq))
 		return;
 	traverse(fpq->head, keys);
 }
@@ -155,7 +155,7 @@ fibpq_keys(const struct fibonaccipq *fpq, struct queue *keys)
 void
 fibpq_clear(struct fibonaccipq *fpq)
 {
-	if(FIBPQ_ISEMPTY(fpq))
+	if (FIBPQ_ISEMPTY(fpq))
 		return;
 	
 	release_node(fpq->head, fpq->keysize);
@@ -175,11 +175,10 @@ make_node(const void *key, unsigned int ksize)
 
 	current = (struct fibonacci_node *)algmalloc(sizeof(struct fibonacci_node));
 	
-	if(ksize != 0) {
+	if (ksize != 0) {
 		current->key = algmalloc(ksize);
 		memcpy(current->key, key, ksize);
-	}
-	else
+	} else
 		current->key = (void *)key;
 	
 	current->degree = 0;
@@ -200,7 +199,7 @@ insert_node(struct fibonacci_node *node, struct fibonacci_node *head)
 	node->prev = node;
 	node->next = node;
 
-	if(head != NULL) {
+	if (head != NULL) {
 		head->prev->next = node;
 		node->next = head;
 		node->prev = head->prev;
@@ -219,12 +218,11 @@ cut_node(struct fibonacci_node *node, struct fibonacci_node *head)
 {
 	struct fibonacci_node *ret;
 	
-	if(node->next == node) {	/* only one node */
+	if (node->next == node) {	/* only one node */
 		node->prev = NULL;
 		node->next = NULL;
 		return NULL;
-	}
-	else {
+	} else {
 		node->prev->next = node->next;
 		node->next->prev = node->prev;
 		
@@ -247,21 +245,20 @@ cut_node(struct fibonacci_node *node, struct fibonacci_node *head)
 static struct fibonacci_node * 
 meld_node(struct fibonacci_node *root1, struct fibonacci_node *root2)
 {
-	if(root1 == NULL)
+	if (root1 == NULL)
 		return root2;
-	else if(root2 == NULL)
+	else if (root2 == NULL)
 		return root1;
 	else {
 #if 0
-		if(root2->next == NULL && root2->prev == NULL) {
-			if(root1->prev != NULL) {
+		if (root2->next == NULL && root2->prev == NULL) {
+			if (root1->prev != NULL) {
 				assert(root1->next != NULL);
 				root1->prev->next = root2;
 				root2->next = root1;
 				root2->prev = root1->prev;
 				root1->prev = root2;
-			}
-			else {
+			} else {
 				root1->next = root2;
 				root2->prev = root1;
 				root1->prev = root2;
@@ -270,15 +267,14 @@ meld_node(struct fibonacci_node *root1, struct fibonacci_node *root2)
 			return root1;
 		}
 
-		if(root1->prev == NULL && root1->next == NULL) {
-			if(root2->prev != NULL) {
+		if (root1->prev == NULL && root1->next == NULL) {
+			if (root2->prev != NULL) {
 				assert(root2->next != NULL);
 				root2->prev->next = root1;
 				root1->next = root2;
 				root1->prev = root2->prev;
 				root2->prev = root1;
-			}
-			else {
+			} else {
 				root2->next = root1;
 				root1->prev = root2;
 				root2->prev = root1;
@@ -324,7 +320,7 @@ consolidate(struct fibonaccipq *fpq)
 	maxdegrees = (int)ceil(log2((double)fpq->size));
 	rootlist = (struct fibonacci_node **)
 		algmalloc((maxdegrees + 1) * sizeof(struct fibonacci_node *));
-	for(i = 0; i <= maxdegrees; i++)
+	for (i = 0; i <= maxdegrees; i++)
 		rootlist[i] = NULL;
 	
 	current = fpq->head;
@@ -333,7 +329,7 @@ consolidate(struct fibonaccipq *fpq)
 	rootptr = NULL;
 	root = NULL;
 	do {
-		if((rootptr = current) == NULL)
+		if ((rootptr = current) == NULL)
 			break;
 		current = current->next;
 		
@@ -342,9 +338,9 @@ consolidate(struct fibonaccipq *fpq)
 		 * roots have same degree.
 		 */
 		d = rootptr->degree;
-		while(rootlist[d] != NULL) {
+		while (rootlist[d] != NULL) {
 			root = rootlist[d];
-			if(fpq->cmp(rootptr->key, root->key)) {
+			if (fpq->cmp(rootptr->key, root->key)) {
 				node = rootptr;
 				rootptr = root;
 				root = node;
@@ -354,12 +350,12 @@ consolidate(struct fibonaccipq *fpq)
 		}
 		
 		rootlist[d] = rootptr;
-	} while(current != NULL && current != headp);
+	} while (current != NULL && current != headp);
 
 	/* reshapes the tree using root lists heap */
 	fpq->head = NULL;
-	for(i = 0; i <= maxdegrees; i++)
-		if((node = rootlist[i]) != NULL) {
+	for (i = 0; i <= maxdegrees; i++)
+		if ((node = rootlist[i]) != NULL) {
 			fpq->result = fpq->cmp(fpq->result->key, node->key)
 				? node : fpq->result;
 			fpq->head = insert_node(node, fpq->head);
@@ -373,16 +369,16 @@ traverse(const struct fibonacci_node *node, struct queue *keys)
 {
 	const struct fibonacci_node *current;
 
-	if(node == NULL)
+	if (node == NULL)
 		return;
 	
 	current = node;
 	do {
 		enqueue(keys, current->key);
-		if(current->child != NULL)
+		if (current->child != NULL)
 			traverse(current->child, keys);
 		current = current->next;
-	} while(current != NULL && current != node);
+	} while (current != NULL && current != node);
 }
 
 static void 
@@ -390,17 +386,17 @@ release_node(struct fibonacci_node *node, unsigned int ksize)
 {
 	struct fibonacci_node *current, *next;
 
-	if(node == NULL)
+	if (node == NULL)
 		return;
 	
 	current = node;
 	do {
 		next = current->next;
-		if(ksize != 0)
+		if (ksize != 0)
 			ALGFREE(current->key);
-		if(current->child != NULL)
+		if (current->child != NULL)
 			release_node(current->child, ksize);
 		ALGFREE(current);
 		current = next;
-	} while(current != NULL && node != next);
+	} while (current != NULL && node != next);
 }

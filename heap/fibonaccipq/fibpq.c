@@ -43,13 +43,13 @@ main(int argc, char *argv[])
 	clock_t start_time, end_time;
 	int sz = 0, n = 0;
 
-	if(argc != 2)
+	if (argc != 2)
 		errmsg_exit("Usage: %s <size>\n", argv[0]);
 
-	if(sscanf(argv[1], "%d", &sz) != 1)
+	if (sscanf(argv[1], "%d", &sz) != 1)
 		errmsg_exit("Not a integer number, %s.\n", argv[1]);
 
-	if(sz <= 0)
+	if (sz <= 0)
 		errmsg_exit("Given a integer number must be greater than 0.\n");	
 
 	SET_RANDOM_SEED;
@@ -60,7 +60,7 @@ main(int argc, char *argv[])
 	printf("Following output a series of numbers and "
 		"inserts those to the fibonacci priority queue:\n");
 	start_time = clock();
-	for(i = 0; i < sz; i++) {
+	for (i = 0; i < sz; i++) {
 		el = rand_range_integer(1, sz < 100 ? sz * 2 : sz);
 		fibpq_insert(&pq, &el);
 	}
@@ -79,7 +79,7 @@ main(int argc, char *argv[])
 	printf("Deletes %d keys from this fibonacci priority "
 		"queue and output it.\n", n);
 	start_time = clock();
-	for(i = 0; i < n && !FIBPQ_ISEMPTY(&pq); i++) {
+	for (i = 0; i < n && !FIBPQ_ISEMPTY(&pq); i++) {
 		key = (int *)fibpq_delete(&pq);
 		printf("%d, %d\n", i, *key);
 		ALGFREE(key);
@@ -91,7 +91,7 @@ main(int argc, char *argv[])
 	show_keys(&pq);
 	printf("\n");
 	
-	printf("Total elements are %lu\n\n", FIBPQ_SIZE(&pq));
+	printf("Total elements are %lu\n", FIBPQ_SIZE(&pq));
 	
 	fibpq_clear(&pq);
 	
@@ -113,7 +113,7 @@ show_keys(const struct fibonaccipq *pq)
 
 	QUEUE_INIT(&qu, 0);
 	fibpq_keys(pq, &qu);
-	while(!QUEUE_ISEMPTY(&qu)) { 
+	while (!QUEUE_ISEMPTY(&qu)) { 
 		dequeue(&qu, (void **)&key);
 		printf("%d  ", *key);
 	}

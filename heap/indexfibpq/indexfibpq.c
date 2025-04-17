@@ -70,27 +70,32 @@ ifibpq_init(struct index_fibpq *fpq, unsigned long n, unsigned int ksize,
 
 	fpq->nodes = (struct index_fibpq_node **)
 		algmalloc(n * sizeof(struct index_fibpq_node *));
-	for(i = 0; i < n; i++)
+	for (i = 0; i < n; i++)
 		fpq->nodes[i] = NULL;
 }
 
 /* Associates a key with an index, worst case is O(1). */
-void 
+int
 ifibpq_insert(struct index_fibpq *fpq, unsigned long i, const void *key)
 {
 	struct index_fibpq_node *current;
+
+	if (i >= fpq->capacity)
+		return -1;
+	if (IFIBPQ_CONTAINS(fpq, i))
+		return -2;
 	
 	current = make_node(i, key, fpq->keysize);
 	fpq->head = insert_node(current, fpq->head);
 	fpq->nodes[i] = current;
 	fpq->size++;
 	
-	if(fpq->result == NULL)
+	if (fpq->result == NULL)
 		fpq->result = fpq->head;
-	else {
-		fpq->result = fpq->cmp(fpq->result->key, key)
-			? fpq->head : fpq->result;
-	}
+	else
+		fpq->result = fpq->cmp(fpq->result->key, key) ? fpq->head : fpq->result;
+
+	return 0;
 }
 
 /* 
@@ -106,7 +111,7 @@ ifibpq_delete(struct index_fibpq *fpq)
 	fpq->head = cut_node(fpq->result, fpq->head);
 	ind = fpq->result->index;
 	
-	if((childp = fpq->result->child) != NULL) {
+	if ((childp = fpq->result->child) != NULL) {
 		/*
 		 * Write each of its child nodes into the root linked list
 		 * where it is located.
@@ -116,17 +121,17 @@ ifibpq_delete(struct index_fibpq *fpq)
 			childp->parent = NULL;	/* detach child's parent pointer */
 			fpq->head = insert_node(childp, fpq->head);
 			childp = nextp;
-		} while(nextp != NULL && nextp != fpq->result->child);
+		} while (nextp != NULL && nextp != fpq->result->child);
 		fpq->result->child = NULL;	/* detach child pointer */
 	}
 
-	if(fpq->keysize != 0)
+	if (fpq->keysize != 0)
 		ALGFREE(fpq->result->key);
 	fpq->size--;
 	fpq->nodes[ind] = NULL;
 	ALGFREE(fpq->result);
 	
-	if(!IFIBPQ_ISEMPTY(fpq))
+	if (!IFIBPQ_ISEMPTY(fpq))
 		consolidate(fpq);
 	else
 		fpq->result = NULL;
@@ -138,14 +143,14 @@ void
 ifibpq_traverse(const struct index_fibpq *fpq, struct queue *keys,
 				struct queue *indexes)
 {
-	if(!IFIBPQ_ISEMPTY(fpq))
+	if (!IFIBPQ_ISEMPTY(fpq))
 		traverse(fpq->head,	keys, indexes);
 }
 
 void 
 ifibpq_clear(struct index_fibpq *fpq)
 {
-	if(IFIBPQ_ISEMPTY(fpq))
+	if (IFIBPQ_ISEMPTY(fpq))
 		return;
 	
 	release_node(fpq->head, fpq->keysize);
@@ -158,19 +163,18 @@ ifibpq_clear(struct index_fibpq *fpq)
  * Deletes the key associated the given index, 
  * worst case is O(log(n)) (amortized). 
  */
-void 
+int
 ifibpq_remove(struct index_fibpq *fpq, unsigned long i)
 {
 	struct index_fibpq_node *current, *childp, *nextp, *chead;
 	
-	if(i >= fpq->capacity)
-		return;
-	
-	if(!IFIBPQ_CONTAINS(fpq, i))
-		return;
+	if (i >= fpq->capacity)
+		return -1;
+	if (!IFIBPQ_CONTAINS(fpq, i))
+		return -2;
 	
 	current = fpq->nodes[i];
-	if(fpq->keysize != 0)
+	if (fpq->keysize != 0)
 		ALGFREE(current->key);
 
 	/* 
@@ -178,11 +182,11 @@ ifibpq_remove(struct index_fibpq *fpq, unsigned long i)
 	 * Move the index of the specified node and associated
 	 * its child to the roots list. 
 	 */
-	if(current->parent != NULL) 
+	if (current->parent != NULL) 
 		cut_index(fpq, i); 
 		
 	fpq->head = cut_node(current, fpq->head);
-	if((childp = current->child) != NULL) {
+	if ((childp = current->child) != NULL) {
 		chead = childp;
 		/*
 		 * Write each of its child nodes into the root linked list
@@ -193,7 +197,7 @@ ifibpq_remove(struct index_fibpq *fpq, unsigned long i)
 			childp->parent = NULL;	/* detach child's parent pointer */
 			fpq->head = insert_node(childp, fpq->head);
 			childp = nextp;
-		} while(nextp != NULL && nextp != chead);
+		} while (nextp != NULL && nextp != chead);
 		current->child = NULL;	/* detach child pointer */
 	}
 
@@ -201,61 +205,66 @@ ifibpq_remove(struct index_fibpq *fpq, unsigned long i)
 	ALGFREE(current);
 	fpq->nodes[i] = NULL;
 	
-	if(!IFIBPQ_ISEMPTY(fpq))
+	if (!IFIBPQ_ISEMPTY(fpq))
 		consolidate(fpq);
 	else
 		fpq->result = NULL;
+
+	return 0;
 }
 
 /* 
  * Decreases the key associated with index i to 
  * the given key, worst case is O(1) (amortized). 
  */
-void 
+int
 ifibpq_decrkey(struct index_fibpq *fpq, unsigned long i, const void *key)
 {
 	struct index_fibpq_node *current;
 	
-	if(i >= fpq->capacity)
-		return;
-	
-	if(!IFIBPQ_CONTAINS(fpq, i))
-		return;
+	if (i >= fpq->capacity)
+		return -1;
+	if (!IFIBPQ_CONTAINS(fpq, i))
+		return -2;
 	
 	current = fpq->nodes[i];
-	if(fpq->cmp(key, current->key))
-		return;
+	if (fpq->cmp(key, current->key))
+		return -3;
 
-	if(fpq->keysize != 0)
+	if (fpq->keysize != 0)
 		memcpy(current->key, key, fpq->keysize);
 	else
 		current->key = (void *)key;
 
-	if(current->parent != NULL && fpq->cmp(current->parent->key, key))
+	if (current->parent != NULL && fpq->cmp(current->parent->key, key))
 		cut_index(fpq, i);
+
+	return 0;
 }
 
 /* 
  * Increases the key associated with index i to 
  * the given key. worst case is O(log(n)). 
  */
-void 
+int
 ifibpq_incrkey(struct index_fibpq *fpq, unsigned long i, const void *key)
 {
 	struct index_fibpq_node *current;
 	
-	if(i >= fpq->capacity)
-		return;
-	
-	if(!IFIBPQ_CONTAINS(fpq, i))
-		return;
+	if (i >= fpq->capacity)
+		return -1;
+	if (!IFIBPQ_CONTAINS(fpq, i))
+		return -2;
 	
 	current = fpq->nodes[i];
-	if(fpq->cmp(current->key, key))
-		return;
+	if (fpq->cmp(current->key, key))
+		return -3;
 	
-	ifibpq_remove(fpq, i);
+	if (ifibpq_remove(fpq, i) != 0)
+		return -4;
 	ifibpq_insert(fpq, i, key);
+	
+	return 0;
 }
 
 /* 
@@ -265,22 +274,22 @@ ifibpq_incrkey(struct index_fibpq *fpq, unsigned long i, const void *key)
  * If the given key is lower, 
  * Worst case is O(1) (amortized).
  */
-void 
+int
 ifibpq_change(struct index_fibpq *fpq, unsigned long i, const void *key)
 {
 	struct index_fibpq_node *current;
 	
-	if(i >= fpq->capacity)
-		return;
+	if (i >= fpq->capacity)
+		return -1;
 	
-	if(!IFIBPQ_CONTAINS(fpq, i))
-		return;
+	if (!IFIBPQ_CONTAINS(fpq, i))
+		return -2;
 	
 	current = fpq->nodes[i];
-	if(fpq->cmp(current->key, key))
-		ifibpq_decrkey(fpq, i, key);
+	if (fpq->cmp(current->key, key))
+		return ifibpq_decrkey(fpq, i, key);
 	else
-		ifibpq_incrkey(fpq, i, key);
+		return ifibpq_incrkey(fpq, i, key);
 }
 
 /******************** static function boundary ********************/
@@ -296,11 +305,10 @@ make_node(unsigned long ind, const void *key, unsigned int ksize)
 	current = (struct index_fibpq_node *)
 		algmalloc(sizeof(struct index_fibpq_node));
 	
-	if(ksize != 0) {
+	if (ksize != 0) {
 		current->key = algmalloc(ksize);
 		memcpy(current->key, key, ksize);
-	}
-	else
+	} else
 		current->key = (void *)key;
 	
 	current->index = ind;
@@ -324,7 +332,7 @@ insert_node(struct index_fibpq_node *node, struct index_fibpq_node *head)
 	node->prev = node;
 	node->next = node;
 
-	if(head != NULL) {
+	if (head != NULL) {
 		head->prev->next = node;
 		node->next = head;
 		node->prev = head->prev;
@@ -343,12 +351,11 @@ cut_node(struct index_fibpq_node *node, struct index_fibpq_node *head)
 {
 	struct index_fibpq_node *ret;
 
-	if(node->next == node && node == head) {
+	if (node->next == node && node == head) {
 		node->prev = NULL;
 		node->next = NULL;
 		return NULL;
-	}
-	else {
+	} else {
 		node->prev->next = node->next;
 		node->next->prev = node->prev;
 		
@@ -356,7 +363,7 @@ cut_node(struct index_fibpq_node *node, struct index_fibpq_node *head)
 		node->prev = NULL;
 		node->next = NULL;
 		
-		if(head == node)
+		if (head == node)
 			return ret;
 		else
 			return head;
@@ -375,7 +382,7 @@ cut_index(struct index_fibpq *fpq, unsigned long i)
 	struct index_fibpq_node *current, *pparent;
 
 	current = fpq->nodes[i];
-	if((pparent = current->parent) == NULL)
+	if ((pparent = current->parent) == NULL)
 		return;
 	pparent->child = cut_node(current, pparent->child);
 	current->parent = NULL;
@@ -383,7 +390,7 @@ cut_index(struct index_fibpq *fpq, unsigned long i)
 	fpq->head = insert_node(current, fpq->head);
 	pparent->mark = !pparent->mark;
 
-	if(!pparent->mark && pparent->parent != NULL)
+	if (!pparent->mark && pparent->parent != NULL)
 		cut_index(fpq, pparent->index);
 }
 
@@ -395,9 +402,9 @@ cut_index(struct index_fibpq *fpq, unsigned long i)
 static struct index_fibpq_node * 
 meld_node(struct index_fibpq_node *root1, struct index_fibpq_node *root2)
 {
-	if(root1 == NULL)
+	if (root1 == NULL)
 		return root2;
-	else if(root2 == NULL)
+	else if (root2 == NULL)
 		return root1;
 	else {
 		root1->prev->next = root2;
@@ -433,7 +440,7 @@ consolidate(struct index_fibpq *fpq)
 	maxdegrees = (int)ceil(log2((double)fpq->size));
 	rootab = (struct index_fibpq_node **)
 		algmalloc((maxdegrees + 1) * sizeof(struct index_fibpq_node *));
-	for(i = 0; i <= maxdegrees; i++)
+	for (i = 0; i <= maxdegrees; i++)
 		rootab[i] = NULL;
 	
 	current = fpq->head;
@@ -442,7 +449,7 @@ consolidate(struct index_fibpq *fpq)
 	rootptr = NULL;
 	root = NULL;
 	do {
-		if((rootptr = current) == NULL)
+		if ((rootptr = current) == NULL)
 			break;
 		current = current->next;
 		
@@ -451,9 +458,9 @@ consolidate(struct index_fibpq *fpq)
 		 * roots have same degree.
 		 */
 		d = rootptr->degree;
-		while(rootab[d] != NULL) {
+		while (rootab[d] != NULL) {
 			root = rootab[d];
-			if(fpq->cmp(rootptr->key, root->key)) {
+			if (fpq->cmp(rootptr->key, root->key)) {
 				node = rootptr;
 				rootptr = root;
 				root = node;
@@ -463,12 +470,12 @@ consolidate(struct index_fibpq *fpq)
 		}
 		
 		rootab[d] = rootptr;
-	} while(current != NULL && current != headp);
+	} while (current != NULL && current != headp);
 	
 	/* reshapes the tree using root lists heap */
 	fpq->head = NULL;
-	for(i = 0; i <= maxdegrees; i++)
-		if((node = rootab[i]) != NULL) {
+	for (i = 0; i <= maxdegrees; i++)
+		if ((node = rootab[i]) != NULL) {
 			fpq->result = fpq->cmp(fpq->result->key, node->key)
 				? node : fpq->result;
 			fpq->head = insert_node(node, fpq->head);
@@ -483,17 +490,17 @@ traverse(const struct index_fibpq_node *node, struct queue *keys,
 {
 	const struct index_fibpq_node *current;
 
-	if(node == NULL)
+	if (node == NULL)
 		return;
 	
 	current = node;
 	do {
 		enqueue(keys, current->key);
 		enqueue(indexes, &(current->index));
-		if(current->child != NULL)
+		if (current->child != NULL)
 			traverse(current->child, keys, indexes);
 		current = current->next;
-	} while(current != NULL && current != node);
+	} while (current != NULL && current != node);
 }
 
 static void 
@@ -501,17 +508,17 @@ release_node(struct index_fibpq_node *node, unsigned int ksize)
 {
 	struct index_fibpq_node *current, *next;
 
-	if(node == NULL)
+	if (node == NULL)
 		return;
 	
 	current = node;
 	do {
 		next = current->next;
-		if(ksize != 0)
+		if (ksize != 0)
 			ALGFREE(current->key);
-		if(current->child != NULL)
+		if (current->child != NULL)
 			release_node(current->child, ksize);
 		ALGFREE(current);
 		current = next;
-	} while(current != NULL && node != next);
+	} while (current != NULL && node != next);
 }

@@ -141,7 +141,6 @@ ipheap_remove(struct index_pheap *iph, unsigned long ind)
 
 	if (IPHEAP_ISEMPTY(iph))
 		return -1;
-
 	if (!IPHEAP_CONTAINS(iph, ind))
 		return -2;
 
@@ -180,7 +179,6 @@ ipheap_decrkey(struct index_pheap *iph, unsigned long ind, const void *key)
 
 	if (IPHEAP_ISEMPTY(iph))
 		return -1;
-
 	if (!IPHEAP_CONTAINS(iph, ind))
 		return -2;
 
@@ -211,7 +209,6 @@ ipheap_incrkey(struct index_pheap *iph, unsigned long ind, const void *key)
 
 	if (IPHEAP_ISEMPTY(iph))
 		return -1;
-
 	if (!IPHEAP_CONTAINS(iph, ind))
 		return -2;
 
@@ -237,7 +234,6 @@ ipheap_change(struct index_pheap *iph, unsigned long ind, const void *key)
 
 	if (IPHEAP_ISEMPTY(iph))
 		return -1;
-
 	if (!IPHEAP_CONTAINS(iph, ind))
 		return -2;
 

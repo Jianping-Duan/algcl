@@ -112,7 +112,7 @@ void ifibpq_init(struct index_fibpq *fpq, unsigned long n, unsigned int ksize,
 				algcomp_ft *cmp);
 
 /* Associates a key with an index. */
-void ifibpq_insert(struct index_fibpq *fpq, unsigned long i, const void *key);
+int ifibpq_insert(struct index_fibpq *fpq, unsigned long i, const void *key);
 
 /* Delete the minimum or maximum key. */
 unsigned long ifibpq_delete(struct index_fibpq *fpq);
@@ -125,24 +125,24 @@ void ifibpq_traverse(const struct index_fibpq *fpq, struct queue *keys,
 void ifibpq_clear(struct index_fibpq *fpq);
 
 /* Deletes the key associated the given index. */
-void ifibpq_remove(struct index_fibpq *fpq, unsigned long i);
+int ifibpq_remove(struct index_fibpq *fpq, unsigned long i);
 
 /* 
  * Decreases the key associated with 
  * index i to the given key. 
  */
-void ifibpq_decrkey(struct index_fibpq *fpq, unsigned long i, const void *key);
+int ifibpq_decrkey(struct index_fibpq *fpq, unsigned long i, const void *key);
 
 /* 
  * Increases the key associated with 
  * index i to the given key. 
  */
-void ifibpq_incrkey(struct index_fibpq *fpq, unsigned long i, const void *key);
+int ifibpq_incrkey(struct index_fibpq *fpq, unsigned long i, const void *key);
 
 /* 
  * Changes the key associated with 
  * index i to the given key. 
  */
-void ifibpq_change(struct index_fibpq *fpq, unsigned long i, const void *key);
+int ifibpq_change(struct index_fibpq *fpq, unsigned long i, const void *key);
 
 #endif /* _INDEXFIBPQ_H_ */
