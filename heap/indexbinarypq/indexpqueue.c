@@ -47,7 +47,7 @@ ipqueue_init(struct index_pqueue *ipq, unsigned long cap, unsigned short ksize,
 {
 	unsigned long i;
 
-	if(ksize == 0) {
+	if (ksize == 0) {
 		errmsg_exit("The key size of the indexed binary priority queue "
 			"not equal 0.\n");
 	}
@@ -61,7 +61,7 @@ ipqueue_init(struct index_pqueue *ipq, unsigned long cap, unsigned short ksize,
 	ipq->qp = (long *)algmalloc(cap * sizeof(long));
 	ipq->keys = algmalloc(cap * ksize);
 
-	for(i = 0; i < cap; i++) {
+	for (i = 0; i < cap; i++) {
 		ipq->keys[i] = algmalloc(ksize);
 		ipq->pq[i] = 0;
 		ipq->qp[i] = -1;
@@ -121,7 +121,7 @@ ipqueue_remove(struct index_pqueue *ipq, unsigned long i)
 {
 	unsigned long k;
 	
-	if(!IPQUEUE_CONTAINS(ipq, i))
+	if (!IPQUEUE_CONTAINS(ipq, i))
 		return;
 	
 	k = ipq->qp[i];	/* find the index of the pq array. */
@@ -154,10 +154,10 @@ ipqueue_change(struct index_pqueue *ipq, unsigned long i, const void *key)
 void
 ipqueue_decrkey(struct index_pqueue *ipq, unsigned long i, const void *key)
 {
-	if(!IPQUEUE_CONTAINS(ipq, i))
+	if (!IPQUEUE_CONTAINS(ipq, i))
 		return;
 	
-	if(ipq->cmp(key, ipq->keys[i]))
+	if (ipq->cmp(key, ipq->keys[i]))
 		return;
 	
 	ipq->keys[i] = (void *)key;
@@ -171,10 +171,10 @@ ipqueue_decrkey(struct index_pqueue *ipq, unsigned long i, const void *key)
 void
 ipqueue_incrkey(struct index_pqueue *ipq, unsigned long i, const void *key)
 {
-	if(!IPQUEUE_CONTAINS(ipq, i))
+	if (!IPQUEUE_CONTAINS(ipq, i))
 		return;
 	
-	if(ipq->cmp(ipq->keys[i], key))
+	if (ipq->cmp(ipq->keys[i], key))
 		return;
 	
 	ipq->keys[i] = (void *)key;
@@ -187,7 +187,7 @@ ipqueue_clear(struct index_pqueue *ipq)
 {
 	unsigned long i;
 	
-	for(i = 0; i < ipq->capacity; i++)
+	for (i = 0; i < ipq->capacity; i++)
 		ALGFREE(ipq->keys[i]);
 	ALGFREE(ipq->keys);
 	ALGFREE(ipq->pq);
@@ -226,7 +226,7 @@ ipqcmp(const struct index_pqueue *ipq, unsigned long i, unsigned long j)
 static inline void 
 swim(struct index_pqueue *ipq, unsigned int k)
 {
-	while(k > 0 && ipqcmp(ipq, k/2, k)) {
+	while (k > 0 && ipqcmp(ipq, k/2, k)) {
 		ipqueue_exch(ipq, k/2, k);
 		k /= 2;
 	}
@@ -238,19 +238,17 @@ sink(struct index_pqueue *ipq, unsigned int k)
 	unsigned int j;
 	
 	j = 2 * k + 1;	/* k start with 0 */
-	while(j < ipq->size) {
+	while (j < ipq->size) {
 		/* 
-		 * find smallest or largest key 
-		 * among children node.
+		 * find smallest or largest key among children node.
 		 */
-		if(j < ipq->size - 1 && ipqcmp(ipq, j, j + 1))
+		if (j < ipq->size - 1 && ipqcmp(ipq, j, j + 1))
 			j++;
 		
 		/* 
-		 * occurs break if parent node not less 
-		 * or greater children node.
+		 * occurs break if parent node not less or greater children node.
 		 */
-		if(!ipqcmp(ipq, k, j))
+		if (!ipqcmp(ipq, k, j))
 			break;
 		
 		ipqueue_exch(ipq, k, j);

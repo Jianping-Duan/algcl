@@ -46,11 +46,11 @@ pqueue_init(struct priority_queue *pq, unsigned long cap, unsigned int ksize,
 {
 	unsigned long i;
 
-	if(ksize == 0)
+	if (ksize == 0)
 		errmsg_exit("The key size of the binary priority queue not equal 0.\n");
 
 	pq->keys = algmalloc(cap * ksize);
-	for(i = 0; i < cap; i++)
+	for (i = 0; i < cap; i++)
 		pq->keys[i] = algmalloc(ksize);
 		
 	pq->keysize = ksize;
@@ -93,8 +93,8 @@ pqueue_clear(struct priority_queue *pq)
 {
 	unsigned long i;
 	
-	if(pq->keysize != 0)
-		for(i = 0; i < pq->capacity; i++) 
+	if (pq->keysize != 0)
+		for (i = 0; i < pq->capacity; i++) 
 			pq->keys[i] = NULL;
 
 	ALGFREE(pq->keys);
@@ -117,7 +117,7 @@ pqueue_exch(struct priority_queue *pq, int i, int j)
 static inline void 
 swim(struct priority_queue *pq, unsigned int k)
 {
-	while(k > 0 && pq->cmp(pq->keys[k/2], pq->keys[k])) {
+	while (k > 0 && pq->cmp(pq->keys[k/2], pq->keys[k])) {
 		pqueue_exch(pq, k/2, k);
 		k /= 2;
 	}
@@ -129,21 +129,17 @@ sink(struct priority_queue *pq, unsigned int k)
 	unsigned int j;
 	
 	j = 2 * k + 1;	/* k start with 0 */
-	while(j < pq->size) {
+	while (j < pq->size) {
 		/* 
-		 * find smallest or largest key 
-		 * among children node.
+		 * find smallest or largest key among children node.
 		 */
-		if(j < pq->size - 1 && 
-		   pq->cmp(pq->keys[j], pq->keys[j + 1])) {
+		if (j < pq->size - 1 && pq->cmp(pq->keys[j], pq->keys[j + 1]))
 			j++;
-		}
 		
 		/* 
-		 * occurs break if parent node not less 
-		 * or greater children node.
+		 * occurs break if parent node not less or greater children node.
 		 */
-		if(!pq->cmp(pq->keys[k], pq->keys[j]))
+		if (!pq->cmp(pq->keys[k], pq->keys[j]))
 			break;
 		
 		pqueue_exch(pq, j, k);

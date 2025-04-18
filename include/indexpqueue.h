@@ -69,8 +69,7 @@ struct index_pqueue {
 
 /* Returns the key associated with index. */
 #define IPQUEUE_KEYOF(ipq, i)	\
-	(((i) < 0 || (i) >= (ipq)->capacity) \
-	? NULL : (ipq)->keys[i])
+	(((i) < 0 || (i) >= (ipq)->capacity) ? NULL : (ipq)->keys[i])
 
 /* Returns all indexes on this priority queue. */
 #define IPQUEUE_INDEXES(ipq)	((ipq)->pq)

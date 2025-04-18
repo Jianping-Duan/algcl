@@ -31,51 +31,60 @@
  */
 #include "priorityqueue.h"
 
-static void show_keys(int **, int);
+static void show_keys(const struct priority_queue *);
 static int greater(const void *, const void *);
 
 int
 main(int argc, char *argv[])
 {
-	int **keys, *key, el, i;
-	int sz = 0, n = 0;
+	int *key, el, i;
+	int sz = 0, n = 0, cnt = 0;
+	clock_t start_time, end_time;
 	struct priority_queue pq;
 
-	if(argc != 2)
+	if (argc != 2)
 		errmsg_exit("Usage: %s <size>\n", argv[0]);
 	
-	SET_RANDOM_SEED;
-
-	if(sscanf(argv[1], "%d", &sz) != 1)
+	if (sscanf(argv[1], "%d", &sz) != 1)
 		errmsg_exit("Not a integer number, %s.\n", argv[1]);
 
-	if(sz <= 0)
+	if (sz <= 0)
 		errmsg_exit("Given a integer number must be greater than 0.\n");
 	
-	pqueue_init(&pq, sz * 2, sizeof(int), greater); 
-	printf("Following output a series of numbers and "
-		"inserts then to the priority queue:\n");
-	for(i = 0; i < sz; i++) {
-		el = rand_range_integer(1, sz * 10);
-		printf("%d ", el);
+	SET_RANDOM_SEED;
+	
+	pqueue_init(&pq, sz + 1, sizeof(int), greater); 
+	printf("Following output a series of numbers and inserts then to "
+		"the priority queue:\n");
+	start_time = clock();
+	for (i = 0; i < sz; i++) {
+		el = rand_range_integer(1, sz < 100 ? sz * 2 : sz);
 		pqueue_insert(&pq, &el);
 	}
-	printf("\n");
+	end_time = clock();
 	printf("Inserted done, total elements are %lu.\n\n", PQUEUE_SIZE(&pq));
-
-	printf("Begin output this priority queue.\n");
-	keys = (int **)PQUEUE_KEYS(&pq);
-	show_keys(keys, sz);
+	printf("Estimated time(s): %.3f\n", 
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
+	show_keys(&pq);
 	printf("\n");
 	
 	n = rand_range_integer(1, sz);
 	printf("Deletes %d keys from this priority queue and output it.\n", n);
-	for(i = 0; i < n; i++) {
+	start_time = clock();
+	for (i = 0; i < n; i++) {
 		key = (int *)pqueue_delete(&pq);
-		printf("The %d key: %d\n", i, *key);
+		printf("%3d ", *key);
+		if (++cnt % 10 == 0)
+			printf("\n");
 		ALGFREE(key);
-		show_keys(keys, sz - i - 1);
 	}
+	end_time = clock();
+	if (cnt % 10 != 0)
+		printf("\n");
+	printf("Estimated time(s): %.3f\n", 
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
+	printf("Prints this priority queue.\n");
+	show_keys(&pq);
 
 	printf("Total elements are %lu.\n", PQUEUE_SIZE(&pq));
 	
@@ -85,13 +94,19 @@ main(int argc, char *argv[])
 }
 
 static void 
-show_keys(int **a, int n)
+show_keys(const struct priority_queue *pq)
 {
-	int i;
-	
-	for(i = 0; i < n; i++)
-		printf("%d ", *a[i]);
-	printf("\n");
+	int i, cnt = 0;
+	int **keys;
+
+	keys = (int **)PQUEUE_KEYS(pq);
+	for (i = 0; i < (int)PQUEUE_SIZE(pq); i++) {
+		printf("%3d ", *keys[i]);
+		if (++cnt % 10 == 0)
+			printf("\n");
+	}
+	if (cnt % 10 != 0)
+		printf("\n");
 }
 
 static int 

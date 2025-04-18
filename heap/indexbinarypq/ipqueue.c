@@ -44,34 +44,34 @@ main(void)
 	struct index_pqueue ipq;
 	
 	printf("The contents of the strings and it's indexes:\n");
-	for(i = 0; i < 10; i++)
+	for (i = 0; i < 10; i++)
 		printf("%-2d %-6s\n", i, strs[i]);
 	printf("\n");
 	
 	printf("Begin inserts this strings to the index priority queue...\n");
 	ipqueue_init(&ipq, 20, 10, compare);
-	for(i = 0; i < 10; i++)
-		if(!IPQUEUE_ISFULL(&ipq))
+	for (i = 0; i < 10; i++)
+		if (!IPQUEUE_ISFULL(&ipq))
 			ipqueue_insert(&ipq, i, strs[i]);
 	printf("Insertion completed.\n\n");
 	
 	printf("Deletes all keys and returns them associated index:\n");
-	while(!IPQUEUE_ISEMPTY(&ipq)) {
+	while (!IPQUEUE_ISEMPTY(&ipq)) {
 		i = ipqueue_delete(&ipq);
 		printf("%-2d %-6s\n", i, strs[i]);
 	}
 	printf("\n");
 	
 	printf("Begin inserts this strings to the index priority queue again...\n");
-	for(i = 0; i < 10; i++)
-		if(!IPQUEUE_ISFULL(&ipq))
+	for (i = 0; i < 10; i++)
+		if (!IPQUEUE_ISFULL(&ipq))
 			ipqueue_insert(&ipq, i, strs[i]);
 	printf("Insertion completed.\n\n");
 	
 	printf("Prints all indexes for this index priority queue and its "
 		"associated key:\n");
 	pq = IPQUEUE_INDEXES(&ipq);
-	for(i = 0; i < (int)IPQUEUE_SIZE(&ipq); i++) {
+	for (i = 0; i < (int)IPQUEUE_SIZE(&ipq); i++) {
 		j = pq[i];
 		printf("%-2d %-6s\n", j, strs[j]);
 	}
@@ -79,7 +79,7 @@ main(void)
 	
 	printf("Prints all original keys for this index priority queue:\n");
 	keys = (char **)IPQUEUE_KEYS(&ipq);
-	for(i = 0; i < (int)IPQUEUE_SIZE(&ipq); i++)
+	for (i = 0; i < (int)IPQUEUE_SIZE(&ipq); i++)
 		printf("%-2d %-6s\n", i, keys[i]);
 	
 	ipqueue_clear(&ipq);
