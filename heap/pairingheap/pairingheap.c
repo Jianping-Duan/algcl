@@ -87,12 +87,10 @@ pheap_delete(struct pairing_heap *ph)
 	current = ph->root;
 	key = current->key;
 
-	if (current->child != NULL)
+	if (current->child != NULL) {
 		ph->root = combine_siblings(ph, current->child,	current->degree);
-	else
-		ph->root = NULL;
-
-	ALGFREE(current);
+		ALGFREE(current);
+	}
 	ph->size--;
 
 	return key;
@@ -157,7 +155,9 @@ static struct pairing_node *
 compare_link(const struct pairing_heap *ph, struct pairing_node *first,
 		  struct pairing_node *second)
 {
-	if (second == NULL)
+	assert(first != NULL);
+
+	if (second == NULL || first == second)
 		return first;
 	else {
 		if (ph->cmp(first->key, second->key) == 1 || 

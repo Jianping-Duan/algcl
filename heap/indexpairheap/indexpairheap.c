@@ -186,13 +186,15 @@ ipheap_decrkey(struct index_pheap *iph, unsigned long ind, const void *key)
 	if (iph->cmp(curr->key, key) == 1 || iph->cmp(curr->key, key) == 0)
 		return -3;
 
-	detach_node(curr);
-
 	if (iph->keysize != 0)
 		memcpy(curr->key, key, iph->keysize);
 	else
 		curr->key = (void *)key;
 
+	if (iph->root == curr)
+		return 0;
+	
+	detach_node(curr);
 	iph->root = compare_link(iph, iph->root, curr);
 
 	return 0;
@@ -284,7 +286,9 @@ static struct index_pheap_node *
 compare_link(const struct index_pheap *ph, struct index_pheap_node *first,
 			struct index_pheap_node *second)
 {
-	if (second == NULL)
+	assert(first != NULL);
+
+	if (second == NULL || first == second)
 		return first;
 	else {
 		if (ph->cmp(first->key, second->key) == 1 || 
@@ -414,5 +418,4 @@ detach_node(struct index_pheap_node *ptr)
 			ptr->prev->sibling = ptr->sibling;
 	}
 	ptr->sibling = NULL;
-	ptr->prev = NULL;
 }
