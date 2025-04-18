@@ -50,10 +50,14 @@ static void consolidate(struct index_fibpq *);
 static void traverse(const struct index_fibpq_node *, struct queue *,
 	struct queue *);
 static void release_node(struct index_fibpq_node *, unsigned int);
+static inline void write_child_root(struct index_fibpq *,
+	struct index_fibpq_node *);
+
+enum lost_mark {UNMARK, MARK};
 
 /* 
- * Initializes an empty indexed fibonacci priority queue, 
- * worst case is O(1). 
+ * Initializes an empty indexed fibonacci priority queue.
+ * Worst case is O(1). 
  */
 void 
 ifibpq_init(struct index_fibpq *fpq, unsigned long n, unsigned int ksize,
@@ -74,7 +78,10 @@ ifibpq_init(struct index_fibpq *fpq, unsigned long n, unsigned int ksize,
 		fpq->nodes[i] = NULL;
 }
 
-/* Associates a key with an index, worst case is O(1). */
+/* 
+ * Associates a key with an index.
+ * Worst case is O(1).
+ */
 int
 ifibpq_insert(struct index_fibpq *fpq, unsigned long i, const void *key)
 {
@@ -91,45 +98,31 @@ ifibpq_insert(struct index_fibpq *fpq, unsigned long i, const void *key)
 	fpq->size++;
 	
 	if (fpq->result == NULL)
-		fpq->result = fpq->head;
+		fpq->result = current;
 	else
-		fpq->result = fpq->cmp(fpq->result->key, key) ? fpq->head : fpq->result;
+		fpq->result = fpq->cmp(fpq->result->key, key) ? current : fpq->result;
 
 	return 0;
 }
 
 /* 
- * Delete the minimum or maximum key, 
- * worst case is O(log(n)) (amortized). 
+ * Delete the minimum or maximum key.
+ * Worst case is O(log(n)) (amortized). 
  */
 unsigned long 
 ifibpq_delete(struct index_fibpq *fpq)
 {
-	struct index_fibpq_node *childp, *nextp;
 	unsigned long ind;
 
 	fpq->head = cut_node(fpq->result, fpq->head);
 	ind = fpq->result->index;
-	
-	if ((childp = fpq->result->child) != NULL) {
-		/*
-		 * Write each of its child nodes into the root linked list
-		 * where it is located.
-		 */
-		do {
-			nextp = childp->next;
-			childp->parent = NULL;	/* detach child's parent pointer */
-			fpq->head = insert_node(childp, fpq->head);
-			childp = nextp;
-		} while (nextp != NULL && nextp != fpq->result->child);
-		fpq->result->child = NULL;	/* detach child pointer */
-	}
+	write_child_root(fpq, fpq->result);
 
 	if (fpq->keysize != 0)
 		ALGFREE(fpq->result->key);
-	fpq->size--;
-	fpq->nodes[ind] = NULL;
 	ALGFREE(fpq->result);
+	fpq->nodes[ind] = NULL;
+	fpq->size--;
 	
 	if (!IFIBPQ_ISEMPTY(fpq))
 		consolidate(fpq);
@@ -160,13 +153,13 @@ ifibpq_clear(struct index_fibpq *fpq)
 }
 
 /* 
- * Deletes the key associated the given index, 
- * worst case is O(log(n)) (amortized). 
+ * Deletes the key associated the given index.
+ * Worst case is O(log(n)) (amortized). 
  */
 int
 ifibpq_remove(struct index_fibpq *fpq, unsigned long i)
 {
-	struct index_fibpq_node *current, *childp, *nextp, *chead;
+	struct index_fibpq_node *current;// *childp, *nextp, *chead;
 	
 	if (i >= fpq->capacity)
 		return -1;
@@ -174,9 +167,6 @@ ifibpq_remove(struct index_fibpq *fpq, unsigned long i)
 		return -2;
 	
 	current = fpq->nodes[i];
-	if (fpq->keysize != 0)
-		ALGFREE(current->key);
-
 	/* 
 	 * Current was not in the roots list. 
 	 * Move the index of the specified node and associated
@@ -186,24 +176,13 @@ ifibpq_remove(struct index_fibpq *fpq, unsigned long i)
 		cut_index(fpq, i); 
 		
 	fpq->head = cut_node(current, fpq->head);
-	if ((childp = current->child) != NULL) {
-		chead = childp;
-		/*
-		 * Write each of its child nodes into the root linked list
-		 * where it is located.
-		 */
-		do {
-			nextp = childp->next;
-			childp->parent = NULL;	/* detach child's parent pointer */
-			fpq->head = insert_node(childp, fpq->head);
-			childp = nextp;
-		} while (nextp != NULL && nextp != chead);
-		current->child = NULL;	/* detach child pointer */
-	}
+	write_child_root(fpq, current);
 
-	fpq->size--;
+	if (fpq->keysize != 0)
+		ALGFREE(current->key);
 	ALGFREE(current);
 	fpq->nodes[i] = NULL;
+	fpq->size--;
 	
 	if (!IFIBPQ_ISEMPTY(fpq))
 		consolidate(fpq);
@@ -214,8 +193,8 @@ ifibpq_remove(struct index_fibpq *fpq, unsigned long i)
 }
 
 /* 
- * Decreases the key associated with index i to 
- * the given key, worst case is O(1) (amortized). 
+ * Decreases the key associated with index i to the given key.
+ * Worst case is O(1) (amortized). 
  */
 int
 ifibpq_decrkey(struct index_fibpq *fpq, unsigned long i, const void *key)
@@ -239,12 +218,15 @@ ifibpq_decrkey(struct index_fibpq *fpq, unsigned long i, const void *key)
 	if (current->parent != NULL && fpq->cmp(current->parent->key, key))
 		cut_index(fpq, i);
 
+	if (current->parent == NULL && fpq->cmp(fpq->result->key, key))
+		fpq->result = current;
+
 	return 0;
 }
 
 /* 
- * Increases the key associated with index i to 
- * the given key. worst case is O(log(n)). 
+ * Increases the key associated with index i to the given key.
+ * Worst case is O(log(n)). 
  */
 int
 ifibpq_incrkey(struct index_fibpq *fpq, unsigned long i, const void *key)
@@ -268,11 +250,9 @@ ifibpq_incrkey(struct index_fibpq *fpq, unsigned long i, const void *key)
 }
 
 /* 
- * Changes the key associated with index i 
- * to the given key.
- * If the given key is greater, Worst case is O(log(n)).
- * If the given key is lower, 
- * Worst case is O(1) (amortized).
+ * Changes the key associated with index i to the given key.
+ * If the given key is greater, worst case is O(log(n)).
+ * If the given key is lower, worst case is O(1) (amortized).
  */
 int
 ifibpq_change(struct index_fibpq *fpq, unsigned long i, const void *key)
@@ -294,7 +274,8 @@ ifibpq_change(struct index_fibpq *fpq, unsigned long i, const void *key)
 
 /******************** static function boundary ********************/
 
-/* Creates fibonacci priority queue node using 
+/* 
+ * Creates fibonacci priority queue node using 
  * the specified key and its bytes. 
  */
 static struct index_fibpq_node * 
@@ -317,7 +298,7 @@ make_node(unsigned long ind, const void *key, unsigned int ksize)
 	current->next = NULL;
 	current->parent = NULL;
 	current->child = NULL;
-	current->mark = 0;
+	current->mark = UNMARK;
 	
 	return current;
 }
@@ -343,8 +324,7 @@ insert_node(struct index_fibpq_node *node, struct index_fibpq_node *head)
 }
 
 /* 
- * Removes a tree from the list defined by 
- * the head pointer. 
+ * Removes a tree from the list defined by the head pointer. 
  */
 static struct index_fibpq_node * 
 cut_node(struct index_fibpq_node *node, struct index_fibpq_node *head)
@@ -371,10 +351,8 @@ cut_node(struct index_fibpq_node *node, struct index_fibpq_node *head)
 }
 
 /* 
- * Removes a Node from its parent's child list and 
- * insert it in the root list. 
- * If the parent Node already lost a child, 
- * reshapes the heap accordingly. 
+ * Removes a Node from its parent's child list and insert it in the root list.
+ * If the parent Node already lost a child, reshapes the heap accordingly. 
  */
 static void 
 cut_index(struct index_fibpq *fpq, unsigned long i)
@@ -387,10 +365,14 @@ cut_index(struct index_fibpq *fpq, unsigned long i)
 	pparent->child = cut_node(current, pparent->child);
 	current->parent = NULL;
 	pparent->degree--;
+	current->mark = UNMARK;
 	fpq->head = insert_node(current, fpq->head);
-	pparent->mark = !pparent->mark;
 
-	if (!pparent->mark && pparent->parent != NULL)
+	if (pparent->parent != NULL && pparent->mark == UNMARK) {
+		pparent->mark = MARK;
+		return;
+	}
+	if (pparent->parent != NULL && pparent->mark == MARK)
 		cut_index(fpq, pparent->index);
 }
 
@@ -521,4 +503,25 @@ release_node(struct index_fibpq_node *node, unsigned int ksize)
 		ALGFREE(current);
 		current = next;
 	} while (current != NULL && node != next);
+}
+
+/*
+ * Write each of its child nodes into the root linked list
+ * where it is located.
+ */
+static inline void
+write_child_root(struct index_fibpq *fpq, struct index_fibpq_node *ptr)
+{
+	struct index_fibpq_node *childp, *nextp, *chead;
+
+	if ((childp = ptr->child) != NULL) {
+		chead = childp;
+		do {
+			nextp = childp->next;
+			childp->parent = NULL;	/* detach child's parent pointer */
+			fpq->head = insert_node(childp, fpq->head);
+			childp = nextp;
+		} while (nextp != NULL && nextp != chead);
+		ptr->child = NULL;	/* detach child pointer */
+	}
 }
