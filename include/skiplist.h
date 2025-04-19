@@ -35,7 +35,7 @@
 #include "algcomm.h"
 
 struct skipl_node {
-	struct element item;			/* key-value pair */
+	void *key;						/* key contained by the Node */
 	struct skipl_node **forward;	/* array to hold references to different
 									   levels */
 };
@@ -45,6 +45,8 @@ struct skip_list {
 	int maxlevel;				/* maximum number of levels */
 	int level;					/* current level of skip-list */
 	unsigned long size;			/* number of elements */
+	unsigned int keysize;		/* the bytes of the key */
+	algcomp_ft *cmp;			/* comparator over the keys */
 };
 
 /* 
@@ -54,50 +56,49 @@ struct skip_list {
 #define SKIPL_SIZE(sl)	((sl)->size)
 
 /* Is this skip list empty? */
-#define SKIPL_ISEMPTY(sl)	\
-	((sl)->head->forward[0] == NULL)
+#define SKIPL_ISEMPTY(sl)	((sl)->head->forward[0] == NULL)
 
 /* Initializes an empty skip list */
-void skipl_init(struct skip_list *sl, int maxlvl);
+void skipl_init(struct skip_list *sl, int maxlvl, unsigned int ksize,
+				algcomp_ft *cmp);
 
 /* Returns the value associated with the given key. */ 
-struct element * skipl_get(const struct skip_list *sl, const char *key);
+void * skipl_get(const struct skip_list *sl, const void *key);
 
 /* 
  * Inserts the specified key-value pair 
  * into the ship list.
  */
-void skipl_put(struct skip_list *sl, const struct element *item);
+void skipl_put(struct skip_list *sl, const void *key);
 
 /* 
  * Removes the specified key and its associated with 
  * value from this skip list. 
  */
-void skipl_delete(struct skip_list *sl, const char *key);
+void skipl_delete(struct skip_list *sl, const void *key);
 
 /* Traverses the skip list */
-void skipl_traverse(const struct skip_list *sl, 
-			void (*visit)(const struct element *item));
+void skipl_traverse(const struct skip_list *sl, void (*visit)(const void *key));
 
 /* Clears this skip list. */
 void skipl_clear(struct skip_list *sl);
 
 /* Returns the smallest key in the skip list. */
-char * skipl_min(const struct skip_list *sl);
+void * skipl_min(const struct skip_list *sl);
 
 /* Returns ths largest key in ths skip list. */
-char * skipl_max(const struct skip_list *sl);
+void * skipl_max(const struct skip_list *sl);
 
 /* 
- * Returns the largest key in the BST less than 
+ * Returns the largest key in the skip list less than 
  * or equal to the specified key. 
  */
-struct element * skipl_floor(const struct skip_list *sl, const char *key);
+void * skipl_floor(const struct skip_list *sl, const void *key);
 
 /* 
- * Returns the smallest key in the BST greater than 
+ * Returns the smallest key in the skip list greater than 
  * or equal to the specified key. 
  */
-struct element * skipl_ceiling(const struct skip_list *sl, const char *key);
+void * skipl_ceiling(const struct skip_list *sl, const void *key);
 
 #endif	/* _SKIPLIST_H_ */
