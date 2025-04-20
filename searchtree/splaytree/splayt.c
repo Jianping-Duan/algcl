@@ -35,6 +35,7 @@
 
 static void usage_info(const char *);
 static void print_st(const struct splay_tree *);
+static int less(const void *, const void *);
 
 int 
 main(int argc, char *argv[])
@@ -42,7 +43,6 @@ main(int argc, char *argv[])
 	FILE *fp;
 	struct splay_tree bst;
 	struct element item, *el;
-	bool dflag = false;
 	clock_t start_time, end_time;
 	char *fname = NULL, *key = NULL;
 
@@ -52,11 +52,11 @@ main(int argc, char *argv[])
 	extern char *optarg;
 	extern int optind;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'f':
 				fname = optarg;
 				break;
@@ -69,46 +69,46 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 	
-	SPLAYT_INIT(&bst);
+	splayt_init(&bst, sizeof(struct element), less);
 	
-	printf("Starting read data from \"%s\" file to "
-		"the splay tree...\n", fname);
+	printf("Starting read data from \"%s\" file to the splay tree...\n", fname);
 	start_time = clock();
 	fp = open_file(fname, "rb");
 	rewind(fp);
-	while(!feof(fp)) {
-		if(fread(&item, sizeof(struct element), 1, fp) > 0)
+	while (!feof(fp)) {
+		if (fread(&item, sizeof(struct element), 1, fp) > 0)
 			splayt_put(&bst, &item);
 	}
 	close_file(fp);
 	end_time = clock();
-	printf("Read completed, estimated time(s): %.3f\n\n", 
+	printf("Read completed, estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
+	printf("The number of nodes in this splay tree is: %lu\n", SPLAYT_SIZE(&bst));
+	printf("\n");
 	
-	printf("The number of nodes in this splay tree is: %lu\n\n",
-		SPLAYT_SIZE(&bst));
-	
-	printf("prints this splay tree:\n");
+	printf("Prints this splay tree:\n");
 	print_st(&bst);
 	printf("\n");
 
 	start_time = clock();
-	printf("The minimum key of the splay tree: %s\n", splayt_min(&bst));
-	printf("The maximum key of the splay tree: %s\n", splayt_max(&bst));
+	el = (struct element *)splayt_min(&bst);
+	printf("The minimum key of the splay tree: %s\n", el->key);
+	el = (struct element *)splayt_max(&bst);
+	printf("The maximum key of the splay tree: %s\n", el->key);
 	end_time = clock();
-	printf("Estimated time(s): %.3f\n\n", 
+	printf("Estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
-	printf("Please enter a key need to be deleted: ");
+	printf("\n");
 	
 	printf("Begin search key: %s\n", key);
+	strncpy(item.key, key, MAX_KEY_LEN);
+	item.value = -1;
 	start_time = clock();
-	if((el = splayt_get(&bst, key)) != NULL) {
+	if ((el = (struct element *)splayt_get(&bst, &item)) != NULL)
 		printf("It's value: %ld\n", el->value);
-		dflag = true;
-	}
 	else
 		printf("Not found.\n");
 	end_time = clock();
@@ -116,25 +116,22 @@ main(int argc, char *argv[])
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 	
-	if(!dflag) {
-		splayt_clear(&bst);
-		ALGFREE(key);
-		return 0;
-	}
-
 	printf("Begin delete key: %s\n", key);
+	strncpy(item.key, key, MAX_KEY_LEN);
+	item.value = -1;
 	start_time = clock();
-	splayt_delete(&bst, key);
+	if (splayt_delete(&bst, &item) == 0)
+		printf("Delete completed.\n");
+	else
+		printf("Not found.\n");
 	end_time = clock();
-	printf("Deletion completed, estimated time(s): %.3f\n", 
+	printf("Estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 	
 	printf("prints this splay tree:\n");
 	print_st(&bst);
-	printf("\n");
-	
-	printf("The number of keys in this splay tree is: %ld\n\n",
+	printf("The number of keys in this splay tree is: %ld\n",
 		SPLAYT_SIZE(&bst));
 	
 	splayt_clear(&bst);
@@ -163,4 +160,20 @@ usage_info(const char *pname)
 	fprintf(stderr, "-f: The data file will be read in memory..\n");
 	fprintf(stderr, "-k: The key will be searched.\n");
 	exit(EXIT_FAILURE);
+}
+
+static int 
+less(const void *key1, const void *key2)
+{
+	struct element *k1, *k2;
+
+	k1 = (struct element *)key1;
+	k2 = (struct element *)key2;
+
+	if (strcmp(k1->key, k2->key) < 0)
+		return 1;
+	else if (strcmp(k1->key, k2->key) == 0)
+		return 0;
+	else
+		return -1;
 }

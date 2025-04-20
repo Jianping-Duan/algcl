@@ -36,7 +36,7 @@
 
 /* splay tree node */
 struct splayt_node {
-	struct element item;		/* key-value pair */
+	void *key;					/* key contained by the Node */
 	struct splayt_node *left;	/* link to left subtrees */
 	struct splayt_node *right;	/* link to right subtrees */
 	struct splayt_node *parent;	/* link to parent node */
@@ -46,18 +46,11 @@ struct splayt_node {
 struct splay_tree {
 	struct splayt_node *root;	/* root node */
 	unsigned long size;			/* size of splay tree */
+	unsigned int keysize;		/* the bytes of the key */
+	algcomp_ft *cmp;			/* comparator over the keys */
 };
 
-/* Initializes an empty splay binary search tree */
-#define SPLAYT_INIT(st)		do {	\
-	(st)->root = NULL;				\
-	(st)->size = 0;					\
-} while(0)
-
-/* 
- * Returns the number of key-value pairs 
- * in this splay tree. 
- */
+/* Returns the number of keys in this splay tree. */
 #define SPLAYT_SIZE(st)		((st)->size)
 
 /* Is this Splay Tree empty? */
@@ -65,30 +58,44 @@ struct splay_tree {
 
 struct single_list;
 
-/* 
- * Inserts the specified key-value pair into the splay tree. 
+/*
+ * Initializes an empty splay tree.
  */
-void splayt_put(struct splay_tree *st, const struct element *item);
-
-/* Returns item associated with the given key */
-struct element * splayt_get(struct splay_tree *st, const char *key);
+void splayt_init(struct splay_tree *st, unsigned int ksize, algcomp_ft *cmp);
 
 /* 
- * Removes the specified key and its associated 
- * with value from this splay tree. 
+ * Inserts the key into this splay tree. 
  */
-void splayt_delete(struct splay_tree *st, const char *key);
+int splayt_put(struct splay_tree *st, const void *key);
 
-/* Returns the smallest key in the splay tree. */
-char * splayt_min(const struct splay_tree *st);
+/* 
+ * Returns the key in this splay tree by the given key.
+ */
+void * splayt_get(struct splay_tree *st, const void *key);
 
-/* Returns the largest key in the splay tree. */
-char * splayt_max(const struct splay_tree *st);
+/* 
+ * Removes the specified key from this splay tree. 
+ */
+int splayt_delete(struct splay_tree *st, const void *key);
 
-/* Gets all items from this splay tree. */
-void splayt_preorder(const struct splay_tree *st, struct single_list *elset);
+/* 
+ * Returns the smallest key in the splay tree. 
+ */
+void * splayt_min(const struct splay_tree *st);
 
-/* Clears this splay tree. */
+/* 
+ * Returns the largest key in the splay tree. 
+ */
+void * splayt_max(const struct splay_tree *st);
+
+/* 
+ * Gets all items from this splay tree. 
+ */
+void splayt_preorder(const struct splay_tree *st, struct single_list *keys);
+
+/* 
+ * Clears this splay tree. 
+ */
 void splayt_clear(struct splay_tree *st);
 
 #endif	/* _SPLAYTREE_H_ */
