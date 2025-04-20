@@ -55,17 +55,17 @@ main(int argc, char *argv[])
 	extern char *optarg;
 	extern int optind;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'n':
-				if(sscanf(optarg, "%d", &num) != 1)
+				if (sscanf(optarg, "%d", &num) != 1)
 					errmsg_exit("Illegal number. -n %s\n", optarg);
 				break;
 			case 'w':
-				if(sscanf(optarg, "%d", &width) != 1)
+				if (sscanf(optarg, "%d", &width) != 1)
 					errmsg_exit("Illegal number. -w %s\n", optarg);
 				break;
 			default:
@@ -74,7 +74,7 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 
 	SET_RANDOM_SEED;
@@ -84,7 +84,7 @@ main(int argc, char *argv[])
 
 	printf("Begin inserts into B-Tree %d key-value pairs.\n", num);
 	start_time = clock();
-	for(i = 0, j = 0; i < num; i++) {
+	for (i = 0, j = 0; i < num; i++) {
 		w = rand_range_integer(5, width);
 		val = rand_string(w);
 
@@ -92,7 +92,7 @@ main(int argc, char *argv[])
 		btree_put(&bt, &w, val);
 
 		x = rand_range_integer(1, num);
-		if(x % 10 == 0 && j < num / 2)
+		if (x % 10 == 0 && j < num / 2)
 			keys[j++] = w;
 
 		ALGFREE(val);
@@ -105,7 +105,7 @@ main(int argc, char *argv[])
 	printf("Begin random query %d keys and print associated value.\n", j);
 	start_time = clock();
 	val = (char *)algmalloc(width * sizeof(char));
-	for(i = 0; i < j; i++) {
+	for (i = 0; i < j; i++) {
 		btree_get(&bt, &keys[i], (void **)&val);
 		printf("%-8d %-8s\n", keys[i], val);
 	}
@@ -126,9 +126,9 @@ main(int argc, char *argv[])
 	printf("The maximum of key in this B-Tree: %d\n", j);
 	printf("\n");
 
-	for(k = 0; k < num * 2; k++) {
+	for (k = 0; k < num * 2; k++) {
 		x = rand_range_integer(1, num);
-		if(btree_delete(&bt, &x) == 0) {
+		if (btree_delete(&bt, &x) == 0) {
 			printf("The key %d was not found.\n", x);
 			continue;
 		}
@@ -142,7 +142,7 @@ main(int argc, char *argv[])
 		SLIST_FOREACH(&records, nptr, struct btree_entry, entry) {
 			key = (int *)entry->key;
 			printf("%3d ", *key);
-			if(++w % 30 == 0)
+			if (++w % 10 == 0)
 				printf("\n");
 		}
 		printf("\n");
@@ -169,9 +169,9 @@ kcmp(const void *key1, const void *key2)
 	k1 = (int *)key1;
 	k2 = (int *)key2;
 
-	if(*k1 < *k2)
+	if (*k1 < *k2)
 		return 1;
-	else if(*k1 == *k2)
+	else if (*k1 == *k2)
 		return 0;
 	else
 		return -1;

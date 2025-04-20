@@ -64,20 +64,19 @@ struct btree_entry {
 
 /* B-Tree */
 struct btree {
-	struct btree_node *root; /* root of the B-tree */
-	int height;				/* height of the B-tree */
-	unsigned long size;		/* number of key-value pairs in the B-tree */
-	unsigned int keysize;	/* max size of the key */
-	unsigned int valsize;	/* max size of the value */
-	algcomp_ft *kcmp;		/* compare function for keys */
+	struct btree_node *root;	/* root of the B-tree */
+	int height;					/* height of the B-tree */
+	unsigned long size;			/* number of key-value pairs in the B-tree */
+	unsigned int keysize;		/* max size of the key */
+	unsigned int valsize;		/* max size of the value */
+	algcomp_ft *kcmp;			/* compare function for keys */
 };
 
 /* Returns true if this symbol table is empty. */
 #define BTREE_ISEMPTY(bt)	((bt)->size == 0)
 
 /* 
- * Returns the number of key-value pairs
- * in this B-Tree. 
+ * Returns the number of key-value pairs in this B-Tree. 
  */
 #define BTREE_SIZE(bt)	((bt)->size)
 
