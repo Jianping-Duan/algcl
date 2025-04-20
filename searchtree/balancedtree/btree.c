@@ -923,7 +923,8 @@ remove_entry(struct btree *bt, struct btree_node *x, const void *key,
 #endif
 
 			for (i = 0; i < (int)x->parent->sz; i++)
-				if (x->parent->children[i]->next == x) {
+				if (x->parent->children[i] != NULL &&
+					x->parent->children[i]->next == x) {
 					pos = i;
 					break;
 				}
