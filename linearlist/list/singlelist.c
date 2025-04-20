@@ -100,7 +100,7 @@ slist_contains(const struct single_list *slist, const void *key)
 	
 	current = slist->first;
 	while (current != NULL) {
-		if (slist->equal(current->key, key))
+		if (slist->equal(current->key, key) == 0)
 			return loc;
 		current = current->next;
 		loc++;
@@ -125,13 +125,14 @@ slist_delete(struct single_list *slist, const void *key)
 		return;
 	
 	/* only one node */
-	if (slist->first == slist->last && slist->equal(slist->first->key, key)) {
+	if (slist->first == slist->last &&
+		slist->equal(slist->first->key, key) == 0) {
 		ALGFREE(slist->first);
 		slist->last = NULL;
 		slist->size = 0;
 	}
 	/* key equals first node */
-	else if (slist->equal(slist->first->key, key)) {
+	else if (slist->equal(slist->first->key, key) == 0) {
 		current = slist->first->next;
 		ALGFREE(slist->first);
 		slist->first = current;
@@ -146,7 +147,7 @@ slist_delete(struct single_list *slist, const void *key)
 			if (pnext == NULL)
 				return;
 				
-			if (slist->equal(pnext->key, key)) {
+			if (slist->equal(pnext->key, key) == 0) {
 				/* key is last node */
 				if (pnext == slist->last) {
 					current->next = NULL;
@@ -175,7 +176,7 @@ slist_change(struct single_list *slist, const void *skey, const void *tkey)
 	
 	current = slist->first;
 	while (current != NULL) {
-		if (slist->equal(current->key, skey)) {
+		if (slist->equal(current->key, skey) == 0) {
 			slist->keysize == 0 ? current->key = (void *)tkey :
 				memcpy(current->key, tkey, slist->keysize);
 		}

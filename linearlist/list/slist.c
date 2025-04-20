@@ -189,7 +189,7 @@ equal(const void *key1, const void *key2)
 {
 	int *x = (int *)key1, *y = (int *)key2;
 	
-	return *x == *y;
+	return *x == *y ? 0 : 1;
 }
 
 static void

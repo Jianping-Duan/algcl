@@ -121,15 +121,13 @@ void slist_put(struct single_list *slist, const void *key);
 void slist_append(struct single_list *slist, const void *key);
 
 /* 
- * Does the single linked-list contain 
- * the given key. if contained, return 
- * the index of loction, -1 is not contain. 
+ * Does the single linked-list contain the given key.
+ * if contained, return the index of loction, -1 is not contain. 
  */
 long slist_contains(const struct single_list *slist, const void *key);
 
 /* 
- * Removes the specified key from 
- * this single linked-list.
+ * Removes the specified key from this single linked-list.
  */
 void slist_delete(struct single_list *slist, const void *key);
 
