@@ -43,7 +43,6 @@ main(int argc, char *argv[])
 	struct skip_list sl;
 	struct element item, *el;
 	int len, sz = 0;
-	bool dflag = false;
 	clock_t start_time, end_time;
 	char *fname = NULL, *key = NULL, *rand_key = NULL;
 
@@ -126,10 +125,9 @@ main(int argc, char *argv[])
 	strncpy(item.key, rand_key, MAX_KEY_LEN);
 	item.value = -1;
 	start_time = clock();
-	if ((el = (struct element *)skipl_ceiling(&sl, &item)) != NULL) {
-		printf("It's key %s, value is %ld\n",
-		el->key, el->value);
-	} else
+	if ((el = (struct element *)skipl_ceiling(&sl, &item)) != NULL)
+		printf("It's key %s, value is %ld\n", el->key, el->value);
+	else
 		printf("The given key '%s' is too large.\n", rand_key);
 	end_time = clock();
 	printf("Estimated time(s): %.3f\n\n", 
@@ -140,21 +138,14 @@ main(int argc, char *argv[])
 	strncpy(item.key, key, MAX_KEY_LEN);
 	item.value = -1;
 	start_time = clock();
-	if ((el = (struct element *)skipl_get(&sl, &item)) != NULL) {
+	if ((el = (struct element *)skipl_get(&sl, &item)) != NULL)
 		printf("key: %s, value: %ld\n", el->key, el->value);
-		dflag = true;
-	} else
+	else
 		printf("Not found.\n");
 	end_time = clock();
 	printf("Search completed, estimated time(s): %.3f\n\n",
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	
-	if (!dflag) {
-		ALGFREE(key);
-		skipl_clear(&sl);
-		return 0;
-	}
-
 	printf("Begin delete key: %s\n", key);
 	start_time = clock();
 	skipl_delete(&sl, &item);
