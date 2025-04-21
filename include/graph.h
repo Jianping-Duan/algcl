@@ -54,8 +54,7 @@ struct graph {
 
 /* Returns the degree of vertex v. */
 #define GRAPH_DEGREE(g, v)	\
-	((v) >= (g)->vertices \
-	? (-1) : (long)SLIST_LENGTH((g)->adjlist[v]))
+	((v) >= (g)->vertices ? (-1) : (long)SLIST_LENGTH((g)->adjlist[v]))
 
 /* 
  * Initializes an empty graph with 
@@ -71,8 +70,7 @@ void graph_init(struct graph *g, unsigned int n);
 int graph_add_edge(struct graph *g, unsigned int v, unsigned int w);
 
 /* 
- * Initializes a graph from the specified 
- * file input stream.
+ * Initializes a graph from the specified file input stream.
  * The format is the number of vertices V,
  * followed by the number of edges E,
  * followed by E pairs of vertices, 
@@ -81,8 +79,7 @@ int graph_add_edge(struct graph *g, unsigned int v, unsigned int w);
 void graph_init_fistream(struct graph *g, FILE *fin);
 
 /* 
- * Prints this graph of everyone vertex and 
- * them composed the edges.
+ * Prints this graph of everyone vertex and them composed the edges.
  */
 void graph_print(const struct graph *g);
 

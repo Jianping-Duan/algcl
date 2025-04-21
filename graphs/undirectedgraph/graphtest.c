@@ -39,7 +39,7 @@ main(int argc, char *argv[])
 	struct graph g[20];
 	int i;
 	
-	if(argc != 2)
+	if (argc != 2)
 		errmsg_exit("Usage: %s <datafile>\n", argv[0]);
 	
 	SET_RANDOM_SEED;
@@ -52,13 +52,13 @@ main(int argc, char *argv[])
 	printf("\n");
 	
 	printf("Generates a random simple graph.\n");
-	simple_graph1(10, 10, &g[1]);
+	simple_graph1(15, 17, &g[1]);
 	graph_print(&g[1]);
 	printf("\n");
 	
 	printf("Generates a random simple graphs "
 		"using probability p.\n");
-	simple_graph2(12, 0.5, &g[2]);
+	simple_graph2(15, 0.5, &g[2]);
 	graph_print(&g[2]);
 	printf("\n");
 	
@@ -74,12 +74,12 @@ main(int argc, char *argv[])
 	printf("\n");
 	
 	printf("Generates a path graph.\n");
-	path_graph(8, &g[5]);
+	path_graph(10, &g[5]);
 	graph_print(&g[5]);
 	printf("\n");
 	
 	printf("Generates a complete binary tree graph.\n");
-	binary_tree_graph(13, &g[6]);
+	binary_tree_graph(15, &g[6]);
 	graph_print(&g[6]);
 	printf("\n");
 	
@@ -109,16 +109,16 @@ main(int argc, char *argv[])
 	printf("\n");
 	
 	printf("Generates a random k-regular graph.\n");
-	regular_graph(4, 6, &g[12]);
+	regular_graph(10, 15, &g[12]);
 	graph_print(&g[12]);
 	printf("\n");
 	
 	printf("Generates a random tree graph.\n");
-	tree_graph(11, &g[13]);
+	tree_graph(20, &g[13]);
 	graph_print(&g[13]);
 	printf("\n");
 	
-	for(i = 0; i < 14; i++)
+	for (i = 0; i < 14; i++)
 		graph_clear(&g[i]);
 	
 	return 0;

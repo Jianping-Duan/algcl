@@ -1,7 +1,7 @@
 # DEBUG = -O0 -g 
 
 TOPDIR = ../..
-LIBS = -lsearchtree -lheap -llinearlist -lalgcomm 
+LIBS = -lsearchtree -lheap -lskiplist -llinearlist -lalgcomm -lm
 
 OBJS = graph.o graphgenerator.o graphdfsp.o graphbfsp.o \
 	graphconcomp.o graphcycle.o euleriancycle.o \

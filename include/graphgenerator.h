@@ -41,45 +41,40 @@
 #define complete_graph(vs, g)	simple_graph2(vs, 1.0, g)
 
 /* 
- * Generates a random simple graph containing vs vertices 
- * and es edges, output a graph g.
- * parameter vs is the number of vertices, 
- * es is the number of edges. 
+ * Generates a random simple graph containing vs vertices and es edges, output
+ * a graph g. Parameter vs is the number of vertices, es is the number of edges.
  */
 void simple_graph1(unsigned int vs, unsigned int es, struct graph *g);
 
 
 /* 
- * Generates a random simple graph on vs vertices, 
- * with an edge between any two vertices with probability p.
- * This is sometimes referred to as the Erdos-Renyi random
- * graph model. parameter vs is the number of vertices, 
- * p is the probability of choosing an edge. 
+ * Generates a random simple graph on vs vertices, with an edge between any two
+ * vertices with probability p.
+ * This is sometimes referred to as the Erdos-Renyi random graph model.
+ * Parameter vs is the number of vertices, p is the probability of choosing an
+ * edge.
  */
 void simple_graph2(unsigned int vs, double p, struct graph *g);
 
 
 /* 
- * Generates a random simple bipartite graph on 
- * vs1 and vs2 vertices with es edges.
- * parameter vs1 the number of vertices in one partition.
- * parameter vs2 the number of vertices in 
- * the other partition.
- * parameter es the number of edges. 
+ * Generates a random simple bipartite graph on vs1 and vs2 vertices with es
+ * edges.
+ * Parameter vs1 the number of vertices in one partition.
+ * Parameter vs2 the number of vertices in the other partition.
+ * Parameter es the number of edges. 
  */
 void bipartite_graph1(unsigned int vs1, unsigned int vs2, unsigned int es,
 					struct graph *g);
 
 
 /* 
- * Generates a random simple bipartite graph on 
- * vs1 and vs2 vertices, 
+ * Generates a random simple bipartite graph on vs1 and vs2 vertices,
  * containing each possible edge with probability p.
- * parameter vs1 the number of vertices in one partition.
- * parameter vs2 the number of vertices in 
- * the other partition.
- * parameter p the probability that the graph contains
- * an edge with one endpoint in either side.
+ * Parameter vs1 the number of vertices in one partition.
+ * Parameter vs2 the number of vertices in the other partition.
+ * Parameter p the probability that the graph contains an edge with one
+ * endpoint in either side.
  */
 void bipartite_graph2(unsigned int vs1, unsigned int vs2, double p,
 					struct graph *g);
@@ -99,8 +94,10 @@ void path_graph(unsigned int vs, struct graph *g);
 void binary_tree_graph(unsigned int vs, struct graph *g);
 
 
-/* Generates a cycle graph on vs vertices. 
-   vs the number of vertices in the cycle. */
+/* 
+ * Generates a cycle graph on vs vertices. 
+ * vs the number of vertices in the cycle.
+ */
 void cycle_graph(unsigned int vs, struct graph *g);
 
 
@@ -135,10 +132,10 @@ void star_graph(unsigned int vs, struct graph *g);
 
 
 /* 
- * Generates a random k-regular graph on vs vertices 
+ * Generates a random k-regular graph on vs vertices
  * (not necessarily simple). 
- * The graph is simple with probability 
- * only about e^(-k^2/4), which is tiny when k = 14.
+ * The graph is simple with probability only about e^(-k^2/4), which is tiny
+ * when k = 14. 
  * vs the number of vertices in the graph,
  * k degree of each vertex.
  */
@@ -147,8 +144,8 @@ void regular_graph(unsigned int vs, unsigned int k, struct graph *g);
 
 /* 
  * Generates a random tree on vs vertices.
- * This algorithm uses a Prufer sequence and takes time
- * proportional to vs log vs. 
+ * This algorithm uses a Prufer sequence and takes time proportional to vs log
+ * vs.
  */
 void tree_graph(unsigned int vs, struct graph *g);
 
