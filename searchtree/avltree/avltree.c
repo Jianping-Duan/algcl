@@ -30,6 +30,7 @@
  *
  */
 #include "avltree.h"
+#include "singlelist.h"
 #include "queue.h"
 
 /* Returns the number of nodes in the subtree. */
@@ -40,222 +41,215 @@
 
 /* 
  * Returns the balance factor of the subtree. 
- * The balance factor is defined as the difference 
- * in height of the left subtree and right subtree, 
- * in this order. Therefore, a subtree with a balance 
- * factor of -1, 0 or 1 has the AVL property since the 
- * heights of the two child subtrees differ by 
- * at most one. 
+ * The balance factor is defined as the difference in height of the left
+ * subtree and right subtree, in this order.
+ * Therefore, a subtree with a balance factor of -1, 0 or 1 has the AVL
+ * property since the heights of the two child subtrees differ by at most one.
  */
 #define BALANCE_FACTOR(node)	\
 	(AVLBST_HEIGHT_NODE((node)->left) - AVLBST_HEIGHT_NODE((node)->right))
 
-static struct avl_node * get_node(struct avl_node *, const char *);
-static struct avl_node * make_node(const struct element *);
+static struct avl_node * get_node(struct avl_node *, const void *,
+	algcomp_ft *);
+static struct avl_node * make_node(const void *, unsigned int);
 static inline struct avl_node * rotate_right(struct avl_node *);
 static inline struct avl_node * rotate_left(struct avl_node *);
 static struct avl_node * balance(struct avl_node *);
-static struct avl_node * put_node(struct avl_node *, const struct element *);
-static void postorder_nodes(struct avl_node *, void (*)(struct avl_node *));
-static inline void release_node(struct avl_node *);
-static void preorder_nodes(const struct avl_node *, struct queue *);
+static struct avl_node * put_node(const struct avl_tree *, struct avl_node *,
+	const void *);
+static void release_subtree(struct avl_node *, unsigned int);
+static void preorder_nodes(const struct avl_node *, struct single_list *);
 static struct avl_node * min_node(struct avl_node *);
 static struct avl_node * max_node(struct avl_node *);
 static struct avl_node * delete_min_node(struct avl_node *);
 static struct avl_node * delete_min(struct avl_node *);
 static struct avl_node * delete_max_node(struct avl_node *);
-static struct avl_node * delete_node(struct avl_node *, const char *);
-static struct avl_node * floor_node(struct avl_node *, const char *);
-static struct avl_node * ceiling_node(struct avl_node *, const char *);
-static unsigned long rank_node(const char *, const struct avl_node *);
-static struct element * select_node(unsigned long, struct avl_node *);
-static void keys_range(const struct avl_node *, const char *, const char *,
-	struct queue *);
-static int isbst(const struct avl_node *, const char *,	const char *);
+static struct avl_node * delete_node(struct avl_node *, const void *,
+	algcomp_ft *);
+static struct avl_node * floor_node(struct avl_node *, const void *,
+	algcomp_ft *);
+static struct avl_node * ceiling_node(struct avl_node *, const void *,
+	algcomp_ft *);
+static unsigned long rank_node(const struct avl_node *, const void *,
+	algcomp_ft *);
+static void * select_node(unsigned long, struct avl_node *);
+static void keys_range(const struct avl_node *, const void *, const void *,
+	algcomp_ft *, struct single_list *);
+static int isbst(const struct avl_node *, const void *,	const void *,
+	algcomp_ft *);
 static int isavl(const struct avl_node *node);
 static int is_size_consistent(const struct avl_node *node);
 static int is_rank_consistent(const struct avl_tree *bst);
 
-/* 
- * Returns element associated with the given key 
- * in the AVL tree. 
- */
-struct element * 
-avlbst_get(const struct avl_tree *avl, const char *key)
+/* Initializes an empty AVL tree */
+void
+avlbst_init(struct avl_tree *avl, unsigned int ksize, algcomp_ft *cmp)
+{
+	avl->root = NULL;
+	avl->keysize = ksize;
+	avl->cmp = cmp;
+}
+
+/* Returns the key in this avl tree by the given key. */
+void * 
+avlbst_get(const struct avl_tree *avl, const void *key)
 {
 	struct avl_node *node;
 	
-	if(key == NULL)
+	if (key == NULL)
 		return NULL;
 	
-	if((node = get_node(avl->root, key)) == NULL)
+	if ((node = get_node(avl->root, key, avl->cmp)) == NULL)
 		return NULL;
-	return &(node->item);
+	return (node->key);
 }
 
-/* 
- * Inserts the specified key-value pair into the AVL tree. 
- */
+/* Inserts the key into the AVL tree. */
 void 
-avlbst_put(struct avl_tree *avl, const struct element *item)
+avlbst_put(struct avl_tree *avl, const void *key)
 {
-	if(item == NULL)
+	if (key == NULL)
 		return;
 	
-	avl->root = put_node(avl->root, item);
+	avl->root = put_node(avl, avl->root, key);
 }
 
 /* Releases the AVL tree. */
 void 
 avlbst_clear(struct avl_tree *avl)
 {
-	if(!AVLBST_ISEMPTY(avl))
-		postorder_nodes(avl->root, release_node);
+	if (!AVLBST_ISEMPTY(avl))
+		release_subtree(avl->root, avl->keysize);
 }
 
 void 
-avlbst_preorder(const struct avl_tree *avl, struct queue *keys)
+avlbst_preorder(const struct avl_tree *avl, struct single_list *keys)
 {
+	slist_init(keys, 0, avl->cmp);
 	preorder_nodes(avl->root, keys);
 }
 
 /* Returns the smallest key in the AVL BST */
-char * 
+void * 
 avlbst_min(const struct avl_tree *avl)
 {
-	if(AVLBST_ISEMPTY(avl))
+	if (AVLBST_ISEMPTY(avl))
 		return NULL;
-	return min_node(avl->root)->item.key;
+	return min_node(avl->root)->key;
 }
 
 /* Returns the largest key in the AVL BST */
-char *
+void *
 avlbst_max(const struct avl_tree *avl)
 {
-	if(AVLBST_ISEMPTY(avl))
+	if (AVLBST_ISEMPTY(avl))
 		return NULL;
-	return max_node(avl->root)->item.key;
+	return max_node(avl->root)->key;
 }
 
-/* 
- * Removes the smallest key and associated with value 
- * from this AVL tree. 
- */
+/* Removes the smallest key and associated with value from this AVL tree. */
 void 
 avlbst_delete_min(struct avl_tree *avl)
 {
-	if(!AVLBST_ISEMPTY(avl))
+	if (!AVLBST_ISEMPTY(avl))
 		avl->root = delete_min_node(avl->root);
 }
 
-/* 
- * Removes the largest key and associated with value 
- * from this AVL tree. 
- */
+/* Removes the largest key from this AVL tree. */
 void 
 avlbst_delete_max(struct avl_tree *avl)
 {
-	if(!AVLBST_ISEMPTY(avl))
+	if (!AVLBST_ISEMPTY(avl))
 		avl->root = delete_max_node(avl->root);
 }
 
-/* 
- * Removes the specified key and its associated value 
- * from the AVL tree. 
- */
-void 
-avlbst_delete(struct avl_tree *avl, const char *key)
+/* Removes the specified key from the AVL tree. */
+int
+avlbst_delete(struct avl_tree *avl, const void *key)
 {
-	if(AVLBST_ISEMPTY(avl))
-		return;
+	if (AVLBST_ISEMPTY(avl))
+		return -1;
 	
-	if(avlbst_get(avl, key) == NULL)
-		return;
+	if (avlbst_get(avl, key) == NULL)
+		return -2;
 	
-	avl->root = delete_node(avl->root, key);
+	avl->root = delete_node(avl->root, key, avl->cmp);
+	return 0;
 }
 
-/* 
- * Returns the largest key in the AVL tree 
- * less than or equal to Key.
- */
-struct element * 
-avlbst_floor(const struct avl_tree *avl, const char *key)
+/* Returns the largest key in the AVL tree less than or equal to Key. */
+void * 
+avlbst_floor(const struct avl_tree *avl, const void *key)
 {
 	struct avl_node *current;
 	
-	current = floor_node(avl->root, key);
-	return current == NULL ? NULL : &(current->item);
+	current = floor_node(avl->root, key, avl->cmp);
+	return current == NULL ? NULL : (current->key);
 }
 
-/* 
- * Returns the smallest key in the AVL tree 
- * greater than or equal to Key.
- */
-struct element * 
-avlbst_ceiling(const struct avl_tree *avl, const char *key)
+/* Returns the smallest key in the AVL tree greater than or equal to Key. */
+void * 
+avlbst_ceiling(const struct avl_tree *avl, const void *key)
 {
 	struct avl_node *current;
 	
-	current = ceiling_node(avl->root, key);
-	return current == NULL ? NULL : &(current->item);
+	current = ceiling_node(avl->root, key, avl->cmp);
+	return current == NULL ? NULL : (current->key);
 }
 
-/* 
- * Returns the number of keys in the AVL BST 
- * strictly less than Key.
- */
+/* Returns the number of keys in the AVL BST strictly less than Key. */
 unsigned long 
-avlbst_rank(const struct avl_tree *avl, const char *key)
+avlbst_rank(const struct avl_tree *avl, const void *key)
 {
-	return rank_node(key, avl->root);
+	return rank_node(avl->root, key, avl->cmp);
 }
 
 /* 
  * Return the key in the AVL BST of a given rank.
- * This key has the property that there are rank 
- * keys in the AVL BST that are smaller. 
- * In other words, this key is the 
- * (rank+1)st smallest key in the AVL BST.
+ * This key has the property that there are rank keys in the AVL BST that are
+ * smaller.
+ * In other words, this key is the (rank+1)st smallest key in the AVL BST.
  */
-struct element * 
+void * 
 avlbst_select(const struct avl_tree *avl, unsigned long rank)
 {
-	if(rank < AVLBST_SIZE(avl))
+	if (rank < AVLBST_SIZE(avl))
 		return select_node(rank, avl->root);
 	return NULL;
 }
 
 /* Returns all keys in the AVL tree in the given range. */
 void
-avlbst_keys(const struct avl_tree *avl, const char *lokey, const char *hikey,
-		struct queue *keys)
+avlbst_keys(const struct avl_tree *avl, const void *lokey, const void *hikey,
+		struct single_list *keys)
 {
-	keys_range(avl->root, lokey, hikey, keys);
+	slist_init(keys, 0, avl->cmp);
+	keys_range(avl->root, lokey, hikey, avl->cmp, keys);
 }
 
 void 
-avlbst_breadth_first(const struct avl_tree *avl, struct queue *keys)
+avlbst_breadth_first(const struct avl_tree *avl, struct single_list *keys)
 {
 	struct queue qp;
 	struct avl_node *proot;
 	
-	if(AVLBST_ISEMPTY(avl))
+	if (AVLBST_ISEMPTY(avl))
 		return;
 	
 	QUEUE_INIT(&qp, 0);
+	slist_init(keys, 0, avl->cmp);
 	proot = avl->root;
-	if(proot != NULL)
+	if (proot != NULL)
 		enqueue(&qp, proot);
 	
-	while(!QUEUE_ISEMPTY(&qp)) {
+	while (!QUEUE_ISEMPTY(&qp)) {
 		dequeue(&qp, (void **)&proot);
-		if(proot != NULL)
-			enqueue(keys, proot->item.key);
+		if (proot != NULL)
+			slist_append(keys, proot->key);
 		
-		if(proot->left != NULL)
+		if (proot->left != NULL)
 			enqueue(&qp, proot->left);
-		if(proot->right != NULL)
+		if (proot->right != NULL)
 			enqueue(&qp, proot->right);
 	}
 	
@@ -268,26 +262,26 @@ avlbst_check(const struct avl_tree *avl)
 {
 	int flag = 1;
 	
-	if(!isbst(avl->root, NULL, NULL)) {
+	if (!isbst(avl->root, NULL, NULL, avl->cmp)) {
 		printf("Not in symmetric order.\n");
 		flag = 0;
 	}
 	
-	if(!isavl(avl->root)) {
+	if (!isavl(avl->root)) {
 		printf("Not a avl tree.\n");
 		flag = 0;
 	}
 	
-	if(!is_size_consistent(avl->root)) {
+	if (!is_size_consistent(avl->root)) {
 		printf("Subtree counts not consistent.\n");
 		flag = 0;
 	}
 	
-	if(!is_rank_consistent(avl)) {
+	if (!is_rank_consistent(avl)) {
 		printf("Ranks not consistent.\n");
 		flag = 0;
 	}
-	
+
 	return flag;
 }
 
@@ -298,34 +292,35 @@ avlbst_check(const struct avl_tree *avl)
  * the given key in the subtree.
  */
 static struct avl_node * 
-get_node(struct avl_node *node, const char *key)
+get_node(struct avl_node *node, const void *key, algcomp_ft *kcmp)
 {
-	int cmp;
+	int cr;
 	
-	if(node == NULL)
+	if (node == NULL)
 		return NULL;	/* not found key */
 	
-	cmp = strcmp(key, node->item.key);
-	if(cmp < 0)
-		return get_node(node->left, key);
-	else if(cmp > 0)
-		return get_node(node->right, key);
+	cr = kcmp(key, node->key);
+	if (cr == 1)
+		return get_node(node->left, key, kcmp);
+	else if (cr == -1)
+		return get_node(node->right, key, kcmp);
 	else
 		return node;
 }
 
-/* 
- * Make the AVL node for AVL tree using 
- * the specified item.
- */
+/* Make the AVL node for AVL tree using the specified key. */
 static struct avl_node * 
-make_node(const struct element *item)
+make_node(const void *key, unsigned int ksize)
 {
 	struct avl_node *current;
 	
 	current = (struct avl_node *)algmalloc(sizeof(struct avl_node));
 	
-	current->item = *item;
+	if (ksize != 0) {
+		current->key = algmalloc(ksize);
+		memcpy(current->key, key, ksize);
+	} else
+		current->key = (void *)key;
 	current->left = NULL;
 	current->right = NULL;
 	current->height = 0;	/* just one node height is 0 */
@@ -335,8 +330,8 @@ make_node(const struct element *item)
 }
 
 /* 
- * Rotates the given subtree to the right, meanwhile, 
- * updates the size and height of subtree. 
+ * Rotates the given subtree to the right, meanwhile, updates the size and
+ * height of subtree. 
  */
 static inline struct avl_node * 
 rotate_right(struct avl_node *hnode)
@@ -358,8 +353,8 @@ rotate_right(struct avl_node *hnode)
 }
 
 /* 
- * Rotates the given subtree to the left, meanwhile, 
- * updates the size and height of subtree. 
+ * Rotates the given subtree to the left, meanwhile, updates the size and
+ * height of subtree. 
  */
 static inline struct avl_node * 
 rotate_left(struct avl_node *hnode)
@@ -380,16 +375,16 @@ rotate_left(struct avl_node *hnode)
 	return lnode;
 }
 
-/* Restores the AVL tree property of the subtree. */
+/* Restores the AVL treevvvproperty of the subtree. */
 static struct avl_node * 
 balance(struct avl_node *node)
 {
-	if(BALANCE_FACTOR(node) < -1) {
-		if(BALANCE_FACTOR(node->right) > 0)
+	if (BALANCE_FACTOR(node) < -1) {
+		if (BALANCE_FACTOR(node->right) > 0)
 			node->right = rotate_right(node->right);
 		node = rotate_left(node);
-	} else if(BALANCE_FACTOR(node) > 1) {
-		if(BALANCE_FACTOR(node->left) < 0)
+	} else if (BALANCE_FACTOR(node) > 1) {
+		if (BALANCE_FACTOR(node->left) < 0)
 			node->left = rotate_left(node->left);
 		node = rotate_right(node);
 	}
@@ -399,26 +394,24 @@ balance(struct avl_node *node)
 
 /* 
  * Inserts the key-value pair in the subtree. 
- * It overrides the old value with the new value 
- * if the AVL tree already contains the specified key. 
+ * It overrides the old value with the new value if the AVL tree already
+ * contains the specified key. 
  */
 static struct avl_node * 
-put_node(struct avl_node *node, const struct element *item)
+put_node(const struct avl_tree *avl, struct avl_node *node, const void *key)
 {
-	int cmp;
+	int cr;
 	
 	if(node == NULL)
-		return make_node(item);
+		return make_node(key, avl->keysize);
 	
-	cmp = strcmp(item->key, node->item.key);
-	if(cmp < 0)
-		node->left = put_node(node->left, item);
-	else if(cmp > 0)
-		node->right = put_node(node->right, item);
-	else {
-		node->item.value = item->value;
+	cr = avl->cmp(key, node->key);
+	if (cr == 1)
+		node->left = put_node(avl, node->left, key);
+	else if (cr == -1)
+		node->right = put_node(avl, node->right, key);
+	else
 		return node;
-	}
 	
 	node->size = 1 + AVLBST_SIZE_NODE(node->left) + 
 		AVLBST_SIZE_NODE(node->right);
@@ -429,27 +422,22 @@ put_node(struct avl_node *node, const struct element *item)
 }
 
 static void 
-postorder_nodes(struct avl_node *root, 
-			void (*release)(struct avl_node *node))
+release_subtree(struct avl_node *root, unsigned int ksize)
 {
-	if(root != NULL) {
-		postorder_nodes(root->left, release);
-		postorder_nodes(root->right, release);
-		(*release)(root);
+	if (root != NULL) {
+		release_subtree(root->left, ksize);
+		release_subtree(root->right, ksize);
+		if (ksize != 0)
+			ALGFREE(root->key);
+		ALGFREE(root);
 	}
 }
 
-static inline void
-release_node(struct avl_node *node)
-{
-	ALGFREE(node);
-}
-
 static void 
-preorder_nodes(const struct avl_node *root, struct queue *keys)
+preorder_nodes(const struct avl_node *root, struct single_list *keys)
 {
-	if(root != NULL) {
-		enqueue(keys, root->item.key);
+	if (root != NULL) {
+		slist_append(keys, root->key);
 		preorder_nodes(root->left, keys);
 		preorder_nodes(root->right, keys);
 	}
@@ -462,7 +450,7 @@ preorder_nodes(const struct avl_node *root, struct queue *keys)
 static struct avl_node * 
 min_node(struct avl_node *node)
 {
-	if(node->left == NULL)
+	if (node->left == NULL)
 		return node;
 	return min_node(node->left);
 }
@@ -474,23 +462,20 @@ min_node(struct avl_node *node)
 static struct avl_node * 
 max_node(struct avl_node *node)
 {
-	if(node->right == NULL)
+	if (node->right == NULL)
 		return node;
 	return max_node(node->right);
 }
 
-/* 
- * Delete the key-value pair with 
- * the minimum key rooted at Node. 
- */
+/* Delete the keywith the minimum key rooted at Node. */
 static struct avl_node * 
 delete_min_node(struct avl_node *node)
 {
 	struct avl_node *current;
 	
-	if(node->left == NULL) {
+	if (node->left == NULL) {
 		current = node->right;
-		release_node(node);
+		ALGFREE(node);
 		return current;
 	}
 	
@@ -509,7 +494,7 @@ delete_min(struct avl_node *node)
 {
 	struct avl_node *current;
 	
-	if(node->left == NULL) {
+	if (node->left == NULL) {
 		current = node->right;
 		return current;
 	}
@@ -524,10 +509,7 @@ delete_min(struct avl_node *node)
 	return balance(node);
 }
 
-/* 
- * Delete the key-value pair with 
- * the maximum key rooted at Node. 
- */
+/* Delete the key with the maximum key rooted at Node. */
 static struct avl_node * 
 delete_max_node(struct avl_node *node)
 {
@@ -535,7 +517,7 @@ delete_max_node(struct avl_node *node)
 	
 	if(node->right == NULL) {
 		current = node->left;
-		release_node(node);
+		ALGFREE(node);
 		return current;
 	}
 	
@@ -549,41 +531,36 @@ delete_max_node(struct avl_node *node)
 	return balance(node);
 }
 
-/* 
- * Delete the key-value pair with 
- * the given key rooted at Node. 
- */
+/* Delete the key by the given key rooted at Node. */
 static struct avl_node * 
-delete_node(struct avl_node *node, const char *key)
+delete_node(struct avl_node *node, const void *key, algcomp_ft *kcmp)
 {
-	int cmp;
+	int cr;
 	struct avl_node *current;
 	
-	if(node == NULL)
+	if (node == NULL)
 		return NULL;
 	
-	cmp = strcmp(key, node->item.key);
-	if(cmp < 0)
-		node->left = delete_node(node->left, key);
-	else if(cmp > 0)
-		node->right = delete_node(node->right, key);
+	cr = kcmp(key, node->key);
+	if (cr == 1)
+		node->left = delete_node(node->left, key, kcmp);
+	else if (cr == -1)
+		node->right = delete_node(node->right, key, kcmp);
 	else {
-		if(node->left == NULL) {
+		if (node->left == NULL) {
 			current = node->right;
-			release_node(node);
+			ALGFREE(node);
 			return current;
-		} 
-		else if(node->right == NULL) {
+		} else if (node->right == NULL) {
 			current = node->left;
-			release_node(node);
+			ALGFREE(node);
 			return current;
-		}
-		else {
+		} else {
 			current = node;
 			node = min_node(current->right);
 			node->right = delete_min(current->right);
 			node->left = current->left;
-			release_node(current);
+			ALGFREE(current);
 		}
 	}
 	
@@ -600,19 +577,19 @@ delete_node(struct avl_node *node, const char *key)
  * less than or equal to the given key.
  */
 static struct avl_node * 
-floor_node(struct avl_node *node, const char *key)
+floor_node(struct avl_node *node, const void *key, algcomp_ft *kcmp)
 {
-	int cmp;
+	int cr;
 	struct avl_node *rnode;
 	
-	if(node == NULL)	/* not found the specified key */
+	if (node == NULL)	/* not found the specified key */
 		return NULL;
 
-	if((cmp = strcmp(key, node->item.key)) == 0)
+	if ((cr = kcmp(key, node->key)) == 0)
 		return node;
-	if(cmp < 0)
-		return floor_node(node->left, key);
-	if((rnode = floor_node(node->right, key)) != NULL)
+	if (cr == 1)
+		return floor_node(node->left, key, kcmp);
+	if ((rnode = floor_node(node->right, key, kcmp)) != NULL)
 		return rnode;
 	else
 		return node;
@@ -623,19 +600,19 @@ floor_node(struct avl_node *node, const char *key)
  * greater than or equal to the given key.
  */
 static struct avl_node * 
-ceiling_node(struct avl_node *node, const char *key)
+ceiling_node(struct avl_node *node, const void *key, algcomp_ft *kcmp)
 {
-	int cmp;
+	int cr;
 	struct avl_node *lnode;
 	
-	if(node == NULL)
+	if (node == NULL)
 		return NULL;
 	
-	if((cmp = strcmp(key, node->item.key)) == 0)
+	if ((cr = kcmp(key, node->key)) == 0)
 		return node;
-	if(cmp > 0)
-		return ceiling_node(node->right, key);
-	if((lnode = ceiling_node(node->left, key)) != NULL)
+	if (cr == -1)
+		return ceiling_node(node->right, key, kcmp);
+	if ((lnode = ceiling_node(node->left, key, kcmp)) != NULL)
 		return lnode;
 	else
 		return node;
@@ -646,19 +623,19 @@ ceiling_node(struct avl_node *node, const char *key)
  * in the subtree rooted at Node.
  */
 static unsigned long 
-rank_node(const char *key, const struct avl_node *node)
+rank_node(const struct avl_node *node, const void *key, algcomp_ft *kcmp)
 {
-	int cmp;
+	int cr;
 	
-	if(node == NULL)
+	if (node == NULL)
 		return 0;
 	
-	if((cmp = strcmp(key, node->item.key)) < 0)
-		return rank_node(key, node->left);
-	if(cmp > 0)
-		return 1 + AVLBST_SIZE_NODE(node->left) + 
-			rank_node(key, node->right);
-	else
+	if ((cr = kcmp(key, node->key)) == 1)
+		return rank_node(node->left, key, kcmp);
+	if (cr == -1) {
+		return 1 + AVLBST_SIZE_NODE(node->left) +
+			rank_node(node->right, key, kcmp);
+	} else
 		return AVLBST_SIZE_NODE(node->left);
 }
 
@@ -666,22 +643,21 @@ rank_node(const char *key, const struct avl_node *node)
  * Return key in BST rooted at Node of given rank.
  * Precondition: rank is in legal range. 
  */
-static struct element * 
+static void * 
 select_node(unsigned long rank, struct avl_node *node)
 {
 	unsigned long leftsize;
 	
-	if(node == NULL)
+	if (node == NULL)
 		return NULL;
 	
 	leftsize = AVLBST_SIZE_NODE(node->left);
-	if(rank < leftsize)
+	if (rank < leftsize)
 		return select_node(rank, node->left);
-	if(rank > leftsize)
-		return select_node(rank - leftsize - 1,
-			node->right);
+	if (rank > leftsize)
+		return select_node(rank - leftsize - 1, node->right);
 	else
-		return &(node->item);
+		return (node->key);
 }
 
 /* 
@@ -689,43 +665,43 @@ select_node(unsigned long rank, struct avl_node *node)
  * rooted at Node to the Queue. 
  */
 static void 
-keys_range(const struct avl_node *node, const char *lokey,
-		const char *hikey, struct queue *qp)
+keys_range(const struct avl_node *node, const void *lokey, const void *hikey,
+		algcomp_ft *kcmp, struct single_list *keys)
 {
 	int cmplo, cmphi;
 	
-	if(node == NULL)
+	if (node == NULL)
 		return;
 	
-	cmplo = strcmp(lokey, node->item.key);
-	cmphi = strcmp(hikey, node->item.key);
+	cmplo = kcmp(lokey, node->key);
+	cmphi = kcmp(hikey, node->key);
 	
-	if(cmplo < 0)
-		keys_range(node->left, lokey, hikey, qp);
-	if(cmplo <= 0 && cmphi >= 0)
-		enqueue(qp, node->item.key);
-	if(cmphi > 0)
-		keys_range(node->right, lokey, hikey, qp);
+	if (cmplo == 1)
+		keys_range(node->left, lokey, hikey, kcmp, keys);
+	if (cmplo <= 0 && cmphi >= 0)
+		slist_append(keys, node->key);
+	if (cmphi == -1)
+		keys_range(node->right, lokey, hikey, kcmp, keys);
 }
 
 /* 
- * Checks if the tree rooted at Note is a BST with all 
- * keys strictly between min and max 
- * (if min or max is null, treat as empty constraint).
+ * Checks if the tree rooted at Note is a BST with all keys strictly between
+ * min and max (if min or max is null, treat as empty constraint).
  */
 static int 
-isbst(const struct avl_node *node, const char *minkey, const char *maxkey)
+isbst(const struct avl_node *node, const void *minkey, const void *maxkey,
+	algcomp_ft *kcmp)
 {
-	if(node == NULL)
+	if (node == NULL)
 		return 1;		/* empty constraint */
 	
-	if(minkey != NULL && strcmp(node->item.key, minkey) < 0)
+	if (minkey != NULL && kcmp(node->key, minkey) == 1)
 		return 0;
-	if(maxkey != NULL && strcmp(node->item.key, maxkey) > 0)
+	if (maxkey != NULL && kcmp(node->key, maxkey) == -1)
 		return 0;
 	
-	return isbst(node->left, minkey, node->item.key) && 
-	   isbst(node->right, node->item.key, maxkey);
+	return isbst(node->left, minkey, node->key, kcmp) &&
+	   isbst(node->right, node->key, maxkey, kcmp);
 }
 
 /* Checks if AVL property is consistent in the subtree. */
@@ -734,11 +710,11 @@ isavl(const struct avl_node *node)
 {
 	int bf;
 	
-	if(node == NULL)
+	if (node == NULL)
 		return 1;
 	
 	bf = BALANCE_FACTOR(node);
-	if(bf < -1 || bf > 1)
+	if (bf < -1 || bf > 1)
 		return 0;
 	
 	return isavl(node->left) && isavl(node->right);
@@ -748,14 +724,13 @@ isavl(const struct avl_node *node)
 static int 
 is_size_consistent(const struct avl_node *node)
 {
-	if(node == NULL)
+	if (node == NULL)
 		return 1;		/* treat as empty constraint */
-	if(node->size != AVLBST_SIZE_NODE(node->left) + 
+	if (node->size != AVLBST_SIZE_NODE(node->left) +
 		AVLBST_SIZE_NODE(node->right) + 1) {
 		return 0;
 	}
-	return is_size_consistent(node->left) && 
-		is_size_consistent(node->right);
+	return is_size_consistent(node->left) && is_size_consistent(node->right);
 }
 
 /* check that ranks are consistent */
@@ -763,26 +738,25 @@ static int
 is_rank_consistent(const struct avl_tree *bst)
 {
 	unsigned long i;
-	char *key;
-	struct queue qu;
-	struct element *el;
-	
-	for(i = 0; i < AVLBST_SIZE(bst); i++) {
+	void *key, *el;
+	struct single_list keys;
+	struct slist_node *loc;
+
+	for (i = 0; i < AVLBST_SIZE(bst); i++) {
 		el = avlbst_select(bst, i);
-		if(i != avlbst_rank(bst, el->key))
+		if (i != avlbst_rank(bst, el))
 			return 0;
 	}
-	
-	QUEUE_INIT(&qu, 0);
-	avlbst_keys(bst, avlbst_min(bst), avlbst_max(bst), &qu);
-	while(!QUEUE_ISEMPTY(&qu)) {
-		dequeue(&qu, (void **)&key);
+
+	avlbst_keys(bst, avlbst_min(bst), avlbst_max(bst), &keys);
+	slist_rewind(&keys, &loc);
+	while (slist_has_next(loc)) {
+		key = slist_next_key(&loc);
 		el = avlbst_select(bst, avlbst_rank(bst, key));
-		if(strcmp(key, el->key) != 0)
+		if (bst->cmp(key, el) != 0)
 			return 0;
 	}
-	
-	queue_clear(&qu);
+	slist_clear(&keys);
 
 	return 1;
 }

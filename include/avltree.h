@@ -35,28 +35,27 @@
 #include "algcomm.h"
 
 struct avl_node {
-	struct element item;		/* key-value pair */
-	struct avl_node *left;		/* left subtree */
-	struct avl_node *right;		/* right subtree */
-	long height;		/* height of the subtree */
-	unsigned long size;	/* number of nodes in subtree */
+	void *key;				/* key contained by the Node */
+	struct avl_node *left;	/* left subtree */
+	struct avl_node *right;	/* right subtree */
+	long height;			/* height of the subtree */
+	unsigned long size;		/* number of nodes in subtree */
 };
 
 struct avl_tree {
 	struct avl_node *root;	/* AVL tree root node */
+	unsigned int keysize;	/* the bytes of the key */
+	algcomp_ft *cmp;		/* comparator over the keys */
 };
 
-/* 
- * Returns the number of key-value pairs 
- * in this AVL tree.
- */
+/* Returns the number of key-value pairs in this AVL tree. */
 #define AVLBST_SIZE(avl)	\
 	((avl)->root == NULL ? 0 : (avl)->root->size)
 
 /* 
  * Returns the height of the internal AVL tree.
- * It is assumed that the height of an empty tree is -1 
- * and the height of a tree with just one node is 0.
+ * It is assumed that the height of an empty tree is -1 and the height of a
+ * tree with just one node is 0.
  */
 #define AVLBST_HEIGHT(avl)	\
 	((avl)->root == NULL ? (-1) : (avl)->root->height)
@@ -64,72 +63,56 @@ struct avl_tree {
 /* Checks if the AVL tree is empty. */
 #define AVLBST_ISEMPTY(avl)	((avl)->root == NULL ? 1 : 0)
 
+struct single_list;
+
 /* Initializes an empty AVL tree */
-#define AVLBST_INIT(avl)	((avl)->root = NULL)
+void avlbst_init(struct avl_tree *avl, unsigned int ksize, algcomp_ft *cmp);
 
-struct queue;
+/* Returns the key in this avl tree by the given key. */
+void * avlbst_get(const struct avl_tree *avl, const void *key);
 
-/* 
- * Returns element associated with the given key in the AVL tree. 
- */
-struct element * avlbst_get(const struct avl_tree *avl, const char *key);
-
-/* 
- * Inserts the specified key-value 
- * pair into the AVL tree. 
- */
-void avlbst_put(struct avl_tree *avl, const struct element *item);
+/* Inserts the key into the AVL tree. */
+void avlbst_put(struct avl_tree *avl, const void *key);
 
 /* Clears this avl tree. */
 void avlbst_clear(struct avl_tree *avl);
 
 /* Traverses for preorder */
-void avlbst_preorder(const struct avl_tree *avl, struct queue *keys);
+void avlbst_preorder(const struct avl_tree *avl, struct single_list *keys);
 
-/* Returns the smallest key in the AVL BST */
-char * avlbst_min(const struct avl_tree *avl);
+/* Returns the smallest key in the AVL BST. */
+void * avlbst_min(const struct avl_tree *avl);
 
-/* Returns the largest key in the AVL BST */
-char * avlbst_max(const struct avl_tree *avl);
+/* Returns the largest key in the AVL BST. */
+void * avlbst_max(const struct avl_tree *avl);
 
-/* Removes the smallest key and associated with value from this AVL tree. */
+/* Removes the smallest key from this AVL tree. */
 void avlbst_delete_min(struct avl_tree *avl);
 
-/* 
- * Removes the largest key and associated with value 
- * from this AVL tree. 
- */
+/* Removes the largest key from this AVL tree. */
 void avlbst_delete_max(struct avl_tree *avl);
 
-/* 
- * Removes the specified key and its associated value from the AVL tree. 
- */
-void avlbst_delete(struct avl_tree *avl, const char *key);
+/* Removes the specified key from the AVL tree. */
+int avlbst_delete(struct avl_tree *avl, const void *key);
 
-/* 
- * Returns the largest key in the AVL tree less than or equal to Key.
- */
-struct element * avlbst_floor(const struct avl_tree *avl, const char *key);
+/* Returns the largest key in the AVL tree less than or equal to Key. */
+void * avlbst_floor(const struct avl_tree *avl, const void *key);
 
-/* 
- * Returns the smallest key in the AVL tree greater than or equal to Key.
- */
-struct element * avlbst_ceiling(const struct avl_tree *avl, const char *key);
+/* Returns the smallest key in the AVL tree greater than or equal to Key. */
+void * avlbst_ceiling(const struct avl_tree *avl, const void *key);
 
-/* 
- * Returns the number of keys in the AVL BST strictly less than Key.
- */
-unsigned long avlbst_rank(const struct avl_tree *avl, const char *key);
+/* Returns the number of keys in the AVL BST strictly less than Key. */
+unsigned long avlbst_rank(const struct avl_tree *avl, const void *key);
 
 /* Return the key in the AVL BST of a given rank. */
-struct element * avlbst_select(const struct avl_tree *avl, unsigned long rank);
+void * avlbst_select(const struct avl_tree *avl, unsigned long rank);
 
 /* Returns all keys in the AVL tree in the given range. */
-void avlbst_keys(const struct avl_tree *avl, const char *lokey,
-				const char *hikey, struct queue *keys);
+void avlbst_keys(const struct avl_tree *avl, const void *lokey,
+				const void *hikey, struct single_list *keys);
 
 /* Breadth first search traverse for this avl tree. */
-void avlbst_breadth_first(const struct avl_tree *avl, struct queue *keys);
+void avlbst_breadth_first(const struct avl_tree *avl, struct single_list *keys);
 
 /* Check integrity of AVL tree data structure. */
 int avlbst_check(const struct avl_tree *avl);
