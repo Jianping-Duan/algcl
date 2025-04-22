@@ -39,7 +39,7 @@ main(int argc, char *argv[])
 	struct digraph g[20];
 	int i;
 	
-	if(argc != 2)
+	if (argc != 2)
 		errmsg_exit("Usage: %s <datafile>\n", argv[0]);
 	
 	SET_RANDOM_SEED;
@@ -51,8 +51,7 @@ main(int argc, char *argv[])
 	digraph_print(&g[0]);
 	printf("\n");
 	
-	printf("Clones other digraph from "
-		"the current digraph.\n");
+	printf("Clones other digraph from the current digraph.\n");
 	digraph_clone(&g[0], &g[1]);
 	digraph_print(&g[1]);
 	printf("\n");
@@ -62,84 +61,82 @@ main(int argc, char *argv[])
 	digraph_print(&g[2]);
 	printf("\n");
 	
-	
 	printf("Generates a random simple digraph.\n");
-	simple_digraph1(10, 13, &g[3]);
+	simple_digraph1(15, 18, &g[3]);
 	digraph_print(&g[3]);
 	printf("\n");
 	
-	printf("Generates a random simple digraph "
-			"using probability p.\n");
-	simple_digraph2(12, 0.5, &g[4]);
+	printf("Generates a random simple digraph using probability p.\n");
+	simple_digraph2(15, 0.5, &g[4]);
 	digraph_print(&g[4]);
 	printf("\n");
 	
 	printf("Generates a complete digraph.\n");
-	complete_digraph(10, &g[5]);
+	complete_digraph(15, &g[5]);
 	digraph_print(&g[5]);
 	printf("\n");
 	
 	printf("Generates a random simple DAG.\n");
-	simple_acyclic_digraph(10, 15, &g[6]);
+	simple_acyclic_digraph(15, 18, &g[6]);
 	digraph_print(&g[6]);
 	printf("\n");
 	
 	printf("Generates a random tournament digraph.\n");
-	tournament_digraph(5, &g[7]);
+	tournament_digraph(8, &g[7]);
 	digraph_print(&g[7]);
 	printf("\n");
 	
 	printf("Generates a complete rooted-in DAG.\n");
-	complete_rootedin_dag(5, &g[8]);
+	complete_rootedin_dag(8, &g[8]);
 	digraph_print(&g[8]);
 	printf("\n");
 	
 	printf("Generates a random rooted-in DAG.\n");
-	rootedin_dag(10, 15, &g[9]);
+	rootedin_dag(15, 18, &g[9]);
 	digraph_print(&g[9]);
 	printf("\n");
 	
 	printf("Generates a complete rooted-out DAG.\n");
-	complete_rootedout_dag(5, &g[10]);
+	complete_rootedout_dag(8, &g[10]);
 	digraph_print(&g[10]);
 	printf("\n");
 	
 	printf("Generates a random rooted-out DAG.\n");
-	rootedout_dag(10, 15, &g[11]);
+	rootedout_dag(15, 18, &g[11]);
 	digraph_print(&g[11]);
 	printf("\n");
 	
 	printf("Generates a path digraph.\n");
-	path_digraph(10, &g[12]);
+	path_digraph(15, &g[12]);
 	digraph_print(&g[12]);
 	printf("\n");
 	
 	printf("Generates a complete binary tree digraph.\n");
-	binary_tree_digraph(10, &g[13]);
+	binary_tree_digraph(15, &g[13]);
 	digraph_print(&g[13]);
 	printf("\n");
 	
 	printf("Generates a cycle digraph.\n");
-	cycle_digraph(10, &g[14]);
+	cycle_digraph(15, &g[14]);
 	digraph_print(&g[14]);
 	printf("\n");
 	
 	printf("Generates an Eulerian cycle digraph.\n");
-	eulerian_cycle_digraph(10, 13, &g[15]);
+	eulerian_cycle_digraph(15, 20, &g[15]);
 	digraph_print(&g[15]);
 	printf("\n");
 	
 	printf("Generates an Eulerian path digraph.\n");
-	eulerian_path_digraph(10, 13, &g[16]);
+	eulerian_path_digraph(15, 20, &g[16]);
 	digraph_print(&g[16]);
 	printf("\n");
 	
 	printf("Generates a random simple digraph that have strong components.\n");
-	strong_component_digraph(10, 15, 3, &g[17]);
+	strong_component_digraph(15, 25, 5, &g[17]);
 	digraph_print(&g[17]);
 	printf("\n");
 	
-	for(i = 0; i < 18; i++)
+	for (i = 0; i < 18; i++)
 		digraph_clear(&g[i]);
 	
 	return 0;

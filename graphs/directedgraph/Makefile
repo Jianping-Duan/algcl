@@ -1,7 +1,7 @@
 # DEBUG = -O0 -g
 
 TOPDIR = ../..
-LIBS = -lsearchtree -lheap -llinearlist -lalgcomm
+LIBS = -lsearchtree -lheap -lskiplist -llinearlist -lalgcomm -lm
 
 OBJS = digraph.o digraphgenerator.o digraphdfs.o \
 	   digraphdfsp.o digraphbfsp.o digraphcycle.o \

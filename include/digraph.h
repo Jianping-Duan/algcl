@@ -37,8 +37,8 @@
 struct single_list;
 
 struct digraph {
-	unsigned int vertices;	/* number of vertices in this digraph */
-	unsigned int edges;		/* number of edges in this digraph */
+	unsigned int vertices;			/* number of vertices in this digraph */
+	unsigned int edges;				/* number of edges in this digraph */
 	struct single_list **adjlist;	/* adj[v] = adjacency list for vertex v */
 	int *indegree;					/* indegree[v] = indegree of vertex v */
 };
@@ -53,25 +53,15 @@ struct digraph {
 #define DIGRAPH_ADJLIST(g, v)	\
 	((v) >= (g)->vertices ? NULL : (g)->adjlist[v])
 
-/* 
- * Returns the number of directed edges incident 
- * from vertex v.
- */
+/* Returns the number of directed edges incident from vertex v. */
 #define DIGRAPH_OUTDEGREE(g, v)	\
-	((v) >= (g)->vertices ? (-1) : \
-	(long)SLIST_LENGTH((g)->adjlist[v]))
+	((v) >= (g)->vertices ? (-1) : (long)SLIST_LENGTH((g)->adjlist[v]))
 
-/* 
- * Returns the number of directed edges incident 
- * to vertex v.
- */
+/* Returns the number of directed edges incident to vertex v. */
 #define DIGRAPH_INDEGREE(g, v)	\
 	((v) >= (g)->vertices ? (-1) : (g)->indegree[v])
 
-/* 
- * Initializes an empty digraph with 
- * n vertices and 0 edges. 
- */
+/* Initializes an empty digraph with n vertices and 0 edges. */
 void digraph_init(struct digraph *g, unsigned int n);
 
 /* 
@@ -82,19 +72,15 @@ void digraph_init(struct digraph *g, unsigned int n);
 void digraph_add_edge(struct digraph *g, unsigned int v, unsigned int w);
 
 /* 
- * Initializes a digraph from the specified 
- * file input stream.
+ * Initializes a digraph from the specified file input stream.
  * The format is the number of vertices V,
  * followed by the number of edges E,
- * followed by E pairs of vertices, 
- * with each entry separated by whitespace. 
+ * followed by E pairs of vertices,
+ * with each entry separated by whitespace.
  */
 void digraph_init_fistream(struct digraph *g, FILE *fin);
 
-/* 
- * Prints this digraph of everyone vertex 
- * and them composed the edges.
- */
+/* Prints this digraph of everyone vertex and them composed the edges. */
 void digraph_print(const struct digraph *g);
 
 /* Clones other digraph from the digraph */
