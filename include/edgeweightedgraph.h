@@ -45,23 +45,20 @@ struct edge {
 
 /* edge-weighted graph */
 struct ewgraph {
-	unsigned int vertices;	/* edge-weighted graph of vertices */
-	unsigned int edges;		/* edge-weighted graph of edges */
+	unsigned int vertices;			/* edge-weighted graph of vertices */
+	unsigned int edges;				/* edge-weighted graph of edges */
 	struct single_list **adjlist;	/* adjacent list */
 };
 
 #define FLOATING_POINT_EPSILON	1.OE-6
 
-/* 
- * Initializes an edge between vertices 
- * v and w of the given weight. 
- */
+/* Initializes an edge between vertices v and w of the given weight. */
 static inline struct edge * 
 make_edge(unsigned int v, unsigned int w, float wt)
 {
 	struct edge *e;
 
-	if(isnan(wt))
+	if (isnan(wt))
 		errmsg_exit("Weight is NaN.\n");
 
 	e = (struct edge *)algmalloc(sizeof(struct edge));
@@ -78,16 +75,13 @@ make_edge(unsigned int v, unsigned int w, float wt)
 /* Returns either endpoint of this edge. */
 #define EDGE_EITHER(edge)	((edge)->v)
 
-/* 
- * Returns the endpoint of this edge that is 
- * different from the given vertex. 
- */
+/* Returns the endpoint of this edge that is different from the given vertex. */
 static inline unsigned int 
 edge_other(const struct edge *e, unsigned int v)
 {
-	if(e->v == v)
+	if (e->v == v)
 		return e->w;
-	else if(e->w == v)
+	else if (e->w == v)
 		return e->v;
 	else
 		errmsg_exit("Illegal endpoint, %u\n", v);
@@ -108,33 +102,25 @@ edge_equals(const void *k1, const void *k2)
 	e1 = (struct edge *)k1;
 	e2 = (struct edge *)k2;
 
-	if((e1->v == e2->v && e1->w == e2->w) || 
+	if ((e1->v == e2->v && e1->w == e2->w) ||
 	   (e1->w == e2->v && e1->v == e2->w)) {
 		sprintf(w1, "%.5f", (double)(e1->weight));
 		sprintf(w2, "%.5f", (double)(e2->weight));
-		return strcmp(w1, w2) == 0;
-	}
-	else
-		return 0;
+		return strcmp(w1, w2) == 0 ? 0 : 1;
+	} else
+		return 1;
 }
 
 /* Returns a string representation of this edge. */
-#define EDGE_STRING(edge, str)	\
-	do {						\
-		sprintf((str), "%u-%u %.5f", (edge)->v, (edge)->w, \
-			(double)((edge)->weight));	\
-} while(0)
+#define EDGE_STRING(edge, str)	do {					\
+	sprintf((str), "%u-%u %.5f", (edge)->v, (edge)->w,	\
+		(double)((edge)->weight));						\
+} while (0)
 
-/* 
- * Returns the number of vertices in 
- * this edge-weighted graph. 
- */
+/* Returns the number of vertices in this edge-weighted graph. */
 #define EWGRAPH_VERTICES(g)	((g)->vertices)
 
-/* 
- * Returns the number of edges in 
- * this edge-weighted graph.
- */
+/* Returns the number of edges in this edge-weighted graph. */
 #define EWGRAPH_EDGES(g)	((g)->edges)
 
 /* Returns the edges incident on vertex. */
@@ -143,31 +129,19 @@ edge_equals(const void *k1, const void *k2)
 
 /* Returns the degree of vertex */
 #define EWGRAPH_DEGREE(g, v)	\
-	((v) >= (g)->vertices \
-		? (-1) : (long)SLIST_LENGTH((g)->adjlist[v]))
+	((v) >= (g)->vertices ? (-1) : (long)SLIST_LENGTH((g)->adjlist[v]))
 
-/* 
- * Initializes an empty edge-weighted graph 
- * with n vertices and 0 edges. 
- */
+/* Initializes an empty edge-weighted graph with n vertices and 0 edges. */
 void ewgraph_init(struct ewgraph *g, unsigned int vs);
 
-/* 
- * Adds the undirected edge e to 
- * this edge-weighted graph. 
- */
+/* Adds the undirected edge e to this edge-weighted graph. */
 void ewgraph_add_edge(struct ewgraph *g, const struct edge *e);
 
-/* 
- * Initializes a random edge-weighted graph 
- * with vs vertices and es edges.
- */
-void ewgraph_init_randomly(struct ewgraph *g, unsigned int vs,
-						unsigned int es);
+/* Initializes a random edge-weighted graph with vs vertices and es edges. */
+void ewgraph_init_randomly(struct ewgraph *g, unsigned int vs, unsigned int es);
 
 /* 
- * Initializes an edge-weighted graph from 
- * an file input stream.
+ * Initializes an edge-weighted graph from an file input stream.
  * The format is the number of vertices v,
  * followed by the number of edges e,
  * followed by e pairs of vertices and edge weights,
@@ -175,10 +149,7 @@ void ewgraph_init_randomly(struct ewgraph *g, unsigned int vs,
  */
 void ewgraph_init_fistream(struct ewgraph *g, FILE *fin);
 
-/* 
- * Initializes a new edge-weighted graph 
- * that is a deep copy of tg. 
- */
+/* Initializes a new edge-weighted graph that is a deep copy of tg. */
 void ewgraph_clone(const struct ewgraph *sg, struct ewgraph *tg);
 
 /* Prints this edge-weighted graph. */

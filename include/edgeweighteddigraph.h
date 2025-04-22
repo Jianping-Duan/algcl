@@ -54,16 +54,13 @@ struct ewdigraph {
 
 #define FLOATING_POINT_EPSILON	1.OE-6
 
-/* 
- * Initializes an edge between vertices 
- * v and w of the given weight. 
- */
+/* Initializes an edge between vertices v and w of the given weight. */
 static inline struct diedge * 
 make_diedge(unsigned int v, unsigned int w, float wt)
 {
 	struct diedge *e;
 
-	if(isnan(wt))
+	if (isnan(wt))
 		errmsg_exit("Weight is NaN.\n");
 
 	e = (struct diedge *)algmalloc(sizeof(struct diedge));
@@ -83,10 +80,7 @@ make_diedge(unsigned int v, unsigned int w, float wt)
 /* Returns the head vertex of the directed edge. */
 #define DIEDGE_TO(edge)		((edge)->w)
 
-/* 
- * Two directed edges are whether equals? 
- * (it used the single linked list)
- */
+/* Two directed edges are whether equals? (it used the single linked list) */
 static inline int 
 diedge_equals(const void *k1, const void *k2)
 {
@@ -96,74 +90,50 @@ diedge_equals(const void *k1, const void *k2)
 	e1 = (struct diedge *)k1;
 	e2 = (struct diedge *)k2;
 
-	if((e1->v == e2->v && e1->w == e2->w)) {
+	if ((e1->v == e2->v && e1->w == e2->w)) {
 		sprintf(w1, "%.5f", (double)(e1->weight));
 		sprintf(w2, "%.5f", (double)(e2->weight));
-		return strcmp(w1, w2) == 0;
-	}
-	else
-		return 0;
+		return strcmp(w1, w2) == 0 ? 0 : 1;
+	} else
+		return 1;
 }
 
 /* Returns a string representation of this edge. */
 #define DIEDGE_STRING(edge, str)	do {	\
-	sprintf((str), "%u->%u %5.3f", \
-	(edge)->v, (edge)->w, (double)((edge)->weight));	\
+	sprintf((str), "%u->%u %5.3f",			\
+		(edge)->v, (edge)->w, (double)((edge)->weight));	\
 } while(0)
 
-/* 
- * Returns the number of vertices in
- * this edge-weighted graph.
- */
+/* Returns the number of vertices in this edge-weighted graph. */
 #define EWDIGRAPH_VERTICES(g)	((g)->vertices)
 
-/* 
- * Returns the number of edges in 
- * this edge-weighted graph.
- */
+/* Returns the number of edges in this edge-weighted graph. */
 #define EWDIGRAPH_EDGES(g)	((g)->edges)
 
 /* Returns the edges incident on vertex. */
 #define EWDIGRAPH_ADJLIST(g, v)	\
 	((v) >= (g)->vertices ? NULL : (g)->adjlist[v])
 
-/* 
- * Returns the number of directed edges 
- * incident from vertex v.
- */
+/* Returns the number of directed edges incident from vertex v. */
 #define EWDIGRAPH_OUTDEGREE(g, v)	\
-	((v) >= (g)->vertices ? (-1) : \
-	(long)SLIST_LENGTH((g)->adjlist[v]))
+	((v) >= (g)->vertices ? (-1) : (long)SLIST_LENGTH((g)->adjlist[v]))
 
-/* 
- * Returns the number of directed edges
- * incident to vertex v.
- */
+/* Returns the number of directed edges incident to vertex v. */
 #define EWDIGRAPH_INDEGREE(g, v)	\
 	((v) >= (g)->vertices ? (-1) : (g)->indegree[v])
 
-/* 
- * Initializes an empty edge-weighted digraph 
- * with n vertices and 0 edges.
- */
+/* Initializes an empty edge-weighted digraph with n vertices and 0 edges. */
 void ewdigraph_init(struct ewdigraph *g, unsigned int vs);
 
-/* 
- * Adds the directed edge e to
- * this edge-weighted digraph.
- */
+/* Adds the directed edge e to this edge-weighted digraph. */
 void ewdigraph_add_edge(struct ewdigraph *g, const struct diedge *e);
 
-/* 
- * Initializes a random edge-weighted digraph 
- * with vs vertices and es edges.
- */
+/* Initializes a random edge-weighted digraph with vs vertices and es edges. */
 void ewdigraph_init_randomly(struct ewdigraph *g, unsigned int vs,
 							unsigned int es);
 
 /* 
- * Initializes an edge-weighted digraph from 
- * an file input stream.
+ * Initializes an edge-weighted digraph from an file input stream.
  * The format is the number of vertices v,
  * followed by the number of edges e,
  * followed by e pairs of vertices and edge weights,
@@ -171,17 +141,14 @@ void ewdigraph_init_randomly(struct ewdigraph *g, unsigned int vs,
  */
 void ewdigraph_init_fistream(struct ewdigraph *g, FILE *fin);
 
-/* 
- * Initializes a new edge-weighted digraph that 
- * is a deep copy of tg. 
- */
+/* Initializes a new edge-weighted digraph that is a deep copy of tg. */
 void ewdigraph_clone(const struct ewdigraph *sg, struct ewdigraph *tg);
 
 /* Prints this edge-weighted digraph. */
 void ewdigraph_print(const struct ewdigraph *g);
 
 /* Gets all edges in this edge-weighted graph. */
-void ewdigraph_edges_get(const struct ewdigraph *g, 
+void ewdigraph_edges_get(const struct ewdigraph *g,
 						struct single_list *edgeset);
 
 /* Clears this edge-weighted digraph. */

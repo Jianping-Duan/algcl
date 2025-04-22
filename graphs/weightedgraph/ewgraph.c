@@ -31,13 +31,14 @@
  */
 #include "edgeweightedgraph.h"
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
 	FILE *fin;
 	struct ewgraph g[3];
 	int i;
 	
-	if(argc != 2)
+	if (argc != 2)
 		errmsg_exit("Usage: %s <datafile>\n", argv[0]);
 
 	SET_RANDOM_SEED;
@@ -59,7 +60,7 @@ int main(int argc, char *argv[])
 	ewgraph_print(&g[2]);
 	ewgraph_clear(&g[2]);
 
-	for(i = 0; i < 3; i++)
+	for (i = 0; i < 3; i++)
 		ewgraph_clear(&g[i]);
 
 	return 0;

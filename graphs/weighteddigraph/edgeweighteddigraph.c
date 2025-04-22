@@ -36,10 +36,7 @@
 
 static void adjlist_init(struct ewdigraph *);
 
-/* 
- * Initializes an empty edge-weighted digraph 
- * with n vertices and 0 edges.
- */
+/* Initializes an empty edge-weighted digraph with n vertices and 0 edges. */
 void 
 ewdigraph_init(struct ewdigraph *g, unsigned int vs)
 {
@@ -50,14 +47,11 @@ ewdigraph_init(struct ewdigraph *g, unsigned int vs)
 	adjlist_init(g);
 
 	g->indegree = (int *)algcalloc(EWDIGRAPH_VERTICES(g), sizeof(int));
-	for(v = 0; v < EWDIGRAPH_VERTICES(g); v++)
+	for (v = 0; v < EWDIGRAPH_VERTICES(g); v++)
 		g->indegree[v] = 0;
 }
 
-/* 
- * Adds the directed edge e to 
- * this edge-weighted digraph.
- */
+/* Adds the directed edge e to this edge-weighted digraph. */
 void 
 ewdigraph_add_edge(struct ewdigraph *g, const struct diedge *e)
 {
@@ -66,12 +60,11 @@ ewdigraph_add_edge(struct ewdigraph *g, const struct diedge *e)
 	v = DIEDGE_FROM(e);
 	w = DIEDGE_TO(e);
 
-	if(v >= EWDIGRAPH_VERTICES(g)) {
+	if (v >= EWDIGRAPH_VERTICES(g)) {
 		errmsg_exit("vertex %u is not between 0 and %u\n", v, 
 			EWDIGRAPH_VERTICES(g) - 1);
 	}
-
-	if(w >= EWDIGRAPH_VERTICES(g)) {
+	if (w >= EWDIGRAPH_VERTICES(g)) {
 		errmsg_exit("vertex %u is not between 0 and %u\n", w, 
 			EWDIGRAPH_VERTICES(g) - 1);
 	}
@@ -81,10 +74,7 @@ ewdigraph_add_edge(struct ewdigraph *g, const struct diedge *e)
 	g->edges++;
 }
 
-/* 
- * Initializes a random edge-weighted digraph 
- * with vs vertices and es edges.
- */
+/* Initializes a random edge-weighted digraph with vs vertices and es edges. */
 void 
 ewdigraph_init_randomly(struct ewdigraph *g, unsigned int vs, unsigned int es)
 {
@@ -93,7 +83,7 @@ ewdigraph_init_randomly(struct ewdigraph *g, unsigned int vs, unsigned int es)
 	struct diedge *de;
 
 	ewdigraph_init(g, vs);
-	for(e = 0; e < es; e++) {
+	for (e = 0; e < es; e++) {
 		v = rand_range_integer(0, vs);
 		w = rand_range_integer(0, vs);
 		weight = (float)0.01 * rand_range_integer(1, 100);
@@ -103,8 +93,7 @@ ewdigraph_init_randomly(struct ewdigraph *g, unsigned int vs, unsigned int es)
 }
 
 /* 
- * Initializes an edge-weighted digraph from 
- * an file input stream.
+ * Initializes an edge-weighted digraph from an file input stream.
  * The format is the number of vertices v,
  * followed by the number of edges e,
  * followed by e pairs of vertices and edge weights,
@@ -123,7 +112,7 @@ ewdigraph_init_fistream(struct ewdigraph *g, FILE *fin)
 	ewdigraph_init(g, vs);
 	
 	fseek(fin, 2L, SEEK_CUR);
-	for(i = 0; i < es; i++) {
+	for (i = 0; i < es; i++) {
 		fgets(buf, BUFSIZE, fin);
 		sscanf(buf, "%u %u %f", &v, &w, &weight);
 		e = make_diedge(v, w,weight);
@@ -132,10 +121,7 @@ ewdigraph_init_fistream(struct ewdigraph *g, FILE *fin)
 	}
 }
 
-/* 
- * Initializes a new edge-weighted digraph that 
- * is a deep copy of tg.
- */
+/* Initializes a new edge-weighted digraph that is a deep copy of tg. */
 void 
 ewdigraph_clone(const struct ewdigraph *sg, struct ewdigraph *tg)
 {
@@ -150,18 +136,15 @@ ewdigraph_clone(const struct ewdigraph *sg, struct ewdigraph *tg)
 	adjlist_init(tg);
 
 	STACK_INIT(&rg, 0);
-	for(v = 0; v < EWDIGRAPH_VERTICES(sg); v++) {
-		/* 
-		 * Reverse so that adjacency list 
-		 * is in same order as original.
-		 */
+	for (v = 0; v < EWDIGRAPH_VERTICES(sg); v++) {
+		/* Reverse so that adjacency list is in same order as original. */
 		adj = EWDIGRAPH_ADJLIST(sg, v);
 		SLIST_FOREACH(adj, nptr, struct diedge, se) {
 			te = make_diedge(se->v, se->w, se->weight);
 			stack_push(&rg, te);
 		}
 
-		while(!STACK_ISEMPTY(&rg)) {
+		while (!STACK_ISEMPTY(&rg)) {
 			stack_pop(&rg, (void **)&te);
 			slist_put(tg->adjlist[v], te);
 		}
@@ -179,7 +162,7 @@ ewdigraph_edges_get(const struct ewdigraph *g, struct single_list *edgeset)
 	struct diedge *e;
 
 	slist_init(edgeset, 0, diedge_equals);
-	for(v = 0; v < EWDIGRAPH_VERTICES(g); v++) {
+	for (v = 0; v < EWDIGRAPH_VERTICES(g); v++) {
 		adj = EWDIGRAPH_ADJLIST(g, v);
 		SLIST_FOREACH(adj, nptr, struct diedge, e) {
 			slist_append(edgeset, e);
@@ -198,7 +181,7 @@ ewdigraph_print(const struct ewdigraph *g)
 
 	printf("%u vertices, %u edges.\n", EWDIGRAPH_VERTICES(g),
 		EWDIGRAPH_EDGES(g));
-	for(v = 0; v < EWDIGRAPH_VERTICES(g); v++) {
+	for (v = 0; v < EWDIGRAPH_VERTICES(g); v++) {
 		printf("%u: ", v);
 		adj = EWDIGRAPH_ADJLIST(g, v);
 		SLIST_FOREACH(adj, nptr, struct diedge, e) {
@@ -222,7 +205,7 @@ ewdigraph_clear(struct ewdigraph *g)
 		ALGFREE(e);
 	}
 
-	for(v = 0; v < EWDIGRAPH_VERTICES(g); v++)
+	for (v = 0; v < EWDIGRAPH_VERTICES(g); v++)
 		slist_clear(g->adjlist[v]);
 	ALGFREE(g->adjlist);
 	
@@ -239,7 +222,7 @@ adjlist_init(struct ewdigraph *g)
 
 	g->adjlist = (struct single_list **)
 		algcalloc(g->vertices, sizeof(struct single_list *));
-	for(v = 0; v < g->vertices; v++) {
+	for (v = 0; v < g->vertices; v++) {
 		g->adjlist[v] = (struct single_list *)
 			algmalloc(sizeof(struct single_list));
 		slist_init(g->adjlist[v], 0, diedge_equals);

@@ -40,7 +40,7 @@ main(int argc, char *argv[])
 	
 	SET_RANDOM_SEED;
 	
-	if(argc != 2)
+	if (argc != 2)
 		errmsg_exit("Usage: %s <datafile>\n", argv[0]);
 	
 	printf("Prints a edge-weighted digraph from input stream.\n");
@@ -60,7 +60,7 @@ main(int argc, char *argv[])
 	ewdigraph_print(&g[2]);
 	ewdigraph_clear(&g[2]);
 
-	for(i = 0; i < 3; i++)
+	for (i = 0; i < 3; i++)
 		ewdigraph_clear(&g[i]);
 
 	return 0;

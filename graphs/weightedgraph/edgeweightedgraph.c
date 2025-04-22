@@ -36,10 +36,7 @@
 
 static void adjlist_init(struct ewgraph *);
 
-/* 
- * Initializes an empty edge-weighted graph 
- * with n vertices and 0 edges. 
- */
+/* Initializes an empty edge-weighted graph with n vertices and 0 edges. */
 void 
 ewgraph_init(struct ewgraph *g, unsigned int vs)
 {
@@ -60,12 +57,11 @@ ewgraph_add_edge(struct ewgraph *g, const struct edge *e)
 	v = EDGE_EITHER(e);
 	w = edge_other(e, v);
 
-	if(v >= EWGRAPH_VERTICES(g)) {
+	if (v >= EWGRAPH_VERTICES(g)) {
 		errmsg_exit("vertex %u is not between 0 and %u\n", v, 
 			EWGRAPH_VERTICES(g) - 1);
 	}
-
-	if(w >= EWGRAPH_VERTICES(g)) {
+	if (w >= EWGRAPH_VERTICES(g)) {
 		errmsg_exit("vertex %u is not between 0 and %u\n", w, 
 			EWGRAPH_VERTICES(g) - 1);
 	}
@@ -75,10 +71,7 @@ ewgraph_add_edge(struct ewgraph *g, const struct edge *e)
 	g->edges++;
 }
 
-/* 
- * Initializes a random edge-weighted graph 
- * with vs vertices and es edges.
- */
+/* Initializes a random edge-weighted graph with vs vertices and es edges. */
 void 
 ewgraph_init_randomly(struct ewgraph *g, unsigned int vs, unsigned int es)
 {
@@ -87,7 +80,7 @@ ewgraph_init_randomly(struct ewgraph *g, unsigned int vs, unsigned int es)
 	struct edge *se;
 
 	ewgraph_init(g, vs);
-	for(e = 0; e < es; e++) {
+	for (e = 0; e < es; e++) {
 		v = rand_range_integer(0, vs);
 		w = rand_range_integer(0, vs);
 		weight = (float)0.01 * rand_range_integer(1, 100);
@@ -98,8 +91,7 @@ ewgraph_init_randomly(struct ewgraph *g, unsigned int vs, unsigned int es)
 }
 
 /* 
- * Initializes an edge-weighted graph from 
- * an file input stream.
+ * Initializes an edge-weighted graph from an file input stream.
  * The format is the number of vertices v,
  * followed by the number of edges e,
  * followed by e pairs of vertices and edge weights,
@@ -118,7 +110,7 @@ ewgraph_init_fistream(struct ewgraph *g, FILE *fin)
 	ewgraph_init(g, vs);
 	
 	fseek(fin, 2L, SEEK_CUR);
-	for(i = 0; i < es; i++) {
+	for (i = 0; i < es; i++) {
 		fgets(buf, BUFSIZE, fin);
 		sscanf(buf, "%u %u %f", &v, &w, &weight);
 		se = make_edge(v, w,weight);
@@ -127,10 +119,7 @@ ewgraph_init_fistream(struct ewgraph *g, FILE *fin)
 	}
 }
 
-/* 
- * Initializes a new edge-weighted graph that
- * is a deep copy of tg. 
- */
+/* Initializes a new edge-weighted graph that is a deep copy of tg. */
 void 
 ewgraph_clone(const struct ewgraph *sg, struct ewgraph *tg)
 {
@@ -145,18 +134,15 @@ ewgraph_clone(const struct ewgraph *sg, struct ewgraph *tg)
 	adjlist_init(tg);
 
 	STACK_INIT(&rg, 0);
-	for(v = 0; v < EWGRAPH_VERTICES(sg); v++) {
-		/* 
-		 * Reverse so that adjacency list is 
-		 * in same order as original.
-		 */
+	for (v = 0; v < EWGRAPH_VERTICES(sg); v++) {
+		/* Reverse so that adjacency list is in same order as original. */
 		adj = EWGRAPH_ADJLIST(sg, v);
 		SLIST_FOREACH(adj, nptr, struct edge, se) {
 			te = make_edge(se->v, se->w, se->weight);
 			stack_push(&rg, te);
 		}
 
-		while(!STACK_ISEMPTY(&rg)) {
+		while (!STACK_ISEMPTY(&rg)) {
 			stack_pop(&rg, (void **)&te);
 			slist_put(tg->adjlist[v], te);
 		}
@@ -174,15 +160,15 @@ ewgraph_edges_get(const struct ewgraph *g, struct single_list *edgeset)
 	struct edge *e;
 
 	slist_init(edgeset, 0, edge_equals);
-	for(v = 0; v < EWGRAPH_VERTICES(g); v++) {
+	for (v = 0; v < EWGRAPH_VERTICES(g); v++) {
 		selfloops = 0;
 		adj = EWGRAPH_ADJLIST(g, v);
 		SLIST_FOREACH(adj, nptr, struct edge, e) {
-			if(edge_other(e, v) > v) /* avoid cycle */
+			if (edge_other(e, v) > v) /* avoid cycle */
 				slist_append(edgeset, e);
 			/* free only one copy of each self loop */
-			else if(edge_other(e, v) == v) {
-				if(selfloops % 2 == 0)
+			else if (edge_other(e, v) == v) {
+				if (selfloops % 2 == 0)
 					slist_append(edgeset, e);
 				selfloops++;
 			}
@@ -200,7 +186,7 @@ ewgraph_print(const struct ewgraph *g)
 	struct edge *e;
 
 	printf("%u vertices, %u edges.\n", EWGRAPH_VERTICES(g), EWGRAPH_EDGES(g));
-	for(v = 0; v < EWGRAPH_VERTICES(g); v++) {
+	for (v = 0; v < EWGRAPH_VERTICES(g); v++) {
 		printf("%u: ", v);
 		adj = EWGRAPH_ADJLIST(g, v);
 		SLIST_FOREACH(adj, nptr, struct edge, e) {
@@ -224,7 +210,7 @@ ewgraph_clear(struct ewgraph *g)
 		ALGFREE(e);
 	}
 
-	for(v = 0; v < EWGRAPH_VERTICES(g); v++)
+	for (v = 0; v < EWGRAPH_VERTICES(g); v++)
 		slist_clear(g->adjlist[v]);
 	ALGFREE(g->adjlist);
 	
@@ -241,7 +227,7 @@ adjlist_init(struct ewgraph *g)
 
 	g->adjlist = (struct single_list **)
 		algcalloc(g->vertices, sizeof(struct single_list *));
-	for(v = 0; v < g->vertices; v++) {
+	for (v = 0; v < g->vertices; v++) {
 		g->adjlist[v] = (struct single_list *)
 			algmalloc(sizeof(struct single_list));
 		slist_init(g->adjlist[v], 0, edge_equals);
