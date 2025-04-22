@@ -515,7 +515,7 @@ delete_max_node(struct avl_node *node)
 {
 	struct avl_node *current;
 	
-	if(node->right == NULL) {
+	if (node->right == NULL) {
 		current = node->left;
 		ALGFREE(node);
 		return current;

@@ -149,7 +149,8 @@ graph_clear(struct graph *g)
 static int 
 vequal(const void *k1, const void *k2)
 {
-	int *v = (int *)k1, *w = (int *)k2;
+	unsigned int *v = (unsigned int *)k1;
+	unsigned int *w = (unsigned int *)k2;
 	return *v == *w ? 0 : 1;
 }
 
