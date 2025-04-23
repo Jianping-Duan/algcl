@@ -46,11 +46,11 @@ main(int argc, char *argv[])
 	extern char *optarg;
 	extern int optind;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'f':
 				fname = optarg;
 				break;
@@ -63,7 +63,7 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 	
 	sybgraph_init(&sg, fname, del);

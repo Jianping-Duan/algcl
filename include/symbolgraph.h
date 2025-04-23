@@ -34,22 +34,15 @@
 
 #include "graph.h"
 
-struct redblack_bst;
+struct avl_tree;
 
 struct symbol_graph {
-	struct redblack_bst *st;	/* symbol table, string -> index */
-	char **keys;				/* index -> string */
-	struct graph *g;			/* the underlying graph */
+	struct avl_tree *st;	/* symbol table, string -> index */
+	char **keys;			/* index -> string */
+	struct graph *g;		/* the underlying graph */
 };
 
-/* Does the symbol graph contain the vertex named s */
-#define SYBGRAPH_CONTAINS(sg, s)	\
-	(rbbst_get((sg)->st, s) != NULL ? 1 : 0)
-
-/* 
- * Returns the name of the vertex associated with 
- * the integer v.
- */
+/* Returns the name of the vertex associated with the integer v. */
 #define SYBGRAPH_NAMEOF(sg, v)	\
 	((v) < GRAPH_VERTICES((sg)->g) ? (sg)->keys[v] : NULL)
 
@@ -58,25 +51,23 @@ struct symbol_graph {
 
 /* 
  * Returns the graph associated with the symbol graph.
- * It is the client's responsibility not to mutate 
- * the graph.
+ * It is the client's responsibility not to mutate the graph.
  */
 #define SYBGRAPH_GRAPH(sg)	((sg)->g)
 
 /* 
- * Initializes a graph from a file using the specified
- * delimiter. Each line in the file contains the name
- * of a vertex, followed by a list of the names of the
- * vertices adjacent to that vertex, 
+ * Initializes a graph from a file using the specified delimiter.
+ * Each line in the file contains the name of a vertex,
+ * followed by a list of the names of the vertices adjacent to that vertex,
  * separated by the delimiter. 
  */
 void sybgraph_init(struct symbol_graph *sg, const char *filename,
 				const char *delimiter);
 
-/* 
- * Returns the integer associated with 
- * the vertex named s. 
- */
+/* Does the symbol graph contain the vertex named s */
+int sybgraph_contains(const struct symbol_graph *sg, const char *s);
+
+/* Returns the integer associated with the vertex named s. */
 long sybgraph_indexof(const struct symbol_graph *sg, const char *s);
 
 /* Prints this symbol graph. */
