@@ -515,7 +515,7 @@ delete_max_node(struct avl_node *node)
 {
 	struct avl_node *current;
 	
-	if (node->right == NULL) {
+	if(node->right == NULL) {
 		current = node->left;
 		ALGFREE(node);
 		return current;
@@ -678,7 +678,7 @@ keys_range(const struct avl_node *node, const void *lokey, const void *hikey,
 	
 	if (cmplo == 1)
 		keys_range(node->left, lokey, hikey, kcmp, keys);
-	if (cmplo <= 0 && cmphi >= 0)
+	if ((cmplo == 1 || cmplo == 0) && (cmphi == -1 || cmphi == 0))
 		slist_append(keys, node->key);
 	if (cmphi == -1)
 		keys_range(node->right, lokey, hikey, kcmp, keys);

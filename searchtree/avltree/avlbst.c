@@ -30,6 +30,7 @@
  *
  */
 #include "avltree.h"
+#include "singlelist.h"
 #include <getopt.h>
 
 static void usage_info(const char *);
@@ -41,7 +42,8 @@ main(int argc, char *argv[])
 {
 	FILE *fp;
 	struct avl_tree bst;
-	struct element item, *el;
+	struct element item, *el, *minel, *maxel;
+	struct single_list els;
 	clock_t start_time, end_time;
 	unsigned long rank;
 	char *fname = NULL, *key = NULL, *rand_key = NULL;
@@ -98,13 +100,19 @@ main(int argc, char *argv[])
 	check(&bst);
 	
 	start_time = clock();
-	el = (struct element *)avlbst_min(&bst);
-	printf("The AVL BST of minimum key is: %s\n", el->key);
-	el = (struct element *)avlbst_max(&bst);
-	printf("The AVL BST of maximum key is: %s\n", el->key);
+	minel = (struct element *)avlbst_min(&bst);
+	printf("The AVL BST of minimum key is: %s\n", minel->key);
+	maxel = (struct element *)avlbst_max(&bst);
+	printf("The AVL BST of maximum key is: %s\n", maxel->key);
 	end_time = clock();
 	printf("Estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
+	printf("\n");
+
+	printf("Begin traverses this AVL Tree.\n");
+	avlbst_keys(&bst, minel, maxel, &els);
+	printf("Total elements: %lu\n", SLIST_LENGTH(&els));
+	slist_clear(&els);
 	printf("\n");
 	
 	printf("Begin delete the minimum key and the maximum key from the AVL "
