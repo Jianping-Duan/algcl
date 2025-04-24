@@ -30,10 +30,26 @@
  *
  */
 #include "symboldigraph.h"
-#include "searchtree.h"
-#include "linearlist.h"
+#include "skiplist.h"
+#include "singlelist.h"
 
 #define MAX_LINE_LENGTH	1024
+
+static int 
+sybcmp(const void *key1, const void *key2)
+{
+	struct element *k1, *k2;
+
+	k1 = (struct element *)key1;
+	k2 = (struct element *)key2;
+
+	if (strcmp(k1->key, k2->key) < 0)
+		return 1;
+	else if (strcmp(k1->key, k2->key) == 0)
+		return 0;
+	else
+		return -1;
+}
 
 /* 
  * Initializes a digraph from a file using 
@@ -47,79 +63,78 @@ sybdigraph_init(struct symbol_digraph *sg, const char *filename,
 				const char *delimiter)
 {
 	FILE *fin;
-	char line[MAX_LINE_LENGTH], **tokens, *key;
+	char line[MAX_LINE_LENGTH], **tokens;
 	unsigned int i, sz, v, w;
-	struct element el, *el2;
-	struct queue qu;
+	struct element el, *el2, *el3;
+	struct skipl_node *nptr;
 	
 	sz = MAX_LINE_LENGTH / 4;
 	tokens = (char **)algcalloc(sz, sizeof(char *));
-	for(i = 0; i < sz; i++)
+	for (i = 0; i < sz; i++)
 		tokens[i] = (char *)algcalloc(MAX_KEY_LEN, sizeof(char));
 	
 	/* 
 	 * First pass builds the index by reading strings to
 	 * associate distinct strings with an index.
 	 */
-	sg->st = (struct redblack_bst *)algmalloc(sizeof(struct redblack_bst));
-	RBBST_INIT(sg->st);
+	sg->st = (struct skip_list *)algmalloc(sizeof(struct skip_list));
+	skipl_init(sg->st, 16, sizeof(struct element), sybcmp);
 	
 	fin = open_file(filename, "r");
-	while(fgets(line, MAX_LINE_LENGTH, fin) &&
+	while (fgets(line, MAX_LINE_LENGTH, fin) &&
 		line[0] != '\n' && line[0] != '\r' && !feof(fin)) {
 		string_erase_rn(line);
 		string_tokens(line, delimiter, tokens, MAX_KEY_LEN, &sz);
-		for(i = 0; i < sz; i++) {
-			if(rbbst_get(sg->st, tokens[i]) == NULL) {
-				strcpy(el.key, tokens[i]);
-				el.value = RBBST_SIZE(sg->st);
-				rbbst_put(sg->st, &el);
-			}
-			memset(tokens[i], 0, MAX_KEY_LEN);
+		for (i = 0; i < sz; i++) {
+			strncpy(el.key, tokens[i], MAX_KEY_LEN);
+			el.value = SKIPL_SIZE(sg->st);
+			if (skipl_get(sg->st, &el) == NULL)
+				skipl_put(sg->st, &el);
+			memset(&el, 0, sizeof(struct element));
 		}
 		sz = MAX_LINE_LENGTH / 4;
 	}
 	close_file(fin);
 	
 	/* inverted index to get string keys in an array */
-	sg->keys = algcalloc(RBBST_SIZE(sg->st), sizeof(char *));
-	for(i = 0; i < RBBST_SIZE(sg->st); i++)
+	sg->keys = algcalloc(SKIPL_SIZE(sg->st), sizeof(char *));
+	for (i = 0; i < SKIPL_SIZE(sg->st); i++)
 		sg->keys[i] = (char *)algcalloc(MAX_KEY_LEN, sizeof(char));
-	
-	QUEUE_INIT(&qu, 0);
-	rbbst_keys(sg->st, rbbst_min(sg->st), rbbst_max(sg->st), &qu);
-	while(!QUEUE_ISEMPTY(&qu)) {
-		dequeue(&qu, (void **)&key);
-		if((el2 = rbbst_get(sg->st, key)) != NULL)
-			strcpy(sg->keys[el2->value], key);
+
+	SKIPL_FOREACH(sg->st, nptr, struct element, el2) {
+		if ((el3 = (struct element *)skipl_get(sg->st, el2)) != NULL)
+			strcpy(sg->keys[el3->value], el3->key);
 	}
-	queue_clear(&qu);
 	
 	/* 
 	 * Second pass builds the digraph by connecting first
 	 * vertex on each line to all others.
 	 */
-	sg->g = (struct digraph *)algmalloc(sizeof(struct digraph));
-	digraph_init(sg->g, RBBST_SIZE(sg->st));
+	sg->dg = (struct digraph *)algmalloc(sizeof(struct digraph));
+	digraph_init(sg->dg, SKIPL_SIZE(sg->st));
 	
 	sz = MAX_LINE_LENGTH / 4;
 	fin = open_file(filename, "r");
 	memset(line, 0, MAX_LINE_LENGTH);
-	while(fgets(line, MAX_LINE_LENGTH, fin) && line[0] != '\n' && 
+	while (fgets(line, MAX_LINE_LENGTH, fin) && line[0] != '\n' &&
 		line[0] != '\r' && !feof(fin)) {
 		string_erase_rn(line);
 		string_tokens(line, delimiter, tokens, MAX_KEY_LEN, &sz);
-		if((el2 = rbbst_get(sg->st, tokens[0])) != NULL) {
+		strncpy(el.key, tokens[0], MAX_KEY_LEN);
+		el.value = -1;
+		if((el2 = (struct element *)skipl_get(sg->st, &el)) != NULL) {
 			v = (unsigned int)el2->value;
 			for(i = 1; i < sz; i++) {
-				if((el2 = rbbst_get(sg->st, tokens[i])) != NULL) {
-					w = (unsigned int)el2->value;
-					digraph_add_edge(sg->g, v, w);
+				strncpy(el.key, tokens[i], MAX_KEY_LEN);
+				el.value = -1;
+				if((el3 = (struct element *)skipl_get(sg->st, &el)) != NULL) {
+					w = (unsigned int)el3->value;
+					digraph_add_edge(sg->dg, v, w);
 				}
-				memset(tokens[i], 0, MAX_KEY_LEN);
+				memset(&el, 0, sizeof(struct element));
 			}
 		}
-		memset(tokens[0], 0, MAX_KEY_LEN);
+		memset(&el, 0, sizeof(struct element));
 		sz = MAX_LINE_LENGTH / 4;
 	}
 	close_file(fin);
@@ -129,14 +144,27 @@ sybdigraph_init(struct symbol_digraph *sg, const char *filename,
 	ALGFREE(tokens);
 }
 
+/* Does the symbol digraph contain the vertex named s */
+int
+sybdigraph_contains(const struct symbol_digraph *sg, const char *s)
+{
+	struct element el;
+
+	strncpy(el.key, s, MAX_KEY_LEN);
+	el.value = -1;
+	return skipl_get(sg->st, &el) != NULL;
+}
+
 /* Returns the integer associated with the vertex named s */
 long 
 sybdigraph_indexof(const struct symbol_digraph *sg, const char *s)
 {
-	struct element *el;
+	struct element el, *el2;
 	
-	el = rbbst_get(sg->st, s);
-	return el->value;
+	strncpy(el.key, s, MAX_KEY_LEN);
+	el.value = -1;
+	el2 = (struct element *)skipl_get(sg->st, &el);
+	return el2->value;
 }
 
 void 
@@ -150,7 +178,7 @@ sybdigraph_print(const struct symbol_digraph *sg)
 	
 	g = SYBDIGRAPH_DIGRAPH(sg);
 	keys = SYBDIGRAPH_KEYS(sg);
-	for(v = 0; v < DIGRAPH_VERTICES(g); v++) {
+	for (v = 0; v < DIGRAPH_VERTICES(g); v++) {
 		printf("%s -- %u\n", keys[v], v);
 		adj = DIGRAPH_ADJLIST(g, v);
 		SLIST_FOREACH(adj, nptr, unsigned int, w) {
@@ -164,10 +192,10 @@ sybdigraph_clear(struct symbol_digraph *sg)
 {
 	unsigned int i;
 	
-	for(i = 0; i < DIGRAPH_VERTICES(sg->g); i++)
+	for (i = 0; i < DIGRAPH_VERTICES(sg->dg); i++)
 		ALGFREE(sg->keys[i]);
 	ALGFREE(sg->keys);
 	
-	rbbst_clear(sg->st);
-	digraph_clear(sg->g);
+	skipl_clear(sg->st);
+	digraph_clear(sg->dg);
 }

@@ -1,7 +1,7 @@
 # DEBUG = -Og -g
 
 TOPDIR = ..
-LIBS = -lalgcomm
+LIBS = -llinearlist -lalgcomm
 
 OBJS = skiplist.o
 SLIBS = libskiplist.a

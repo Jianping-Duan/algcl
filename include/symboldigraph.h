@@ -34,44 +34,38 @@
 
 #include "digraph.h"
 
-struct redblack_bst;
+struct skip_list;
 
 struct symbol_digraph {
-	struct redblack_bst *st;	/* symbol table, string -> index */
-	char **keys;				/* index -> string */
-	struct digraph *g;			/* the underlying digraph */
+	struct skip_list *st;	/* symbol table, string -> index */
+	char **keys;			/* index -> string */
+	struct digraph *dg;		/* the underlying digraph */
 };
 
-/* Does the symbol digraph contain the vertex named s */
-#define SYBDIGRAPH_CONTAINS(sg, s)	\
-	(rbbst_get((sg)->st, s) != NULL ? 1 : 0)
-
-/* 
- * Returns the name of the vertex
- * associated with the integer v.
- */
+/* Returns the name of the vertex associated with the integer v. */
 #define SYBDIGRAPH_NAMEOF(sg, v)	\
-	((v) < DIGRAPH_VERTICES((sg)->g) ? (sg)->keys[v] : NULL)
+	((v) < DIGRAPH_VERTICES((sg)->dg) ? (sg)->keys[v] : NULL)
 
 /* Returns the symbol digraph of all the name of vertices */
 #define SYBDIGRAPH_KEYS(sg)	((sg)->keys)
 
 /* 
  * Returns the digraph associated with the symbol digraph.
- * It is the client's responsibility not to mutate 
- * the digraph.
+ * It is the client's responsibility not to mutate the digraph.
  */
-#define SYBDIGRAPH_DIGRAPH(sg)	((sg)->g)
+#define SYBDIGRAPH_DIGRAPH(sg)	((sg)->dg)
 
 /* 
- * Initializes a digraph from a file using 
- * the specified delimiter. 
+ * Initializes a digraph from a file using the specified delimiter. 
  * Each line in the file contains the name of a vertex,
- * followed by a list of the names of the vertices
- * adjacent to that vertex, separated by the delimiter.
+ * followed by a list of the names of the vertices adjacent to that vertex,
+ * separated by the delimiter.
  */
 void sybdigraph_init(struct symbol_digraph *sg, const char *filename,
 					const char *delimiter);
+
+/* Does the symbol digraph contain the vertex named s */
+int sybdigraph_contains(const struct symbol_digraph *sg, const char *s);
 
 /* Returns the integer associated with the vertex named s */
 long sybdigraph_indexof(const struct symbol_digraph *sg, const char *s);
