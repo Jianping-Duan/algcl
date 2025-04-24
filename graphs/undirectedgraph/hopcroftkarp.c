@@ -39,8 +39,8 @@ static inline bool is_level_edge(const struct hopcroft_karp *, unsigned int,
 static bool has_augment_path(struct hopcroft_karp *, const struct graph *);
 
 /* 
- * Determines a maximum matching 
- * (and a minimum vertex cover) in a bipartite graph. 
+ * Determines a maximum matching (and a minimum vertex cover)
+ * in a bipartite graph.
  */
 void 
 hkbipmatch_init(struct hopcroft_karp *bm, const struct graph *g)
@@ -54,7 +54,7 @@ hkbipmatch_init(struct hopcroft_karp *bm, const struct graph *g)
 	bm->bigraph = (struct bipartite_graph_bfs *)
 		algmalloc(sizeof(struct bipartite_graph_bfs));
 	bigraphbfs_get(bm->bigraph, g);
-	if(!BIGRAPHBFS_ISBIPARTITE(bm->bigraph)) {
+	if (!BIGRAPHBFS_ISBIPARTITE(bm->bigraph)) {
 		BIGRAPHBFS_CLEAR(bm->bigraph);
 		ALGFREE(bm->bigraph);
 		errmsg_exit("graph is not bipartite.\n");
@@ -68,7 +68,7 @@ hkbipmatch_init(struct hopcroft_karp *bm, const struct graph *g)
 	bm->marked = (bool *)algcalloc(GRAPH_VERTICES(g), sizeof(bool));
 	bm->distto = (unsigned int *)algcalloc(GRAPH_VERTICES(g), sizeof(int));
 	
-	for(v = 0; v < GRAPH_VERTICES(g); v++) {
+	for (v = 0; v < GRAPH_VERTICES(g); v++) {
 		/* initialize empty matching */
 		bm->mate[v] = BIPARTITE_UNMATCHED;
 		bm->mincover[v] = false;
@@ -77,13 +77,12 @@ hkbipmatch_init(struct hopcroft_karp *bm, const struct graph *g)
 	}
 
 	/* 
-	 * To be able to iterate over each adjacency list,
-	 * keeping track of which vertex in each adjacency
-	 * list needs to be explored next.
+	 * To be able to iterate over each adjacency list, keeping track of which
+	 * vertex in each adjacency list needs to be explored next.
 	 */
 	adj = (struct single_list **)
 		algcalloc(GRAPH_VERTICES(g), sizeof(struct single_list *));
-	for(v = 0; v < GRAPH_VERTICES(g); v++) {
+	for (v = 0; v < GRAPH_VERTICES(g); v++) {
 		adj[v] = (struct single_list *)algmalloc(sizeof(struct single_list));
 		slist_init(adj[v], sizeof(int), NULL);
 
@@ -94,68 +93,56 @@ hkbipmatch_init(struct hopcroft_karp *bm, const struct graph *g)
 	}
 
 	/* 
-	 * The call to has_augment_path() provides
-	 * enough info to reconstruct level graph.
+	 * The call to has_augment_path() provides enough info to reconstruct
+	 * level graph.
 	 */
 	STACK_INIT(&path, sizeof(int));
 	x = (unsigned int *)algmalloc(sizeof(int));
 	y = (unsigned int *)algmalloc(sizeof(int));
 	z = (unsigned int *)algmalloc(sizeof(int));
-	while(has_augment_path(bm, g)) {
-		/* 
-		 * For each unmatched vertex v on one 
-		 * side of bipartition.
-		 */
-		for(v = 0; v < GRAPH_VERTICES(g); v++) {
-			if(HKBIPMATCH_ISMATCHED(bm, v) || !bigraphbfs_color(bm->bigraph, v))
+	while (has_augment_path(bm, g)) {
+		/* For each unmatched vertex v on one side of bipartition. */
+		for (v = 0; v < GRAPH_VERTICES(g); v++) {
+			if (HKBIPMATCH_ISMATCHED(bm, v) || !bigraphbfs_color(bm->bigraph, v))
 				continue;
 
-			/* 
-			 * Find augmenting path from s using
-			 * nonrecursive DFS.
-			 */
+			/* Find augmenting path from s using nonrecursive DFS. */
 			stack_push(&path, &v);
-			while(!STACK_ISEMPTY(&path)) {
+			while (!STACK_ISEMPTY(&path)) {
 				w = (unsigned int *)stack_peek(&path);
 
-				if(*w != vflag) {
+				if (*w != vflag) {
 					vflag = *w;
 					slist_rewind(adj[*w], &loc);
 				}
 
-				/* 
-				 * Retreat, no more edges in 
-				 * level graph leaving w.
-				 */
-				if(!slist_has_next(loc))
+				/* Retreat, no more edges in level graph leaving w. */
+				if (!slist_has_next(loc))
 					stack_pop(&path, (void **)&x);
 				/* advance */
 				else {
 					/* 
-					 * Process edge v-w only 
-					 * if it is an edge in level graph.
+					 * Process edge v-w only if it is an edge in level graph.
 					 */
 					x = NULL;
 					x = (unsigned int *)slist_next_key(&loc);
-					if(!is_level_edge(bm, *w, *x))
+					if (!is_level_edge(bm, *w, *x))
 						continue;
 					/* add w to augmenting path */
 					stack_push(&path, x);
 
 					/* 
-					 * Augmenting path found: 
-					 * update the matching.
+					 * Augmenting path found: update the matching.
 					 */
-					if(!HKBIPMATCH_ISMATCHED(bm, *x)) {
-						while(!STACK_ISEMPTY(&path)) {
+					if (!HKBIPMATCH_ISMATCHED(bm, *x)) {
+						while (!STACK_ISEMPTY(&path)) {
 							stack_pop(&path, (void **)&y);
 							stack_pop(&path, (void **)&z);
 							bm->mate[*y] = *z;
 							bm->mate[*z] = *y;
 						}
 						bm->cardinality++;
-					}
-					else
+					} else
 						stack_pop(&path, (void **)&x);
 				}
 			}
@@ -164,14 +151,14 @@ hkbipmatch_init(struct hopcroft_karp *bm, const struct graph *g)
 	}
 
 	/* also find a min vertex cover */
-	for(v = 0; v < GRAPH_VERTICES(g); v++) {
-		if(bigraphbfs_color(bm->bigraph, v) && !bm->marked[v])
+	for (v = 0; v < GRAPH_VERTICES(g); v++) {
+		if (bigraphbfs_color(bm->bigraph, v) && !bm->marked[v])
 			bm->mincover[v] = true;
-		if(!bigraphbfs_color(bm->bigraph, v) && bm->marked[v])
+		if (!bigraphbfs_color(bm->bigraph, v) && bm->marked[v])
 			bm->mincover[v] = true;
 	}
 
-	for(v = 0; v < GRAPH_VERTICES(g); v++) {
+	for (v = 0; v < GRAPH_VERTICES(g); v++) {
 		slist_clear(adj[v]);
 		ALGFREE(adj[v]);
 	}
@@ -190,12 +177,10 @@ hkbipmatch_init(struct hopcroft_karp *bm, const struct graph *g)
 static bool 
 is_residual_edge(const struct hopcroft_karp *bm, unsigned int v, unsigned int w)
 {
-	if(bm->mate[v] != w && bigraphbfs_color(bm->bigraph, v))
+	if (bm->mate[v] != w && bigraphbfs_color(bm->bigraph, v))
 		return true;
-
-	if(bm->mate[v] == w && !bigraphbfs_color(bm->bigraph, v))
+	if (bm->mate[v] == w && !bigraphbfs_color(bm->bigraph, v))
 		return true;
-
 	return false;
 }
 
@@ -208,11 +193,9 @@ is_level_edge(const struct hopcroft_karp *bm, unsigned int v, unsigned int w)
 
 /*
  * is there an augmenting path?
- *   - if so, upon termination adjlist[] contains the
- *	   level graph;
- *   - if not, upon termination marked[] specifies those
- *     vertices reachable via an alternating path from
- *     one side of the bipartition.
+ *   - if so, upon termination adjlist[] contains the level graph;
+ *   - if not, upon termination marked[] specifies those vertices reachable via
+ *	   an alternating path from one side of the bipartition.
  *
  * An alternating path is a path whose edges belong 
  * alternately to the matching and not to the matching.
@@ -238,8 +221,8 @@ has_augment_path(struct hopcroft_karp *bm, const struct graph *g)
 	 * vertices on one side of bipartition) 
 	 */
 	QUEUE_INIT(&qu, sizeof(int));
-	for(v = 0; v < bm->vertices; v++)
-		if(bigraphbfs_color(bm->bigraph, v) && !HKBIPMATCH_ISMATCHED(bm, v)) {
+	for (v = 0; v < bm->vertices; v++)
+		if (bigraphbfs_color(bm->bigraph, v) && !HKBIPMATCH_ISMATCHED(bm, v)) {
 			enqueue(&qu, &v);
 			bm->marked[v] = true;
 			bm->distto[v] = 0;
@@ -247,11 +230,10 @@ has_augment_path(struct hopcroft_karp *bm, const struct graph *g)
 
 	/* 
 	 * Run BFS until an augmenting path is found
-	 * (and keep going until all vertices at
-	 * that distance are explored) 
+	 * (and keep going until all vertices at that distance are explored)
 	 */
 	w = (unsigned int *)algmalloc(sizeof(int));
-	while(!QUEUE_ISEMPTY(&qu)) {
+	while (!QUEUE_ISEMPTY(&qu)) {
 		dequeue(&qu, (void **)&w);
 		adj = GRAPH_ADJLIST(g, *w);
 		SLIST_FOREACH(adj, nptr, unsigned int, x) {
@@ -259,19 +241,18 @@ has_augment_path(struct hopcroft_karp *bm, const struct graph *g)
 			 * either (1) forward edge not in matching
 			 * or (2) backward edge in matching.
 			 */
-			if(is_residual_edge(bm, *w, *x) && !bm->marked[*x]) {
+			if (is_residual_edge(bm, *w, *x) && !bm->marked[*x]) {
 				bm->marked[*x] = true;
 				bm->distto[*x] = bm->distto[*w] + 1;
-				if(!HKBIPMATCH_ISMATCHED(bm, *x))
+				if (!HKBIPMATCH_ISMATCHED(bm, *x))
 					haspath = true;
 
 				/* 
-				 * Stop enqueuing vertices once an
-				 * alternating path has been discovered
-				 * (no vertex on same side will be marked
+				 * Stop enqueuing vertices once an alternating path has been
+				 * discovered (no vertex on same side will be marked
 				 * if its shortest path distance longer) 
 				 */
-				if(!haspath)
+				if (!haspath)
 					enqueue(&qu, x);
 			}
 		}

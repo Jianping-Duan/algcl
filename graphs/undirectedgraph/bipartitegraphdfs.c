@@ -52,30 +52,26 @@ bigraphdfs_get(struct bipartite_graph_dfs *bg, const struct graph *g)
 	bg->color = (bool *)algmalloc(GRAPH_VERTICES(g) * sizeof(bool));
 	bg->edgeto = (long *)algmalloc(GRAPH_VERTICES(g) * sizeof(long));
 	
-	for(v = 0; v < GRAPH_VERTICES(g); v++) {
+	for (v = 0; v < GRAPH_VERTICES(g); v++) {
 		bg->marked[v] = false;
 		bg->color[v] = false;
 		bg->edgeto[v] = -1;
 	}
 	
-	for(v = 0; v < GRAPH_VERTICES(g); v++)
-		if(!bg->marked[v])
+	for (v = 0; v < GRAPH_VERTICES(g); v++)
+		if (!bg->marked[v])
 			dfs(bg, g, v);
 }
 
-/* 
- * Returns the side of the bipartite that 
- * vertex v is on. 
- */
+/* Returns the side of the bipartite that vertex v is on. */
 bool bigraphdfs_color(struct bipartite_graph_dfs *bg, 
 					unsigned int v)
 {
-	if(v >= bg->vertices) {
-		errmsg_exit("vertex %u is not between 0 "
-			"and %u.\n", v, bg->vertices - 1);
+	if (v >= bg->vertices) {
+		errmsg_exit("vertex %u is not between 0 and %u.\n", v,
+			bg->vertices - 1);
 	}
-	
-	if(!bg->isbipartite)
+	if (!bg->isbipartite)
 		errmsg_exit("graph is not bipartite.\n");
 	
 	return bg->color[v];
@@ -96,20 +92,20 @@ dfs(struct bipartite_graph_dfs *bg, const struct graph *g, unsigned int v)
 	slist = GRAPH_ADJLIST(g, v);
 	SLIST_FOREACH(slist, nptr, unsigned int, w) {
 		/* short circuit if odd-length cycle found */
-		if(!STACK_ISEMPTY(&bg->cycle))
+		if (!STACK_ISEMPTY(&bg->cycle))
 			return;
 		
 		/* found uncolored vertex, so recur */
-		if(!bg->marked[*w]) {
+		if (!bg->marked[*w]) {
 			bg->edgeto[*w] = v;
 			bg->color[*w] = !bg->color[v];
 			dfs(bg, g, *w);
 		}
 		/* if v-w create an odd-length cycle, find it */
-		else if(bg->color[v] == bg->color[*w]) {
+		else if (bg->color[v] == bg->color[*w]) {
 			bg->isbipartite = false;
 			stack_push(&bg->cycle, w);
-			for(x = v; x != -1 && x != *w;	x = bg->edgeto[x])
+			for (x = v; x != -1 && x != *w;	x = bg->edgeto[x])
 				stack_push(&bg->cycle, &x);
 			stack_push(&bg->cycle, w);
 		}

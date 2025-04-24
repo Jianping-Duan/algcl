@@ -56,13 +56,11 @@ struct hopcroft_karp {
 #define BIPARTITE_UNMATCHED	-1
 
 /* 
- * Returns the vertex to which the specified vertex is
- * matched in the maximum matching computed by 
- * the algorithm. 
+ * Returns the vertex to which the specified vertex is matched in the maximum
+ * matching computed by the algorithm. 
  */
 #define HKBIPMATCH_MATE(bm, v)	\
-	((v) >= (bm)->vertices \
-	? BIPARTITE_UNMATCHED : (bm)->mate[v])
+	((v) >= (bm)->vertices ? BIPARTITE_UNMATCHED : (bm)->mate[v])
 
 /* 
  * Returns true if the specified vertex is matched 
@@ -76,16 +74,15 @@ struct hopcroft_karp {
 
 /* 
  * Returns true if the graph contains a perfect matching.
- * That is, the number of edges in a maximum matching is
- * equal to one half of the number of vertices in the graph
- * (so that every vertex is matched). 
+ * That is, the number of edges in a maximum matching is  equal to one half of
+ * the number of vertices in the graph (so that every vertex is matched). 
  */
 #define HKBIPMATCH_ISPERFECT(bm)	\
    ((bm)->cardinality * 2 == (bm)->vertices)
 
 /* 
- * Returns true if the specified vertex is in the minimum
- * vertex cover computed by the algorithm. 
+ * Returns true if the specified vertex is in the minimum vertex cover
+ * computed by the algorithm. 
  */
 #define HKBIPMATCH_MIN_COVER(bm, v)	\
 	((v) >= (bm)->vertices ? false : (bm)->mincover[v])
@@ -99,11 +96,11 @@ struct hopcroft_karp {
 	ALGFREE((bm)->mincover);			\
 	ALGFREE((bm)->marked);				\
 	ALGFREE((bm)->distto);				\
-} while(0)
+} while (0)
 
 /* 
- * Determines a maximum matching 
- * (and a minimum vertex cover) in a bipartite graph. 
+ * Determines a maximum matching (and a minimum vertex cover)
+ * in a bipartite graph. 
  */
 void hkbipmatch_init(struct hopcroft_karp *bm, const struct graph *g);
 

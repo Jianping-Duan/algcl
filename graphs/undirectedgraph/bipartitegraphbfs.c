@@ -53,31 +53,27 @@ bigraphbfs_get(struct bipartite_graph_bfs *bg, const struct graph *g)
 		algmalloc(GRAPH_VERTICES(g) * sizeof(enum bigraph_color));
 	bg->edgeto = (long *)algmalloc(GRAPH_VERTICES(g) * sizeof(long));
 	
-	for(v = 0; v < GRAPH_VERTICES(g); v++) {
+	for (v = 0; v < GRAPH_VERTICES(g); v++) {
 		bg->marked[v] = false;
 		bg->color[v] = BLACK;
 		bg->edgeto[v] = -1;
 	}
 	
-	for(v = 0; v < GRAPH_VERTICES(g) && bg->isbipartite; v++)
-		if(!bg->marked[v])
+	for (v = 0; v < GRAPH_VERTICES(g) && bg->isbipartite; v++)
+		if (!bg->marked[v])
 			bfs(bg, g, v);
 }
 
-/* 
- * Returns the side of the bipartite that 
- * vertex v is on. 
- */
+/* Returns the side of the bipartite that vertex v is on. */
 enum bigraph_color 
 bigraphbfs_color(struct bipartite_graph_bfs *bg, 
 				unsigned int v)
 {
-	if(v >= bg->vertices) {
+	if (v >= bg->vertices) {
 		errmsg_exit("vertex %u is not between 0 and %u.\n", v,
 			bg->vertices - 1);
 	}
-	
-	if(!bg->isbipartite)
+	if (!bg->isbipartite)
 		errmsg_exit("graph is not bipartite.\n");
 	
 	return bg->color[v];
@@ -100,30 +96,27 @@ bfs(struct bipartite_graph_bfs *bg, const struct graph *g, unsigned int s)
 	enqueue(&qu, &s);
 	
 	v = (unsigned int *)algmalloc(sizeof(int));
-	while(!QUEUE_ISEMPTY(&qu)) {
+	while (!QUEUE_ISEMPTY(&qu)) {
 		dequeue(&qu, (void **)&v);
 		slist = GRAPH_ADJLIST(g, *v);
 		SLIST_FOREACH(slist, nptr, unsigned int, w) {
-			if(!bg->marked[*w]) {
+			if (!bg->marked[*w]) {
 				bg->marked[*w] = true;
 				bg->edgeto[*w] = *v;
 				bg->color[*w] = !bg->color[*v];
 				enqueue(&qu, w);
-			}
-			else if(bg->color[*w] == bg->color[*v]) {
+			} else if (bg->color[*w] == bg->color[*v]) {
 				bg->isbipartite = false;
 				
 				/* 
-				 * To form odd cycle, consider s-v path
-				 * and s-w path and let x be closest node
-				 * to v and w common to two paths then
-				 * (w-x path) + (x-v path) + (edge v-w) 
-				 * is an odd-length cycle.
+				 * To form odd cycle, consider s-v path and s-w path and let x
+				 * be closest node to v and w common to two paths then
+				 * (w-x path) + (x-v path) + (edge v-w) is an odd-length cycle.
 				 * Note: distTo[v] == distTo[w];
 				 */
 				STACK_INIT(&st, sizeof(int));
 				x = *v, y = *w;
-				while(x != y) {
+				while (x != y) {
 					stack_push(&st, &x);
 					enqueue(&bg->cycle, &y);
 					x = (unsigned)bg->edgeto[y];
@@ -131,14 +124,13 @@ bfs(struct bipartite_graph_bfs *bg, const struct graph *g, unsigned int s)
 				}
 				stack_push(&st, &x);
 				
-				while(!STACK_ISEMPTY(&st)) {
+				while (!STACK_ISEMPTY(&st)) {
 					stack_pop(&st, (void **)&v);
 					enqueue(&bg->cycle, v);
 				}
 				enqueue(&bg->cycle, w);
 				
 				stack_clear(&st);
-				
 				return;
 			}
 		}

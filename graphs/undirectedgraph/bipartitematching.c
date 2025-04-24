@@ -48,7 +48,7 @@ bipmatch_init(struct bipartite_matching *bm, const struct graph *g)
 	bm->bigraph = (struct bipartite_graph_bfs *)
 		algmalloc(sizeof(struct bipartite_graph_bfs));
 	bigraphbfs_get(bm->bigraph, g);
-	if(!BIGRAPHBFS_ISBIPARTITE(bm->bigraph)) {
+	if (!BIGRAPHBFS_ISBIPARTITE(bm->bigraph)) {
 		BIGRAPHBFS_CLEAR(bm->bigraph);
 		ALGFREE(bm->bigraph);
 		errmsg_exit("graph is not bipartite.\n");
@@ -62,7 +62,7 @@ bipmatch_init(struct bipartite_matching *bm, const struct graph *g)
 	bm->marked = (bool *)algcalloc(GRAPH_VERTICES(g), sizeof(bool));
 	bm->edgeto = (long *)algcalloc(GRAPH_VERTICES(g), sizeof(long));
 	
-	for(v = 0; v < GRAPH_VERTICES(g); v++) {
+	for (v = 0; v < GRAPH_VERTICES(g); v++) {
 		/* initialize empty matching */
 		bm->mate[v] = BIPARTITE_UNMATCHED;
 		bm->mincover[v] = false;
@@ -71,20 +71,19 @@ bipmatch_init(struct bipartite_matching *bm, const struct graph *g)
 	}
 
 	/* alternating path algorithm */
-	while(has_augment_path(bm, g)) {
+	while (has_augment_path(bm, g)) {
 		/* find one endpoint t in alternating path */
 		t = -1;
-		for(v = 0; v < GRAPH_VERTICES(g); v++)
-			if(!BIPMATCH_ISMATCHED(bm, v) && bm->edgeto[v] != -1) {
+		for (v = 0; v < GRAPH_VERTICES(g); v++)
+			if (!BIPMATCH_ISMATCHED(bm, v) && bm->edgeto[v] != -1) {
 				t = v;
 				break;
 			}
 
 		/* 
-		 * update the matching according to alternating
-		 * path in edgeTo[] array.
+		 * update the matching according to alternating path in edgeto[] array.
 		 */
-		for(v = t; v != -1; v = bm->edgeto[bm->edgeto[v]]) {
+		for (v = t; v != -1; v = bm->edgeto[bm->edgeto[v]]) {
 			w = bm->edgeto[v];
 			bm->mate[v] = w;
 			bm->mate[w] = v;
@@ -94,10 +93,10 @@ bipmatch_init(struct bipartite_matching *bm, const struct graph *g)
 	}
 
 	/* find min vertex cover from marked[] array */
-	for(v = 0; v < GRAPH_VERTICES(g); v++) {
-		if(bigraphbfs_color(bm->bigraph, (unsigned)v) && !bm->marked[v])
+	for (v = 0; v < GRAPH_VERTICES(g); v++) {
+		if (bigraphbfs_color(bm->bigraph, (unsigned)v) && !bm->marked[v])
 			bm->mincover[v] = true;
-		if(!bigraphbfs_color(bm->bigraph, (unsigned)v) && bm->marked[v])
+		if (!bigraphbfs_color(bm->bigraph, (unsigned)v) && bm->marked[v])
 			bm->mincover[v] = true;
 	}
 }
@@ -109,13 +108,12 @@ bipmatch_init(struct bipartite_matching *bm, const struct graph *g)
  * or a reverse edge in the matching? 
  */
 static bool 
-is_residual_edge(const struct bipartite_matching *bm, 
-				unsigned int v, unsigned int w)
+is_residual_edge(const struct bipartite_matching *bm, unsigned int v,
+				unsigned int w)
 {
-	if(bm->mate[v] != w && bigraphbfs_color(bm->bigraph, v))
+	if (bm->mate[v] != w && bigraphbfs_color(bm->bigraph, v))
 		return true;
-	
-	if(bm->mate[v] == w && !bigraphbfs_color(bm->bigraph, v))
+	if (bm->mate[v] == w && !bigraphbfs_color(bm->bigraph, v))
 		return true;
 	
 	return false;
@@ -123,21 +121,19 @@ is_residual_edge(const struct bipartite_matching *bm,
 
 /*
  * Is there an augmenting path?
- *   - if so, upon termination adjlist[] contains 
- *	   the level graph;
- *   - if not, upon termination marked[] specifies those 
- *     vertices reachable via an alternating path from
- *     one side of the bipartition.
+ *   - if so, upon termination adjlist[] contains the level graph;
+ *   - if not, upon termination marked[] specifies those vertices reachable via
+ *     an alternating path from one side of the bipartition.
  *
- * An alternating path is a path whose edges belong 
- * alternately to the matching and not to the matching.
+ * An alternating path is a path whose edges belong alternately to the matching
+ * and not to the matching.
  *
- * An augmenting path is an alternating path that 
- * starts and ends at unmatched vertices.
+ * An augmenting path is an alternating path that starts and ends at unmatched
+ * vertices.
  *
  * This implementation finds a shortest augmenting path
- * (fewest number of edges), though there
- * is no particular advantage to do so here
+ * (fewest number of edges), though there is no particular advantage to do so
+ * here
  */
 static bool 
 has_augment_path(struct bipartite_matching *bm,	const struct graph *g)
@@ -148,22 +144,19 @@ has_augment_path(struct bipartite_matching *bm,	const struct graph *g)
 	struct slist_node *nptr;
 
 	/* 
-	 * breadth-first search (starting from all
-	 * unmatched vertices on one side of bipartition)
+	 * breadth-first search (starting from all unmatched vertices on one side
+	 * of bipartition)
 	 */
 	QUEUE_INIT(&qu, sizeof(int));
-	for(v = 0; v < bm->vertices; v++)
-		if(bigraphbfs_color(bm->bigraph, v) && !BIPMATCH_ISMATCHED(bm, v)) {
+	for (v = 0; v < bm->vertices; v++)
+		if (bigraphbfs_color(bm->bigraph, v) && !BIPMATCH_ISMATCHED(bm, v)) {
 			enqueue(&qu, &v);
 			bm->marked[v] = true;
 		}
 
-	/* 
-	 * run BFS, stopping as soon as 
-	 * an alternating path is found.
-	 */
+	/* run BFS, stopping as soon as an alternating path is found. */
 	w = (unsigned int *)algmalloc(sizeof(int));
-	while(!QUEUE_ISEMPTY(&qu)) {
+	while (!QUEUE_ISEMPTY(&qu)) {
 		dequeue(&qu, (void **)&w);
 		adj = GRAPH_ADJLIST(g, *w);
 		SLIST_FOREACH(adj, nptr, unsigned int, x) {
@@ -171,10 +164,10 @@ has_augment_path(struct bipartite_matching *bm,	const struct graph *g)
 			 * either (1) forward edge not in matching or
 			 * (2) backward edge in matching
 			 */
-			if(is_residual_edge(bm, *w, *x) && !bm->marked[*x]) {
+			if (is_residual_edge(bm, *w, *x) && !bm->marked[*x]) {
 				bm->marked[*x] = true;
 				bm->edgeto[*x] = *w;
-				if(!BIPMATCH_ISMATCHED(bm, *x))
+				if (!BIPMATCH_ISMATCHED(bm, *x))
 					return true;
 				enqueue(&qu, x);
 			}

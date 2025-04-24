@@ -51,21 +51,21 @@ main(int argc, char *argv[])
 	
 	SET_RANDOM_SEED;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'v':
-				if(sscanf(optarg, "%u", &v1) != 1)
+				if (sscanf(optarg, "%u", &v1) != 1)
 					errmsg_exit("Illegal number. -v %s\n", optarg);
 				break;
 			case 'V':
-				if(sscanf(optarg, "%u", &v2) != 1)
+				if (sscanf(optarg, "%u", &v2) != 1)
 					errmsg_exit("Illegal number. -V %s\n", optarg);
 				break;
 			case 'e':
-				if(sscanf(optarg, "%u", &e) != 1)
+				if (sscanf(optarg, "%u", &e) != 1)
 					errmsg_exit("Illegal number. -e %s\n", optarg);
 				break;
 			default:
@@ -74,7 +74,7 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 	
 	bipartite_graph1(v1, v2, e, &g);
@@ -90,17 +90,17 @@ main(int argc, char *argv[])
 	printf("\n");
 
 	printf("Max matching:\n");
-	for(v = 0; v < GRAPH_VERTICES(&g); v++) {
+	for (v = 0; v < GRAPH_VERTICES(&g); v++) {
 		w = BIPMATCH_MATE(&bm, v);
 		/* print each edge only once */
-		if(BIPMATCH_ISMATCHED(&bm, v) && v < w)
+		if (BIPMATCH_ISMATCHED(&bm, v) && v < w)
 			printf("%ld-%ld  ", v, w);
 	}
 	printf("\n");
 
 	printf("Min vertex cover:\n");
-	for(v = 0; v < GRAPH_VERTICES(&g); v++)
-		if(BIPMATCH_MIN_COVER(&bm, v))
+	for (v = 0; v < GRAPH_VERTICES(&g); v++)
+		if (BIPMATCH_MIN_COVER(&bm, v))
 			printf("%ld ", v);
 	printf("\n");
 
@@ -113,10 +113,9 @@ main(int argc, char *argv[])
 static void 
 usage_info(const char *pname)
 {
-	fprintf(stderr, "Usage %s -v -V -e -E.\n", pname);
-	fprintf(stderr, "Create random bipartite graph "
-		"with 'v' vertices on left side,\n");
-	fprintf(stderr, "'V' vertices on right side, "
-		"and 'e' edges.");
+	fprintf(stderr, "Usage %s -v -V -e.\n", pname);
+	fprintf(stderr, "Create random bipartite graph with 'v' vertices on left "
+		"side,\n");
+	fprintf(stderr, "'V' vertices on right side, and 'e' edges.\n");
 	exit(EXIT_FAILURE);
 }

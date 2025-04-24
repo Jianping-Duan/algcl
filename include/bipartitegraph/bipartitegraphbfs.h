@@ -39,8 +39,8 @@ enum bigraph_color {WHITE, BLACK};
 
 struct bipartite_graph_bfs {
 	bool isbipartite;	/* is the graph bipartite? */
-	enum bigraph_color *color; /* color[v] gives vertices on one side of
-								  bipartition */
+	enum bigraph_color *color;	/* color[v] gives vertices on one side of
+								   bipartition */
 	bool *marked;	/* marked[v] = true if v has been visited in BFS */
 	long *edgeto;	/* edgeTo[v] = last edge on path to v */
 	struct queue cycle;		/* odd-length cycle */
@@ -50,10 +50,7 @@ struct bipartite_graph_bfs {
 /* Returns true if the graph is bipartite. */
 #define BIGRAPHBFS_ISBIPARTITE(bg)	((bg)->isbipartite)
 
-/* 
- * Returns an odd-length cycle 
- * if the graph is not bipartite. 
- */
+/* Returns an odd-length cycle if the graph is not bipartite. */
 #define BIGRAPHBFS_ODDCYCLE(bg)	((bg)->cycle)
 
 #define BIGRAPHBFS_CLEAR(bg)	do {	\
@@ -62,7 +59,7 @@ struct bipartite_graph_bfs {
 	ALGFREE((bg)->edgeto);				\
 	(bg)->vertices = 0;					\
 	(bg)->isbipartite = false;			\
-} while(0)
+} while (0)
 
 /* 
  * Determines whether an undirected graph is bipartite 
@@ -70,10 +67,7 @@ struct bipartite_graph_bfs {
  */
 void bigraphbfs_get(struct bipartite_graph_bfs *bg, const struct graph *g);
 
-/* 
- * Returns the side of the bipartite that 
- * vertex v is on. 
- */
+/* Returns the side of the bipartite that vertex v is on. */
 enum bigraph_color 
 bigraphbfs_color(struct bipartite_graph_bfs *bg, unsigned int v);
 

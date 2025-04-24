@@ -51,30 +51,26 @@ main(int argc, char *argv[])
 	extern char *optarg;
 	extern int optind;
 	
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'v':
-				if(sscanf(optarg, "%u", &v1) != 1) {
+				if (sscanf(optarg, "%u", &v1) != 1)
 					errmsg_exit("Illegal number. -v %s\n", optarg);
-				}
 				break;
 			case 'V':
-				if(sscanf(optarg, "%u", &v2) != 1) {
+				if (sscanf(optarg, "%u", &v2) != 1)
 					errmsg_exit("Illegal number. -V %s\n", optarg);
-				}
 				break;
 			case 'e':
-				if(sscanf(optarg, "%u", &e) != 1) {
+				if (sscanf(optarg, "%u", &e) != 1)
 					errmsg_exit("Illegal number. -e %s\n", optarg);
-				}
 				break;
 			case 'E':
-				if(sscanf(optarg, "%u", &f) != 1) {
+				if (sscanf(optarg, "%u", &f) != 1)
 					errmsg_exit("Illegal number. -E %s\n", optarg);
-				}
 				break;
 			default:
 				fprintf(stderr, "Parameters error.\n");
@@ -82,13 +78,13 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 	
 	SET_RANDOM_SEED;
 	
 	bipartite_graph1(v1, v2, e, &g);
-	for(i = 0; i < f; i++) {
+	for (i = 0; i < f; i++) {
 		v = rand_range_integer(0, v1 + v2);
 		w = rand_range_integer(0, v1 + v2);
 		graph_add_edge(&g, v, w);
@@ -97,18 +93,17 @@ main(int argc, char *argv[])
 	printf("\n");
 	
 	bigraphbfs_get(&bg, &g);
-	if(BIGRAPHBFS_ISBIPARTITE(&bg)) {
+	if (BIGRAPHBFS_ISBIPARTITE(&bg)) {
 		printf("Graph is bipartite.\n");
-		for(v = 0; v < GRAPH_VERTICES(&g); v++) {
+		for (v = 0; v < GRAPH_VERTICES(&g); v++) {
 			printf("%u: %s\n", v, 
 				bigraphbfs_color(&bg, v) == BLACK ? "Black" : "White");
 		}
-	}
-	else {
+	} else {
 		printf("Graph has an odd-length cycle:\n");
 		x = (int *)algmalloc(sizeof(int));
 		qu = BIGRAPHBFS_ODDCYCLE(&bg);
-		while(!QUEUE_ISEMPTY(&qu)) {
+		while (!QUEUE_ISEMPTY(&qu)) {
 			dequeue(&qu, (void **)&x);
 			printf("%d ", *x);
 		}
@@ -126,9 +121,9 @@ main(int argc, char *argv[])
 static void usage_info(const char *pname)
 {
 	fprintf(stderr, "Usage %s -v -V -e -E.\n", pname);
-	fprintf(stderr, "Create random bipartite graph "
-		"with 'v' vertices on left side,\n");
-	fprintf(stderr, "'V' vertices on right side, "
-		"and 'e' edges; then add 'E' random edges.\n");
+	fprintf(stderr, "Create random bipartite graph with 'v' vertices on left "
+		"side,\n");
+	fprintf(stderr, "'V' vertices on right side, and 'e' edges; then add 'E' "
+		"random edges.\n");
 	exit(EXIT_FAILURE);
 }

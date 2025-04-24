@@ -36,7 +36,7 @@
 #include "stack.h"
 
 struct bipartite_graph_dfs {
-	bool isbipartite;		/* is the graph bipartite? */
+	bool isbipartite;	/* is the graph bipartite? */
 	bool *color;	/* color[v] gives vertices on one side of bipartition */
 	bool *marked;	/* marked[v] = true iff v has been visited in DFS */
 	long *edgeto;	/* edgeTo[v] = last edge on path to v */
@@ -47,10 +47,7 @@ struct bipartite_graph_dfs {
 /* Returns true if the graph is bipartite. */
 #define BIGRAPHDFS_ISBIPARTITE(bg)	((bg)->isbipartite)
 
-/* 
- * Returns an odd-length cycle 
- * if the graph is not bipartite. 
- */
+/* Returns an odd-length cycle if the graph is not bipartite. */
 #define BIGRAPHDFS_ODDCYCLE(bg)	((bg)->cycle)
 
 #define BIGRAPHDFS_CLEAR(bg)	do {	\
@@ -59,7 +56,7 @@ struct bipartite_graph_dfs {
 	ALGFREE((bg)->edgeto);				\
 	(bg)->vertices = 0;					\
 	(bg)->isbipartite = false;			\
-} while(0)
+} while (0)
 
 /* 
  * Determines whether an undirected graph is bipartite 
@@ -67,10 +64,7 @@ struct bipartite_graph_dfs {
  */
 void bigraphdfs_get(struct bipartite_graph_dfs *bg, const struct graph *g);
 
-/* 
- * Returns the side of the bipartite that 
- * vertex v is on. 
- */
+/* eturns the side of the bipartite that vertex v is on. */
 bool bigraphdfs_color(struct bipartite_graph_dfs *bg, unsigned int v);
 
 #endif	/* _BIPARTITEGRAPHDFS_H_ */
