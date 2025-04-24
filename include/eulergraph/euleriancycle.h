@@ -40,13 +40,11 @@ struct stack;
  * Computes an Eulerian cycle in the specified graph, 
  * if one exists. 
  */
-void eulcycle_get(struct stack *cycle, 
-				const struct graph *g);
+void eulcycle_get(struct stack *cycle, const struct graph *g);
 
 /* 
- * Determines whether a graph has an Eulerian cycle
- * using necessary and sufficient conditions 
- * (without computing the cycle itself):
+ * Determines whether a graph has an Eulerian cycle using necessary and
+ * sufficient conditions (without computing the cycle itself):
  *   - at least one edge
  *   - degree(v) is even for every vertex v
  *   - the graph is connected (ignoring isolated vertices)

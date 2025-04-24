@@ -66,46 +66,44 @@ eulcycle_get(struct stack *cycle, const struct graph *g)
 	STACK_INIT(cycle, sizeof(int));
 	
 	/* must have at least one edge */
-	if(GRAPH_EDGES(g) == 0)
+	if (GRAPH_EDGES(g) == 0)
 		return;
 	
 	/* 
 	 * Necessary condition: 
 	 * all vertices have even degree.
 	 */
-    for(v = 0; v < GRAPH_VERTICES(g); v++)
-		if(GRAPH_DEGREE(g, v) % 2 != 0)
+    for (v = 0; v < GRAPH_VERTICES(g); v++)
+		if (GRAPH_DEGREE(g, v) % 2 != 0)
 			return;
 		
 	/* 
-	 * Create local view of adjacency lists, 
-	 * to iterate one vertex at a time.
-     * the helper Edge data type is used to avoid exploring
+	 * Create local view of adjacency lists, to iterate one vertex at a time.
+     * The helper Edge data type is used to avoid exploring
 	 * both copies of an edge v-w. 
 	 */
 	adjs = (struct queue *)algmalloc(GRAPH_VERTICES(g) * sizeof(struct queue));
-	for(v = 0; v < GRAPH_VERTICES(g); v++)
+	for (v = 0; v < GRAPH_VERTICES(g); v++)
 		QUEUE_INIT(&adjs[v], 0);
 	
 	
 	edges = (struct edge *)
 		algmalloc((GRAPH_EDGES(g) + 1) * sizeof(struct edge));
 	
-	for(v = 0, k = 0; v < GRAPH_VERTICES(g); v++) {
+	for (v = 0, k = 0; v < GRAPH_VERTICES(g); v++) {
 		selfloops = 0;
 		slist = GRAPH_ADJLIST(g, v);
 		SLIST_FOREACH(slist, nptr, unsigned int, w) {
 			/* careful with self loops */
-			if(v == *w) {
-				if(selfloops % 2 == 0) {
+			if (v == *w) {
+				if (selfloops % 2 == 0) {
 					set_edge(&edges[k], v, *w);
 					enqueue(&adjs[v], &edges[k]);
 					enqueue(&adjs[*w], &edges[k]);
 					k++;
 				}
 				selfloops++;
-			}
-			else if(v < *w) {
+			} else if (v < *w) {
 				set_edge(&edges[k], v, *w);
 				enqueue(&adjs[v], &edges[k]);
 				enqueue(&adjs[*w], &edges[k]);
@@ -114,22 +112,21 @@ eulcycle_get(struct stack *cycle, const struct graph *g)
 		}
 	}
 	
-	/* initialize stack with any non-isolated vertex */
+	/* Initialize stack with any non-isolated vertex. */
 	ns = nonisolated_vertex(g);
 	STACK_INIT(&st, sizeof(long));
-	if(ns >= 0)
+	if (ns >= 0)
 		stack_push(&st, &ns);
 	
 	/* 
-	 * Greedily search through edges 
-	 * in iterative DFS style.
+	 * Greedily search through edges in iterative DFS style.
 	 */
 	w = (unsigned int *)algmalloc(sizeof(int));
-	while(!STACK_ISEMPTY(&st)) {
+	while (!STACK_ISEMPTY(&st)) {
 		stack_pop(&st, (void **)&w);
-		while(!QUEUE_ISEMPTY(&adjs[*w])) {
+		while (!QUEUE_ISEMPTY(&adjs[*w])) {
 			dequeue(&adjs[*w], (void **)&e);
-			if(e->isused)
+			if (e->isused)
 				continue;
 			e->isused = true;
 			stack_push(&st, w);
@@ -137,8 +134,7 @@ eulcycle_get(struct stack *cycle, const struct graph *g)
 		}
 		
 		/* 
-		 * Push vertex with no more 
-		 * leaving edges to cycle.
+		 * Push vertex with no more leaving edges to cycle.
 		 */
 		stack_push(cycle, w);
 	}
@@ -151,11 +147,10 @@ eulcycle_get(struct stack *cycle, const struct graph *g)
 }
 
 /* 
- * Determines whether a graph has an Eulerian cycle 
- * using necessary and sufficient conditions 
- * (without computing the cycle itself):
- *   - at least one edge
- *   - degree(v) is even for every vertex v
+ * Determines whether a graph has an Eulerian cycle using necessary and
+ * sufficient conditions (without computing the cycle itself):
+ *   - at least one edge.
+ *   - degree(v) is even for every vertex v.
  *   - the graph is connected (ignoring isolated vertices)
  */
 bool 
@@ -165,23 +160,22 @@ eulcycle_necesuff_condition(const struct graph *g)
 	struct graph_bfsp bfs;
 	long ns;
 	
-	/* Condition 0: at least 1 edge */
-	if(GRAPH_EDGES(g) == 0)
+	/* Condition 0: at least 1 edge. */
+	if (GRAPH_EDGES(g) == 0)
 		return false;
 	
-	/* Condition 1: degree(v) is even for every vertex */
-	for(v = 0; v < GRAPH_VERTICES(g); v++)
-		if(GRAPH_DEGREE(g, v) % 2 != 0)
+	/* Condition 1: degree(v) is even for every vertex. */
+	for (v = 0; v < GRAPH_VERTICES(g); v++)
+		if (GRAPH_DEGREE(g, v) % 2 != 0)
 			return false;
 		
-	/* Condition 2: graph is connected, */
-	/* ignoring isolated vertices */
-	if((ns = nonisolated_vertex(g)) == -1)
+	/* Condition 2: graph is connected, ignoring isolated vertices. */
+	if ((ns = nonisolated_vertex(g)) == -1)
 		return false;
 	
 	graph_bfsp_init(&bfs, (unsigned int)ns, g);
-	for(v = 0; v < GRAPH_VERTICES(g); v++)
-		if(GRAPH_DEGREE(g, v) > 0 && !GRAPH_BFSP_HASPATH(&bfs, v))
+	for (v = 0; v < GRAPH_VERTICES(g); v++)
+		if (GRAPH_DEGREE(g, v) > 0 && !GRAPH_BFSP_HASPATH(&bfs, v))
 			return false;
 	
 	return true;
@@ -201,9 +195,9 @@ set_edge(struct edge *e, unsigned int v, unsigned int w)
 static inline unsigned int 
 other_edge(struct edge *e, unsigned int v)
 {
-	if(e->v == v)
+	if (e->v == v)
 		return e->w;
-	else if(e->w == v)
+	else if (e->w == v)
 		return e->v;
 	else
 		errmsg_exit("Illegal endpoint.\n");
@@ -220,8 +214,8 @@ nonisolated_vertex(const struct graph *g)
 {
 	unsigned int v;
 	
-	for(v = 0; v < GRAPH_VERTICES(g); v++)
-		if(GRAPH_DEGREE(g, v) > 0)
+	for (v = 0; v < GRAPH_VERTICES(g); v++)
+		if (GRAPH_DEGREE(g, v) > 0)
 			return v;
 	return -1;
 }

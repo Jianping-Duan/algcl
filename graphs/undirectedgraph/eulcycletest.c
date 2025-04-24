@@ -49,17 +49,17 @@ main(int argc, char *argv[])
 	extern char *optarg;
 	extern int optind;
 	
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'v':
-				if(sscanf(optarg, "%u", &v) != 1)
+				if (sscanf(optarg, "%u", &v) != 1)
 					errmsg_exit("Illegal number. -v %s\n", optarg);
 				break;
 			case 'e':
-				if(sscanf(optarg, "%u", &e) != 1)
+				if (sscanf(optarg, "%u", &e) != 1)
 					errmsg_exit("Illegal number. -e %s\n", optarg);
 				break;
 			default:
@@ -68,7 +68,7 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 	
 	/* Eulerian cycle */
@@ -125,13 +125,13 @@ print_euler_cycle(const struct graph *g, const char *desc)
 	printf("Eulerian cycle:\n");
 	eulcycle_get(&cycle, g);
 	
-	if(STACK_ISEMPTY(&cycle)) {
+	if (STACK_ISEMPTY(&cycle)) {
 		printf("None.\n");
 		return;
 	}
 	
 	v = (unsigned int *)algmalloc(sizeof(int));
-	while(!STACK_ISEMPTY(&cycle)) {
+	while (!STACK_ISEMPTY(&cycle)) {
 		stack_pop(&cycle, (void **)&v);
 		printf("%u ", *v);
 	}

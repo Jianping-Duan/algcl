@@ -49,17 +49,17 @@ main(int argc, char *argv[])
 	extern char *optarg;
 	extern int optind;
 	
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'v':
-				if(sscanf(optarg, "%u", &v) != 1)
+				if (sscanf(optarg, "%u", &v) != 1)
 					errmsg_exit("Illegal number. -v %s\n", optarg);
 				break;
 			case 'e':
-				if(sscanf(optarg, "%u", &e) != 1)
+				if (sscanf(optarg, "%u", &e) != 1)
 					errmsg_exit("Illegal number. -e %s\n", optarg);
 				break;
 			default:
@@ -68,7 +68,7 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 
 	/* Eulerian path */
@@ -91,7 +91,7 @@ main(int argc, char *argv[])
 	print_euler_path(&g[3], "Simple graph");
 	printf("\n");
 	
-	for(v = 0; v < 4; v++)
+	for (v = 0; v < 4; v++)
 		graph_clear(&g[v]);
 	
 	return 0;
@@ -124,13 +124,13 @@ print_euler_path(const struct graph *g, const char *desc)
 	printf("Eulerian path:\n");
 	eulpath_get(&path, g);
 	
-	if(STACK_ISEMPTY(&path)) {
+	if (STACK_ISEMPTY(&path)) {
 		printf("None.\n");
 		return;
 	}
 	
 	v = (unsigned int *)algmalloc(sizeof(int));
-	while(!STACK_ISEMPTY(&path)) {
+	while (!STACK_ISEMPTY(&path)) {
 		stack_pop(&path, (void **)&v);
 		printf("%u ", *v);
 	}

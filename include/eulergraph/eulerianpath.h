@@ -42,9 +42,8 @@ struct stack;
  */
 void eulpath_get(struct stack *path, const struct graph *g);
 
-/* Determines whether a graph has an Eulerian path 
- * using necessary and sufficient conditions 
- * (without computing the path itself):
+/* Determines whether a graph has an Eulerian path using necessary and
+ * sufficient conditions (without computing the path itself):
  *   - degree(v) is even for every vertex,
  *     except for possibly two
  *   - the graph is connected 

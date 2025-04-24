@@ -66,14 +66,13 @@ eulpath_get(struct stack *path, const struct graph *g)
 	STACK_INIT(path, sizeof(int));
 	
 	/* 
-	 * find vertex from which to start potential 
-	 * Eulerian path:
+	 * find vertex from which to start potential Eulerian path:
      * a vertex v with odd degree(v) if it exits;
 	 * otherwise a vertex with degree(v) > 0.
 	 */
 	ns = nonisolated_vertex(g);
-	for(v = 0, oddv = 0; v < GRAPH_VERTICES(g); v++)
-		if(GRAPH_DEGREE(g, v) % 2 == 1) {
+	for (v = 0, oddv = 0; v < GRAPH_VERTICES(g); v++)
+		if (GRAPH_DEGREE(g, v) % 2 == 1) {
 			oddv++;
 			ns = v;
 		}
@@ -82,44 +81,42 @@ eulpath_get(struct stack *path, const struct graph *g)
 	 * Graph can't have an Eulerian path
 	 * (this condition is needed for correctness)
 	 */
-	if(oddv > 2)
+	if (oddv > 2)
 		return;
 	
 	/* 
 	 * special case for graph with zero edges
 	 * (has a degenerate Eulerian path) 
 	 */
-	if(ns == -1)
+	if (ns == -1)
 		ns = 0;
 		
 	/* 
-	 * Create local view of adjacency lists, 
-	 * to iterate one vertex at a time.
-     * the helper Edge data type is used to avoid exploring 
+	 * Create local view of adjacency lists, to iterate one vertex at a time.
+     * the helper Edge data type is used to avoid exploring
 	 * both copies of an edge v-w. 
 	 */
 	adjs = (struct queue *)algmalloc(GRAPH_VERTICES(g) * sizeof(struct queue));
-	for(v = 0; v < GRAPH_VERTICES(g); v++)
+	for (v = 0; v < GRAPH_VERTICES(g); v++)
 		QUEUE_INIT(&adjs[v], 0);
 	
 	
 	edges = (struct edge *)
 		algmalloc((GRAPH_EDGES(g) + 1) * sizeof(struct edge));
-	for(v = 0, k = 0; v < GRAPH_VERTICES(g); v++) {
+	for (v = 0, k = 0; v < GRAPH_VERTICES(g); v++) {
 		selfloops = 0;
 		slist = GRAPH_ADJLIST(g, v);
 		SLIST_FOREACH(slist, nptr, unsigned int, w) {
 			/* careful with self loops */
-			if(v == *w) {
-				if(selfloops % 2 == 0) {
+			if (v == *w) {
+				if (selfloops % 2 == 0) {
 					set_edge(&edges[k], v, *w);
 					enqueue(&adjs[v], &edges[k]);
 					enqueue(&adjs[*w], &edges[k]);
 					k++;
 				}
 				selfloops++;
-			}
-			else if(v < *w) {
+			} else if (v < *w) {
 				set_edge(&edges[k], v, *w);
 				enqueue(&adjs[v], &edges[k]);
 				enqueue(&adjs[*w], &edges[k]);
@@ -128,18 +125,17 @@ eulpath_get(struct stack *path, const struct graph *g)
 		}
 	}
 	
-	/* initialize stack with any non-isolated vertex */
+	/* Initialize stack with any non-isolated vertex */
 	STACK_INIT(&st, sizeof(long));
 	stack_push(&st, &ns);
 	
-	/* greedily search through edges in iterative */
-	/* depth-first search style */
+	/* Greedily search through edges in iterative depth-first search style */
 	w = (unsigned int *)algmalloc(sizeof(int));
-	while(!STACK_ISEMPTY(&st)) {
+	while (!STACK_ISEMPTY(&st)) {
 		stack_pop(&st, (void **)&w);
-		while(!QUEUE_ISEMPTY(&adjs[*w])) {
+		while (!QUEUE_ISEMPTY(&adjs[*w])) {
 			dequeue(&adjs[*w], (void **)&e);
-			if(e->isused)
+			if (e->isused)
 				continue;
 			e->isused = true;
 			stack_push(&st, w);
@@ -158,13 +154,10 @@ eulpath_get(struct stack *path, const struct graph *g)
 }
 
 /* 
- * Determines whether a graph has an Eulerian path 
- * using necessary and sufficient conditions 
- * (without computing the path itself):
- *   - degree(v) is even for every vertex, 
- *	   except for possibly two
- *   - the graph is connected 
- *     (ignoring isolated vertices) 
+ * Determines whether a graph has an Eulerian path using necessary and
+ * sufficient conditions (without computing the path itself):
+ *   - degree(v) is even for every vertex, except for possibly two
+ *   - the graph is connected (ignoring isolated vertices) 
  */
 bool 
 eulpath_necesuff_condition(const struct graph *g)
@@ -174,32 +167,31 @@ eulpath_necesuff_condition(const struct graph *g)
 	long ns;
 	
 	/* special case for graph with zero edges */
-	if(GRAPH_EDGES(g) == 0)
+	if (GRAPH_EDGES(g) == 0)
 		return true;
 	
 	/* 
 	 * Condition 1: 
 	 * degree(v) is even except for possibly two.
 	 */
-	for(v = 0, oddv = 0; v < GRAPH_VERTICES(g); v++)
-		if(GRAPH_DEGREE(g, v) % 2 != 0)
+	for (v = 0, oddv = 0; v < GRAPH_VERTICES(g); v++)
+		if (GRAPH_DEGREE(g, v) % 2 != 0)
 			oddv++;
 		
-	if(oddv > 2)
+	if (oddv > 2)
 		return false;
 		
 	/* 
 	 * Condition 2: 
 	 * graph is connected, ignoring isolated vertices.
 	 */
-	if((ns = nonisolated_vertex(g)) == -1)
+	if ((ns = nonisolated_vertex(g)) == -1)
 		return false;
 	
 	graph_bfsp_init(&bfs, (unsigned int)ns, g);
-	for(v = 0; v < GRAPH_VERTICES(g); v++)
-		if(GRAPH_DEGREE(g, v) > 0 && !GRAPH_BFSP_HASPATH(&bfs, v)) {
+	for (v = 0; v < GRAPH_VERTICES(g); v++)
+		if (GRAPH_DEGREE(g, v) > 0 && !GRAPH_BFSP_HASPATH(&bfs, v))
 			return false;
-		}
 	
 	return true;
 }
@@ -218,9 +210,9 @@ set_edge(struct edge *e, unsigned int v, unsigned int w)
 static inline unsigned int 
 other_edge(struct edge *e, unsigned int v)
 {
-	if(e->v == v)
+	if (e->v == v)
 		return e->w;
-	else if(e->w == v)
+	else if (e->w == v)
 		return e->v;
 	else
 		errmsg_exit("Illegal endpoint.\n");
@@ -237,8 +229,8 @@ nonisolated_vertex(const struct graph *g)
 {
 	unsigned int v;
 	
-	for(v = 0; v < GRAPH_VERTICES(g); v++)
-		if(GRAPH_DEGREE(g, v) > 0)
+	for (v = 0; v < GRAPH_VERTICES(g); v++)
+		if (GRAPH_DEGREE(g, v) > 0)
 			return v;
 	return -1;
 }
