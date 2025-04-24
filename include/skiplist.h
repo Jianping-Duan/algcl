@@ -58,6 +58,21 @@ struct skip_list {
 /* Is this skip list empty? */
 #define SKIPL_ISEMPTY(sl)	((sl)->head->forward[0] == NULL)
 
+/* Internal macro, used for SLIST_FOREACH. */
+#define _SKIPL_NODE_KEY(nptr)	\
+	((nptr) != NULL ? (nptr)->key : NULL)
+
+/* 
+ * Traverses this Skip List.
+ * Before use it, you must declare 'nptr' pointer.
+ */
+#define SKIPL_FOREACH(sl, nptr, dtyp, key)	\
+	for ((nptr) = (sl)->head->forward[0],	\
+		(key) = (dtyp *)_SKIPL_NODE_KEY(nptr); (nptr) != NULL;	\
+		(nptr) = (nptr)->forward[0], (key) = (dtyp *)_SKIPL_NODE_KEY(nptr))
+
+struct single_list;
+
 /* Initializes an empty skip list */
 void skipl_init(struct skip_list *sl, int maxlvl, unsigned int ksize,
 				algcomp_ft *cmp);
@@ -77,8 +92,8 @@ void skipl_put(struct skip_list *sl, const void *key);
  */
 void skipl_delete(struct skip_list *sl, const void *key);
 
-/* Traverses the skip list */
-void skipl_traverse(const struct skip_list *sl, void (*visit)(const void *key));
+/* Gets all keys from this skip list */
+void skipl_keys(const struct skip_list *sl, struct single_list *keys);
 
 /* Clears this skip list. */
 void skipl_clear(struct skip_list *sl);

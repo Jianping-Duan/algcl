@@ -33,7 +33,7 @@
 #include <getopt.h>
 
 static void usage_info(const char *);
-static void print(const void *);
+static void show_keys(const struct skip_list *);
 static int less(const void *, const void *);
 
 int 
@@ -91,11 +91,13 @@ main(int argc, char *argv[])
 	len = (int)strlen(item.key);
 	close_file(fp);
 	end_time = clock();
-	printf("Read completed, estimated time(s): %.3f\n\n",
+	printf("Read completed, estimated time(s): %.3f\n",
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
+	printf("The number of key-value pairs: %ld\n", SKIPL_SIZE(&sl));
+	printf("\n");
 
 	printf("show all key-value pairs for this skip list:\n");
-	skipl_traverse(&sl, print);
+	show_keys(&sl);
 	printf("\n");
 
 	el = (struct element *)skipl_min(&sl);
@@ -155,7 +157,7 @@ main(int argc, char *argv[])
 	printf("\n");
 
 	printf("show all key-value pairs for this skip list:\n");
-	skipl_traverse(&sl, print);
+	show_keys(&sl);
 	printf("The number of key-value pairs: %ld\n", SKIPL_SIZE(&sl));
 
 	skipl_clear(&sl);
@@ -164,10 +166,14 @@ main(int argc, char *argv[])
 }
 
 static void 
-print(const void *key)
+show_keys(const struct skip_list *sl)
 {
-	struct element *item = (struct element *)key;
-	printf("%-5s   %-5ld\n", item->key, item->value);
+	struct skipl_node *nptr;
+	struct element *el;
+
+	SKIPL_FOREACH(sl, nptr, struct element, el) {
+		printf("%-5s   %-5ld\n", el->key, el->value);
+	}
 }
 
 static void

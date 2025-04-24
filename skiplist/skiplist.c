@@ -30,6 +30,7 @@
  *
  */
 #include "skiplist.h"
+#include "singlelist.h"
 
 /* returns a random value in [0...1] */
 #define SL_FRACTION		((double)rand() / (double)RAND_MAX)
@@ -218,15 +219,16 @@ skipl_delete(struct skip_list *sl, const void *key)
 	ALGFREE(update);
 }
 
-/* Traverses the skip list */
+/* Gets all keys from this skip list */
 void 
-skipl_traverse(const struct skip_list *sl, void (*visit)(const void *key))
+skipl_keys(const struct skip_list *sl, struct single_list *keys)
 {
 	struct skipl_node *current;
 
+	slist_init(keys, 0, sl->cmp);
 	current = sl->head;
 	while (current->forward[0] != NULL) {
-		(*visit)(current->forward[0]->key);
+		slist_append(keys, current->forward[0]->key);
 		current = current->forward[0];
 	}
 }
