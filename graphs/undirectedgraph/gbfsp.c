@@ -54,11 +54,11 @@ main(int argc, char *argv[])
 	
 	SET_RANDOM_SEED;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'f':
 				fname = optarg;
 				break;
@@ -72,7 +72,7 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 	
 	fin = open_file(fname, "r");
@@ -84,21 +84,20 @@ main(int argc, char *argv[])
 	graph_bfsp_init(&gbfs, s, &g);
 	
 	w = (long *)algmalloc(sizeof(long));
-	for(v = 0; v < GRAPH_VERTICES(&g); v++) {
-		if(GRAPH_BFSP_HASPATH(&gbfs, v)) {
+	for (v = 0; v < GRAPH_VERTICES(&g); v++) {
+		if (GRAPH_BFSP_HASPATH(&gbfs, v)) {
 			printf("%u to %u: ", s, v);
 			graph_bfsp_paths(&gbfs, v, &paths);
-			while(!STACK_ISEMPTY(&paths)) {
+			while (!STACK_ISEMPTY(&paths)) {
 				stack_pop(&paths, (void **)&w);
-				if(s == *w)
+				if (s == *w)
 					printf("%ld", *w);
 				else
 					printf("-%ld", *w);
 			}
 			stack_clear(&paths);
 			printf("\n");
-		}
-		else
+		} else
 			printf("%u to %u: not connected.\n", s, v);
 	}
 	

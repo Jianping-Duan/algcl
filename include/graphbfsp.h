@@ -39,19 +39,16 @@ struct graph_bfsp {
 	bool *marked;	/* marked[v] = is there an s-v path */
 	long *edgeto;	/* edgeTo[v] = previous edge on shortest s-v path */
 	long *distto;	/* distTo[v] = number of edges shortest s-v path */
-	unsigned int vertices;		/* graph of vertices */
+	unsigned int vertices;	/* graph of vertices */
 };
 
-/* 
- * Is there a path between the source 
- * vertex s and vertex v? 
- */
+/* Is there a path between the source vertex s and vertex v? */
 #define GRAPH_BFSP_HASPATH(bfs, v)	\
 	((v) >= (bfs)->vertices ? false : (bfs)->marked[v])
 
 /* 
- * Returns the number of edges in a shortest path between
- * the source vertex s and vertex v? 
+ * Returns the number of edges in a shortest path between the source vertex s
+ * and vertex v? 
  */
 #define GRAPH_BFSP_DISTTO(bfs, v)	\
 	((v) >= (bfs)->vertices ? (-1) : (bfs)->distto[v])
@@ -62,13 +59,13 @@ struct graph_bfsp {
 	ALGFREE((bfs)->edgeto);				\
 	ALGFREE((bfs)->distto);				\
 	(bfs)->vertices = 0;				\
-} while(0)
+} while (0)
 
 struct stack;
 
 /* 
- * Computes the shortest path between the source vertex s 
- * and every other vertex in the graph g. 
+ * Computes the shortest path between the source vertex s and every other
+ * vertex in the graph g. 
  */
 void graph_bfsp_init(struct graph_bfsp *bfs, unsigned int s,
 					const struct graph *g);
@@ -77,7 +74,7 @@ void graph_bfsp_init(struct graph_bfsp *bfs, unsigned int s,
  * Gets a shortest path between the source vertex s and v, 
  * or if no such path. 
  */
-void graph_bfsp_paths(const struct graph_bfsp *bfs, 
-					unsigned int v, struct stack *paths);
+void graph_bfsp_paths(const struct graph_bfsp *bfs, unsigned int v,
+					struct stack *paths);
 
 #endif	/* _GRAPHBFSP_H_ */

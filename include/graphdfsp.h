@@ -42,10 +42,7 @@ struct graph_dfsp {
 	unsigned int vertices;	/* graph of vertices */
 };
 
-/* 
- * Is there a path between the source 
- * vertex sv and vertex v? 
- */
+/* Is there a path between the source vertex sv and vertex v? */
 #define GRAPH_DFSP_HASPATH(dfs, v)	\
 	((v) >= (dfs)->vertices ? false : (dfs)->marked[v])
 
@@ -54,22 +51,19 @@ struct graph_dfsp {
 	ALGFREE((dfs)->marked);				\
 	ALGFREE((dfs)->edgeto);				\
 	(dfs)->vertices = 0;				\
-} while(0)
+} while (0)
 
 struct stack;
 
-/* 
- * Computes a path between s and 
- * every other vertex in graph g. 
- */
+/* Computes a path between s and every other vertex in graph g. */
 void graph_dfsp_init(struct graph_dfsp *dfs, unsigned int s,
 					const struct graph *g);
 
 /* 
- * Returns a path between the source vertex sv 
- * and vertex v, or if no such path. 
+ * Returns a path between the source vertex sv and vertex v,
+ * or if no such path. 
  */
-void graph_dfsp_paths(const struct graph_dfsp *dfs, 
-					unsigned int v,	struct stack *paths);
+void graph_dfsp_paths(const struct graph_dfsp *dfs, unsigned int v,
+					struct stack *paths);
 
 #endif	/* _GRAPHDFSP_H_ */

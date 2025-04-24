@@ -44,7 +44,7 @@ graph_dfsp_init(struct graph_dfsp *dfs, unsigned int s, const struct graph *g)
 {
 	unsigned int i;
 	
-	if(s > g->vertices)
+	if (s > g->vertices)
 		errmsg_exit("vertex %u is not between 0 and %u\n", s, g->vertices - 1);
 	
 	dfs->sv = s;
@@ -53,7 +53,7 @@ graph_dfsp_init(struct graph_dfsp *dfs, unsigned int s, const struct graph *g)
 	dfs->marked = (bool *)algmalloc(g->vertices * sizeof(bool));
 	dfs->edgeto = (long *)algmalloc(g->vertices * sizeof(long));
 	
-	for(i = 0; i < g->vertices; i++) {
+	for (i = 0; i < g->vertices; i++) {
 		dfs->marked[i] = false;
 		dfs->edgeto[i] = -1;
 	}
@@ -66,20 +66,23 @@ graph_dfsp_init(struct graph_dfsp *dfs, unsigned int s, const struct graph *g)
  * and vertex v, or if no such path. 
  */
 void 
-graph_dfsp_paths(const struct graph_dfsp *dfs, unsigned int v, struct stack *paths)
+graph_dfsp_paths(const struct graph_dfsp *dfs, unsigned int v,
+				struct stack *paths)
 {
 	long x, s;
 	
-	if(v > dfs->vertices)
-		errmsg_exit("vertex %u is not between 0 and %u\n", v, dfs->vertices - 1);
+	if (v > dfs->vertices) {
+		errmsg_exit("vertex %u is not between 0 and %u\n", v,
+			dfs->vertices - 1);
+	}
 	
-	if(!GRAPH_DFSP_HASPATH(dfs, v)) {
+	if (!GRAPH_DFSP_HASPATH(dfs, v)) {
 		paths = NULL;
 		return;
 	}
 	
 	STACK_INIT(paths, sizeof(long));
-	for(x = v; x != dfs->sv && x != -1; x = dfs->edgeto[x])
+	for (x = v; x != dfs->sv && x != -1; x = dfs->edgeto[x])
 		stack_push(paths, &x);
 	s = (long)dfs->sv;
 	stack_push(paths, &s);
@@ -99,7 +102,7 @@ gdfs(struct graph_dfsp *dfs, unsigned int v, const struct graph *g)
 	
 	slist = GRAPH_ADJLIST(g, v);
 	SLIST_FOREACH(slist, nptr, unsigned int, w) {
-		if(!dfs->marked[*w]) {
+		if (!dfs->marked[*w]) {
 			dfs->edgeto[*w] = v;
 			gdfs(dfs, *w, g);
 		}

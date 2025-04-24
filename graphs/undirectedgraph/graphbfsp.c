@@ -37,15 +37,15 @@
 static void gbfs(struct graph_bfsp *, unsigned int, const struct graph *);
 
 /* 
- * Computes the shortest path between the source vertex s 
- * and every other vertex in the graph g. 
+ * Computes the shortest path between the source vertex s and every other
+ * vertex in the graph g. 
  */
 void 
 graph_bfsp_init(struct graph_bfsp *bfs, unsigned int s, const struct graph *g)
 {
 	unsigned int i;
 	
-	if(s >= g->vertices)
+	if (s >= g->vertices)
 		errmsg_exit("vertex %u is not between 0 and %u\n", s, g->vertices - 1);
 	
 	bfs->vertices = g->vertices;
@@ -54,7 +54,7 @@ graph_bfsp_init(struct graph_bfsp *bfs, unsigned int s, const struct graph *g)
 	bfs->edgeto = (long *)algmalloc(g->vertices * sizeof(long));
 	bfs->distto = (long *)algmalloc(g->vertices * sizeof(long));
 	
-	for(i = 0; i < bfs->vertices; i++) {
+	for (i = 0; i < bfs->vertices; i++) {
 		bfs->marked[i] = false;
 		bfs->distto[i] = 0;
 		bfs->edgeto[i] = 0;
@@ -64,8 +64,7 @@ graph_bfsp_init(struct graph_bfsp *bfs, unsigned int s, const struct graph *g)
 }
 
 /* 
- * Gets a shortest path between the source 
- * vertex s and v, or if no such path. 
+ * Gets a shortest path between the source vertex s and v, or if no such path.
  */
 void 
 graph_bfsp_paths(const struct graph_bfsp *bfs, unsigned int v,
@@ -73,20 +72,17 @@ graph_bfsp_paths(const struct graph_bfsp *bfs, unsigned int v,
 {
 	long w;
 	
-	if(v >= bfs->vertices) {
+	if (v >= bfs->vertices) {
 		errmsg_exit("vertex %u is not between 0 and %u\n", v,
 			bfs->vertices - 1);
 	}
 	
-	if(!GRAPH_BFSP_HASPATH(bfs, v)) {
+	if (!GRAPH_BFSP_HASPATH(bfs, v))
 		return;
-	}
 	
 	STACK_INIT(paths, sizeof(long));
-	for(w = v; w != -1 && bfs->distto[w] != 0; 
-		w = bfs->edgeto[w]) {
+	for (w = v; w != -1 && bfs->distto[w] != 0; w = bfs->edgeto[w])
 		stack_push(paths, &w);
-	}
 	stack_push(paths, &w);	/* source vertex */
 }
 
@@ -104,18 +100,18 @@ gbfs(struct graph_bfsp *bfs, unsigned int s, const struct graph *g)
 	QUEUE_INIT(&qu, sizeof(int));
 	v = (unsigned int *)algmalloc(sizeof(int));
 	
-	for(i = 0; i < g->vertices; i++)
+	for (i = 0; i < g->vertices; i++)
 		bfs->distto[i] = INFINITY;
 	
 	bfs->distto[s] = 0;
 	bfs->marked[s] = true;
 	enqueue(&qu, &s);
 	
-	while(!QUEUE_ISEMPTY(&qu)) {
+	while (!QUEUE_ISEMPTY(&qu)) {
 		dequeue(&qu, (void **)&v);
 		slist = GRAPH_ADJLIST(g, *v);
 		SLIST_FOREACH(slist, nptr, unsigned int, w) {
-			if(!bfs->marked[*w]) {
+			if (!bfs->marked[*w]) {
 				bfs->marked[*w] = true;
 				bfs->edgeto[*w] = *v;
 				bfs->distto[*w] = bfs->distto[*v] + 1;
