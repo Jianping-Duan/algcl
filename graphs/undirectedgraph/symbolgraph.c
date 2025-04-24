@@ -100,7 +100,7 @@ sybgraph_init(struct symbol_graph *sg, const char *filename,
 	for(i = 0; i < AVLBST_SIZE(sg->st); i++)
 		sg->keys[i] = (char *)algcalloc(MAX_KEY_LEN, sizeof(char));
 	
-	avlbst_keys(sg->st, avlbst_min(sg->st), avlbst_max(sg->st), &els);
+	avlbst_preorder(sg->st, &els);
 	SLIST_FOREACH(&els, nptr, struct element, el2) {
 		if ((el3 = (struct element *)avlbst_get(sg->st, el2)) != NULL)
 			strcpy(sg->keys[el3->value], el2->key);
