@@ -52,7 +52,7 @@ struct graph_cycle {
 #define GRAPH_CYCLE_CLEAR(gc)	do {	\
 	ALGFREE((gc)->marked);				\
 	ALGFREE((gc)->edgeto);				\
-} while(0)
+} while (0)
 
 /* Initialize an empty cycle. */
 void graph_cycle_init(struct graph_cycle *gc, const struct graph *g);

@@ -50,14 +50,14 @@ graphcc_init(struct graph_cc *gc, const struct graph *g)
 	gc->ids = (unsigned int *)algmalloc(g->vertices * sizeof(int));
 	gc->sizes = (unsigned int *)algmalloc(g->vertices * sizeof(int));
 	
-	for(i = 0; i < g->vertices; i++) {
+	for (i = 0; i < g->vertices; i++) {
 		gc->marked[i] = false;
 		gc->ids[i] = 0;
 		gc->sizes[i] = 0;
 	}
 	
-	for(v = 0; v < g->vertices; v++)
-		if(!gc->marked[v]) {
+	for (v = 0; v < g->vertices; v++)
+		if (!gc->marked[v]) {
 			dfs(gc, v, g);
 			gc->count++;
 		}
@@ -79,7 +79,7 @@ dfs(struct graph_cc *gc, unsigned int v, const struct graph *g)
 	
 	slist = GRAPH_ADJLIST(g, v);
 	SLIST_FOREACH(slist, nptr, unsigned int, w) {
-		if(!gc->marked[*w])
+		if (!gc->marked[*w])
 			dfs(gc, *w, g);
 	}
 }

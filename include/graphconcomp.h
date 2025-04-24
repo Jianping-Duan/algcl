@@ -38,38 +38,30 @@
 struct graph_cc {
 	bool *marked;		/* marked[v] = has vertex v been marked? */
 	unsigned int *ids;	/* id[v] = id of connected component containing v */
-	unsigned int *sizes; /* size[id] = number of vertices in given component */
-	unsigned int count;	/* number of connected components */
+	unsigned int *sizes;	/* size[id] = number of vertices in given
+							   component */
+	unsigned int count;		/* number of connected components */
 	unsigned int vertices;	/* graph of vertices */
 };
 
-/* 
- * Returns the component id of the connected component 
- * containing vertex v.
- */
+/* Returns the component id of the connected component containing vertex v. */
 #define GRAPHCC_ID(gc, v)	\
 	((v) >= (gc)->vertices ? 0 : (gc)->ids[v])
 
 /* 
- * Returns the number of vertices in the connected 
+ * Returns the number of vertices in the connected
  * component containing vertex v.
  */
 #define GRAPH_SIZE(gc, v)	\
 	((v) >= (gc)->vertices ? 0 : (gc)->sizes[v])
 
-/* 
- * Returns the number of connected components 
- * in the graph g.
- */
+/* Returns the number of connected components in the graph g. */
 #define GRAPHCC_COUNT(gc)	((gc)->count)
 
-/* 
- * Returns true if vertices v and w are in 
- * the same connected component. 
- */
-#define GRAPHCC_CONNECTED(gc, v, w)	\
-	((v) >= (gc)->vertices ? 0 : (w) >= (gc)->vertices \
-	? 0 : (gc)->ids[v] == (gc)->ids[w])
+/* Returns true if vertices v and w are in the same connected component. */
+#define GRAPHCC_CONNECTED(gc, v, w)		\
+	((v) >= (gc)->vertices ? 0 : (w) >= (gc)->vertices	\
+		? 0 : (gc)->ids[v] == (gc)->ids[w])
 
 /* Clears this connected components. */
 #define GRAPHCC_CLEAR(gc)	do {	\
@@ -78,11 +70,9 @@ struct graph_cc {
 	ALGFREE((gc)->sizes);			\
 	(gc)->count = 0;				\
 	(gc)->vertices = 0;				\
-} while(0)
+} while (0)
 
-/* 
- * Computes the connected components of the undirected graph g.
- */
+/* Computes the connected components of the undirected graph g. */
 void graphcc_init(struct graph_cc *gc, const struct graph *g);
 
 #endif	/* _GRAPHCONCOMP_H_ */

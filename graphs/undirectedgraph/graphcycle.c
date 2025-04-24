@@ -46,29 +46,29 @@ graph_cycle_init(struct graph_cycle *gc, const struct graph *g)
 	
 	STACK_INIT(&gc->cycle, sizeof(int));
 	
-	for(i = 0; i < GRAPH_VERTICES(g); i++) {
+	for (i = 0; i < GRAPH_VERTICES(g); i++) {
 		gc->marked[i] = false;
 		gc->edgeto[i] = -1;
 	}
 }
 
 /* 
- * Determines whether the undirected graph g 
- * has a cycle and, if so, finds such a cycle. 
+ * Determines whether the undirected graph g has a cycle and,
+ * if so, finds such a cycle. 
  */
 void 
 graph_cycle_get(struct graph_cycle *gc, const struct graph *g)
 {
 	unsigned int v;
 	
-	if(graph_parallel_edges(gc, g))
+	if (graph_parallel_edges(gc, g))
 		return;
 	
-	if(!STACK_ISEMPTY(&gc->cycle))
+	if (!STACK_ISEMPTY(&gc->cycle))
 		stack_clear(&gc->cycle);
 	
-	for(v = 0; v < GRAPH_VERTICES(g); v++)
-		if(!gc->marked[v])
+	for (v = 0; v < GRAPH_VERTICES(g); v++)
+		if (!gc->marked[v])
 			dfs(gc, g, -1, v);
 }
 
@@ -83,13 +83,13 @@ graph_self_loop(struct graph_cycle *gc, const struct graph *g)
 	struct single_list *slist;
 	struct slist_node *nptr;
 	
-	if(!STACK_ISEMPTY(&gc->cycle))
+	if (!STACK_ISEMPTY(&gc->cycle))
 		stack_clear(&gc->cycle);
 	
-	for(v = 0; v < GRAPH_VERTICES(g); v++) {
+	for (v = 0; v < GRAPH_VERTICES(g); v++) {
 		slist = GRAPH_ADJLIST(g, v);
 		SLIST_FOREACH(slist, nptr, unsigned int, w) {
-			if(v == *w) {
+			if (v == *w) {
 				stack_push(&gc->cycle, &v);
 				stack_push(&gc->cycle, w);
 				return true;
@@ -110,13 +110,13 @@ graph_parallel_edges(struct graph_cycle *gc, const struct graph *g)
 	struct single_list *slist;
 	struct slist_node *nptr;
 	
-	if(!STACK_ISEMPTY(&gc->cycle))
+	if (!STACK_ISEMPTY(&gc->cycle))
 		stack_clear(&gc->cycle);
 	
-	for(v = 0; v < GRAPH_VERTICES(g); v++) {
+	for (v = 0; v < GRAPH_VERTICES(g); v++) {
 		slist = GRAPH_ADJLIST(g, v);
 		SLIST_FOREACH(slist, nptr, unsigned int, w) {
-			if(gc->marked[*w]) {
+			if (gc->marked[*w]) {
 				stack_push(&gc->cycle, &v);
 				stack_push(&gc->cycle, w);
 				stack_push(&gc->cycle, &v);
@@ -147,22 +147,17 @@ dfs(struct graph_cycle *gc, const struct graph *g, long u, unsigned int v)
 	slist = GRAPH_ADJLIST(g, v);
 	SLIST_FOREACH(slist, nptr, unsigned int, w) {
 		/* short circuit if cycle already found */
-		if(!STACK_ISEMPTY(&gc->cycle))
+		if (!STACK_ISEMPTY(&gc->cycle))
 			return;
 			
-		if(!gc->marked[*w]) {
+		if (!gc->marked[*w]) {
 			gc->edgeto[*w] = v;
 			dfs(gc, g, v, *w);
 		}
-		/* 
-		 * check for cycle (but disregard reverse of 
-		 * edge leading to v) 
-		 */
-		else if(*w != u) {
-			for(x = v; x != -1 && x != *w;
-				x = gc->edgeto[x]) {
+		/* check for cycle (but disregard reverse of edge leading to v) */
+		else if (*w != u) {
+			for (x = v; x != -1 && x != *w; x = gc->edgeto[x])
 				stack_push(&gc->cycle, &x);
-			}
 			stack_push(&gc->cycle, w);
 			stack_push(&gc->cycle, &v);
 		}

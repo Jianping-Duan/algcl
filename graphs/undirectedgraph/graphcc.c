@@ -41,7 +41,7 @@ main(int argc, char *argv[])
 	unsigned int m, i, v, *w;
 	struct queue *comps;
 	
-	if(argc != 2)
+	if (argc != 2)
 		errmsg_exit("Usage: %s <datafile> \n", argv[0]);
 
 	SET_RANDOM_SEED;
@@ -56,27 +56,24 @@ main(int argc, char *argv[])
 	m = GRAPHCC_COUNT(&gc);
 	printf("%u components.\n", m);
 	
-	/* 
-	 * compute list of vertices in 
-	 * each connected component.
-	 */
+	/* compute list of vertices in each connected component. */
 	comps = (struct queue *)algmalloc(m * sizeof(struct queue));
-	for(i = 0; i < m; i++)
+	for (i = 0; i < m; i++)
 		QUEUE_INIT(&comps[i], sizeof(int));
 	
 	for(v = 0; v < GRAPH_VERTICES(&g); v++)
 		enqueue(&comps[GRAPHCC_ID(&gc, v)], &v);
 	
 	/* print result */
-	for(i = 0; i < m; i++) {
-		while(!QUEUE_ISEMPTY(&comps[i])) {
+	for (i = 0; i < m; i++) {
+		while (!QUEUE_ISEMPTY(&comps[i])) {
 			dequeue(&comps[i], (void **)&w);
 			printf("%u ", *w);
 		}
 		printf("\n");
 	}
 	
-	for(i = 0; i < m; i++)
+	for (i = 0; i < m; i++)
 		queue_clear(&comps[i]);
 	ALGFREE(comps);
 	
