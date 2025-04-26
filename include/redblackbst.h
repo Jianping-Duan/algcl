@@ -36,26 +36,22 @@
 
 enum bst_redblack {RED, BLACK};
 
-struct rbbst_node{
-	struct element item;		/* key-value pair */
-	struct rbbst_node *left;	/* link to left subtrees */
-	struct rbbst_node *right;	/* link to right subtrees */
+struct rbtree_node {
+	void *key;					/* key contained by the Node */
+	struct rbtree_node *left;	/* link to left subtrees */
+	struct rbtree_node *right;	/* link to right subtrees */
 	enum bst_redblack color;	/* color for parent link */
 	unsigned long size;			/* subtrees count */
 	long height;				/* height of the subtree */
 };
 
-struct redblack_bst{
-	struct rbbst_node *root;	/* root node */
+struct rbtree {
+	struct rbtree_node *root;	/* root node */
+	unsigned int keysize;		/* the bytes of the key */
+	algcomp_ft *cmp;			/* comparator over the keys */
 };
 
-/* Initializes an empty Red-Black binary search tree. */
-#define RBBST_INIT(bst)	((bst)->root = NULL)
-
-/* 
- * Returns the number of key-value pairs in 
- * this Red-Black BST.
- */
+/* Returns the number of keys in this Red-Black BST. */
 #define RBBST_SIZE(bst)	\
 	((bst)->root == NULL ? 0 : (bst)->root->size)
 
@@ -70,80 +66,64 @@ struct redblack_bst{
 /* Is this Red Black BST empty ? */
 #define RBBST_ISEMPTY(bst)	((bst)->root == NULL)
 
-struct queue;
+struct single_list;
 
-/* Returns item associated with the given key */
-struct element * rbbst_get(const struct redblack_bst *bst, const char *key);
+/* Initializes an empty Red-Black binary search tree. */
+void rbbst_init(struct rbtree *bst, unsigned int ksize, algcomp_ft *kcmp);
 
-/* 
- * Inserts the specified key-value pair 
- * into the Red-Black BST.
- */
-void rbbst_put(struct redblack_bst *bst, const struct element *item);
+/* Returns Key associated with the given key */
+void * rbbst_get(const struct rbtree *bst, const void *key);
+
+/* Inserts the specified key into the Red-Black BST. */
+int rbbst_put(struct rbtree *bst, const void *key);
 
 /* Release the Red-Black tree */
-void rbbst_clear(struct redblack_bst *bst);
+void rbbst_clear(struct rbtree *bst);
 
 /* Preorder traverse */
-void rbbst_preorder(const struct redblack_bst *bst, 
-					void (*print)(struct element *item));
+void rbbst_preorder(const struct rbtree *bst, struct single_list *keys);
 
 /* Returns the smallest key in the Red-Black BST */
-char * rbbst_min(const struct redblack_bst *bst);
+void * rbbst_min(const struct rbtree *bst);
 
 /* Returns the largest key in the Red-Black BST */
-char * rbbst_max(const struct redblack_bst *bst);
+void * rbbst_max(const struct rbtree *bst);
 
-/* 
- * Remove the smallest key associated with value from 
- * this Red-Black BST.
- */
-void rbbst_delete_min(struct redblack_bst *bst);
+/* Remove the smallest key from this Red-Black BST. */
+int rbbst_delete_min(struct rbtree *bst);
 
-/* 
- * Remove the largest key associated with value from 
- * this Red-Black BST.
- */
-void rbbst_delete_max(struct redblack_bst *bst);
+/* Remove the largest key from this Red-Black BST. */
+int rbbst_delete_max(struct rbtree *bst);
 
-/* 
- * Removes the specified key and its associated with 
- * value from this Red-Black BST. 
- */
-void rbbst_delete(struct redblack_bst *bst,	const char *key);
+/* Removes the specified key from this Red-Black BST. */
+int rbbst_delete(struct rbtree *bst, const void *key);
 
 /* Check integrity of red-black tree data structure. */
-int rbbst_check(const struct redblack_bst *bst);
+int rbbst_check(const struct rbtree *bst);
 
 /* 
- * Returns the largest key in the symbol table less than
+ * Returns the largest key in the Red-Black tree less than
  * or equal to Key.
  */
-struct element * rbbst_floor(const struct redblack_bst *bst, 
-							const char *key);
-
-/* Returns the smallest key in the symbol table greater 
- * than or equal to Key.
- */
-struct element * rbbst_ceiling(const struct redblack_bst *bst,
-								const char *key);
+void * rbbst_floor(const struct rbtree *bst, const void *key);
 
 /* 
- * Return the number of keys in the Red-Black BST 
- * strictly less than Key.
+ * Returns the smallest key in the Red-Black tree greater than
+ * or equal to Key.
  */
-unsigned long rbbst_rank(const struct redblack_bst *bst, 
-						const char *key);
+void * rbbst_ceiling(const struct rbtree *bst, const void *key);
+
+/* Return the number of keys in the Red-Black BST strictly less than Key. */
+unsigned long rbbst_rank(const struct rbtree *bst, const void *key);
 
 /* Return the key in the BST of a given rank. */
-struct element * rbbst_select(const struct redblack_bst *bst, 
-							unsigned long rank);
+void * rbbst_select(const struct rbtree *bst, unsigned long rank);
 
 /* 
- * Returns all keys in the Red-Black BST in the 
+ * Returns all keys in the Red-Black BST in the
  * given range in ascending order.
  */
-void rbbst_keys(const struct redblack_bst *bst, const char *lokey,
-				const char *hikey, struct queue *keys);
+void rbbst_keys(const struct rbtree *bst, const void *lokey, const void *hikey,
+				struct single_list *keys);
 
 #endif /* _REDBLACKBST_H_ */

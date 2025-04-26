@@ -30,17 +30,20 @@
  *
  */
 #include "redblackbst.h"
+#include "singlelist.h"
 #include <getopt.h>
 
 static void usage_info(const char *);
-static void check(struct redblack_bst *);
+static void check(const struct rbtree *);
+static int less(const void *, const void *);
 
 int
 main(int argc, char *argv[])
 {
 	FILE *fp;
-	struct redblack_bst bst;
-	struct element item, *el;
+	struct rbtree bst;
+	struct element item, *el, *minel, *maxel;
+	struct single_list els;
 	clock_t start_time, end_time;
 	char *fname = NULL, *key = NULL, *rand_key = NULL;
 	int rank, len;
@@ -51,11 +54,11 @@ main(int argc, char *argv[])
 	extern char *optarg;
 	extern int optind;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'f':
 				fname = optarg;
 				break;
@@ -68,14 +71,14 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 	
 	fp = open_file(fname, "rb");
 	
 	SET_RANDOM_SEED;
 	
-	RBBST_INIT(&bst);
+	rbbst_init(&bst, sizeof(struct element), less);
 	
 	printf("Start read data from \"%s\" file to the Red-Black BST...\n", fname);
 	start_time = clock();
@@ -91,20 +94,30 @@ main(int argc, char *argv[])
 	printf("\n");
 	
 	printf("The height of the Red-Black BST is: %ld\n", RBBST_HEIGHT(&bst));
-	printf("The number of nodes in this Red-Black BST is: %ld\n\n",
+	printf("The number of nodes in this Red-Black BST is: %ld\n",
 		RBBST_SIZE(&bst));
+	printf("\n");
 	
 	check(&bst);
 	
 	start_time = clock();
-	printf("The red-black BST of minimum key is: %s\n",	rbbst_min(&bst));
-	printf("The red-black BST of maximum key is: %s\n",	rbbst_max(&bst));
+	minel = (struct element *)rbbst_min(&bst);
+	printf("The red-black BST of minimum key is: %s\n",	minel->key);
+	maxel = (struct element *)rbbst_max(&bst);
+	printf("The red-black BST of maximum key is: %s\n",	maxel->key);
 	end_time = clock();
-	printf("Estimated time(s): %.3f\n\n", 
+	printf("Estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
+	printf("\n");
+
+	printf("Begin traverses this Red-Black Tree.\n");
+	rbbst_keys(&bst, minel, maxel, &els);
+	printf("Total elements: %lu\n", SLIST_LENGTH(&els));
+	slist_clear(&els);
+	printf("\n");
 	
-	printf("Begin delete the minimum key and the "
-		"maximum key from the Red-Black BST...\n");
+	printf("Begin delete the minimum key and the maximum key from "
+		"the Red-Black BST...\n");
 	start_time = clock();
 	rbbst_delete_min(&bst);
 	rbbst_delete_max(&bst);
@@ -116,57 +129,67 @@ main(int argc, char *argv[])
 	check(&bst);
 	
 	printf("Begin search key: %s\n", key);
+	strncpy(item.key, key, MAX_KEY_LEN);
+	item.value = -1;
 	start_time = clock();
-	if((el = rbbst_get(&bst, key)) != NULL)
+	if((el = (struct element *)rbbst_get(&bst, &item)) != NULL) {
 		printf("It's value: %ld\n", el->value);
-	else
+		printf("The rank of key '%s' is %ld\n", key, rbbst_rank(&bst, el));
+	} else
 		printf("Not found.\n");
 	end_time = clock();
 	printf("Search completed, estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 	
-	printf("The rank of key '%s' is %ld\n\n", key, rbbst_rank(&bst, key));
-	
 	rank = rand_range_integer(0, RBBST_SIZE(&bst));
 	printf("The element of rank %d is:\n", rank);
 	start_time = clock();
-	el = rbbst_select(&bst, rank);
+	el = (struct element *)rbbst_select(&bst, rank);
 	end_time = clock();
 	printf("Key: %s, value: %ld\n", el->key, el->value);
-	printf("Estimated time(s): %.3f\n\n", 
+	printf("Estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
+	printf("\n");
 	
 	len = (int)strlen(key);
 	rand_key = rand_string(len);
-	printf("The largest key in this Red-Black BST less "
-		"than or equal to '%s'\n", rand_key);
+	printf("The largest key in this Red-Black BST less than or equal "
+		"to '%s'\n", rand_key);
+	strncpy(item.key, rand_key, MAX_KEY_LEN);
+	item.value = -1;
 	start_time = clock();
-	if((el = rbbst_floor(&bst, rand_key)) != NULL)
+	if ((el = (struct element *)rbbst_floor(&bst, &item)) != NULL)
 		printf("It's key %s, value is %ld\n", el->key, el->value);
 	else
 		printf("The given key '%s' is too small.\n", rand_key);
 	end_time = clock();
-	printf("Estimated time(s): %.3f\n\n", 
+	printf("Estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	ALGFREE(rand_key);
+	printf("\n");
 	
 	rand_key = rand_string(len);
-	printf("The smallest key in this Red-Black BST "
-		"greater than or equal to '%s'\n", rand_key);
+	printf("The smallest key in this Red-Black BST greater than or equal "
+		"to '%s'\n", rand_key);
+	strncpy(item.key, rand_key, MAX_KEY_LEN);
+	item.value = -1;
 	start_time = clock();
-	if((el = rbbst_ceiling(&bst, rand_key)) != NULL)
+	if((el = (struct element *)rbbst_ceiling(&bst, &item)) != NULL)
 		printf("It's key %s, value is %ld\n", el->key, el->value);
 	else
 		printf("The given key '%s' is too large.\n", rand_key);
 	end_time = clock();
-	printf("Estimated time(s): %.3f\n\n", 
+	printf("Estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	ALGFREE(rand_key);
+	printf("\n");
 	
 	printf("Begin delete key: %s\n", key);
+	strncpy(item.key, key, MAX_KEY_LEN);
+	item.value = -1;
 	start_time = clock();
-	rbbst_delete(&bst, key);
+	rbbst_delete(&bst, &item);
 	end_time = clock();
 	printf("Deletion completed, estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
@@ -174,8 +197,9 @@ main(int argc, char *argv[])
 	
 	check(&bst);
 	
-	printf("The number of nodes in this Red-Black BST is: %ld\n\n",
+	printf("The number of nodes in this Red-Black BST is: %ld\n",
 		RBBST_SIZE(&bst));
+	printf("\n");
 
 	rbbst_clear(&bst);
 	
@@ -183,12 +207,11 @@ main(int argc, char *argv[])
 }
 
 static void
-check(struct redblack_bst *bst)
+check(const struct rbtree *bst)
 {
 	clock_t start_time, end_time;
 	
-	printf("Begin checks the integrity of Red-Black BST "
-		"data structure......\n");
+	printf("Begin checks the integrity of Red-Black BST data structure...\n");
 	start_time = clock();
 	rbbst_check(bst);
 	end_time = clock();
@@ -201,7 +224,23 @@ static void
 usage_info(const char *pname)
 {
 	fprintf(stderr, "Usage: %s -f -k\n", pname);
-	fprintf(stderr, "-f: The data file will be read in memory..\n");
+	fprintf(stderr, "-f: The data file will be read in memory...\n");
 	fprintf(stderr, "-k: The key will be searched.\n");
 	exit(EXIT_FAILURE);
+}
+
+static int 
+less(const void *key1, const void *key2)
+{
+	struct element *k1, *k2;
+
+	k1 = (struct element *)key1;
+	k2 = (struct element *)key2;
+
+	if (strcmp(k1->key, k2->key) < 0)
+		return 1;
+	else if (strcmp(k1->key, k2->key) == 0)
+		return 0;
+	else
+		return -1;
 }

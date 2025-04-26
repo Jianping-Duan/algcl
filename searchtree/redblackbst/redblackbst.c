@@ -30,7 +30,7 @@
  *
  */
 #include "redblackbst.h"
-#include "queue.h"
+#include "singlelist.h"
 
 #define RBBST_SIZE_NODE(node)	((node) == NULL ? 0 : (node)->size)
 #define RBBST_ISRED(node)	((node) == NULL ? 0 : (node)->color == RED)
@@ -38,196 +38,198 @@
 
 /* Flips the colors of node and its two children */
 #define FLIP_COLORS(node)		do {					\
-	if(node != NULL) {									\
+	if (node != NULL) {									\
 		node->color = !node->color;						\
-		if(node->left != NULL)							\
+		if (node->left != NULL)							\
 			node->left->color = !node->left->color;		\
-		if(node->right != NULL)							\
+		if (node->right != NULL)						\
 			node->right->color = !node->right->color;	\
 	}													\
-} while(0)
+} while (0)
 
-static struct element * get_node(struct rbbst_node *, const char *);
-static struct rbbst_node * make_node(const struct element *);
-static inline struct rbbst_node * rotate_right(struct rbbst_node *);
-static inline struct rbbst_node * rotate_left(struct rbbst_node *);
-static inline struct rbbst_node * balance(struct rbbst_node *);
-static struct rbbst_node * put_node(struct rbbst_node *,
-	const struct element *);
-static void postorder_nodes(struct rbbst_node *, void (*)(struct rbbst_node *));
-static void release_node(struct rbbst_node *);
-static void preorder_nodes(struct rbbst_node *, void (*)(struct element *));
-static struct rbbst_node * min_node(struct rbbst_node *);
-static struct rbbst_node * max_node(struct rbbst_node *);
-static struct rbbst_node * move_red_left(struct rbbst_node *);
-static struct rbbst_node * move_red_right(struct rbbst_node *);
-static struct rbbst_node * delete_min_node(struct rbbst_node *);
-static struct rbbst_node * delete_max_node(struct rbbst_node *);
-static struct rbbst_node * delete_node(struct rbbst_node *, const char *);
-static int isbst(const struct rbbst_node *, const char *, const char *);
-static int is23(const struct rbbst_node *, const struct rbbst_node *);
-static inline int isbal_node(const struct rbbst_node *node, int blacks);
-static int isbalanced(const struct rbbst_node *);
-static int is_size_consistent(const struct rbbst_node *);
-static int is_rank_consistent(const struct redblack_bst *);
-static struct rbbst_node * floor_node(struct rbbst_node *, const char *);
-static struct rbbst_node * ceiling_node(struct rbbst_node *, const char *);
-static unsigned long rank_node(const char *, const struct rbbst_node *);
-static struct element * select_node(unsigned long, struct rbbst_node *);
-static void keys_range(const struct rbbst_node *, const char *, const char *,
-	struct queue *);
+static void * get_node(struct rbtree_node *, const void *, algcomp_ft *);
+static struct rbtree_node * make_node(const void *, unsigned int);
+static inline struct rbtree_node * rotate_right(struct rbtree_node *);
+static inline struct rbtree_node * rotate_left(struct rbtree_node *);
+static inline struct rbtree_node * balance(struct rbtree_node *);
+static struct rbtree_node * put_node(const struct rbtree *,
+	struct rbtree_node *, const void *);
+static void release_subtree(struct rbtree_node *, unsigned int);
+static void preorder_nodes(struct rbtree_node *, struct single_list *);
+static struct rbtree_node * min_node(struct rbtree_node *);
+static struct rbtree_node * max_node(struct rbtree_node *);
+static struct rbtree_node * move_red_left(struct rbtree_node *);
+static struct rbtree_node * move_red_right(struct rbtree_node *);
+static struct rbtree_node * delete_min_node(struct rbtree_node *, unsigned int);
+static struct rbtree_node * delete_max_node(struct rbtree_node *, unsigned int);
+static struct rbtree_node * delete_node(const struct rbtree *,
+	struct rbtree_node *, const void *);
+static int isbst(const struct rbtree_node *, const void *, const void *,
+	algcomp_ft *);
+static int is23(const struct rbtree_node *, const struct rbtree_node *);
+static inline int isbal_node(const struct rbtree_node *node, int blacks);
+static int isbalanced(const struct rbtree_node *);
+static int is_size_consistent(const struct rbtree_node *);
+static int is_rank_consistent(const struct rbtree *);
+static struct rbtree_node * floor_node(struct rbtree_node *, const void *,
+	algcomp_ft *);
+static struct rbtree_node * ceiling_node(struct rbtree_node *, const void *,
+	algcomp_ft *);
+static unsigned long rank_node(const struct rbtree_node *, const void *,
+	algcomp_ft *);
+static void * select_node(struct rbtree_node *, unsigned long);
+static void keys_range(const struct rbtree_node *, const void *, const void *,
+	algcomp_ft *, struct single_list *);
 
-/* Returns item associated with the given key. */
-struct element * 
-rbbst_get(const struct redblack_bst *bst, const char *key)
+/* Initializes an empty Red-Black binary search tree. */
+void
+rbbst_init(struct rbtree *bst, unsigned int ksize, algcomp_ft *kcmp)
 {
-	if(key == NULL)
-		return NULL;
-	return get_node(bst->root, key);
+	bst->root = NULL;
+	bst->keysize = ksize;
+	bst->cmp = kcmp;
 }
 
-/* 
- * Inserts the specified key-value pair into 
- * the Red-Black BST.
- */
-void
-rbbst_put(struct redblack_bst *bst, const struct element *item)
+/* Returns item associated with the given key. */
+void * 
+rbbst_get(const struct rbtree *bst, const void *key)
 {
-	assert(item != NULL);
-	
-	bst->root = put_node(bst->root, item);
+	if (key == NULL)
+		return NULL;
+	return get_node(bst->root, key, bst->cmp);
+}
+
+/* Inserts the specified key into the Red-Black BST. */
+int
+rbbst_put(struct rbtree *bst, const void *key)
+{
+	if (key == NULL)
+		return -1;
+	bst->root = put_node(bst, bst->root, key);
 	bst->root->color = BLACK;
+	return 0;
 }
 
 /* Release the Red-Black tree */
 void
-rbbst_clear(struct redblack_bst *bst)
+rbbst_clear(struct rbtree *bst)
 {
-	if(!RBBST_ISEMPTY(bst))
-		postorder_nodes(bst->root, release_node);
+	if (!RBBST_ISEMPTY(bst))
+		release_subtree(bst->root, bst->keysize);
 }
 
 /* Preorder traverse. */
 void 
-rbbst_preorder(const struct redblack_bst *bst, 
-			void (*print)(struct element *item))
+rbbst_preorder(const struct rbtree *bst, struct single_list *keys)
 {
-	preorder_nodes(bst->root, print);
+	slist_init(keys, 0, bst->cmp);
+	if (!RBBST_ISEMPTY(bst))
+		preorder_nodes(bst->root, keys);
 }
 
 /* Returns the smallest key in the Red-Black BST. */
-char * 
-rbbst_min(const struct redblack_bst *bst)
+void * 
+rbbst_min(const struct rbtree *bst)
 {
-	if(RBBST_ISEMPTY(bst))
+	if (RBBST_ISEMPTY(bst))
 		return NULL;
-	return min_node(bst->root)->item.key;
+	return (min_node(bst->root)->key);
 }
 
 /* Returns the largest key in the Red-Black BST. */
-char *
-rbbst_max(const struct redblack_bst *bst)
+void *
+rbbst_max(const struct rbtree *bst)
 {
-	if(RBBST_ISEMPTY(bst))
+	if (RBBST_ISEMPTY(bst))
 		return NULL;
-	return max_node(bst->root)->item.key;
+	return (max_node(bst->root)->key);
+}
+
+/* Remove the smallest key from this Red-Black BST. */
+int
+rbbst_delete_min(struct rbtree *bst)
+{
+	if (RBBST_ISEMPTY(bst))
+		return -1;
+	
+	/* if both children of root are black, set root to red. */
+	if (!RBBST_ISRED(bst->root->left) && !RBBST_ISRED(bst->root->right))
+		bst->root->color = RED;
+	
+	bst->root = delete_min_node(bst->root, bst->keysize);
+	if (!RBBST_ISEMPTY(bst))
+		bst->root->color = BLACK;
+
+	return 0;
 }
 
 /* 
- * Remove the smallest key associated with value from 
- * this Red-Black BST.
+ * Remove the largest key from this Red-Black BST.
  */
-void
-rbbst_delete_min(struct redblack_bst *bst)
+int
+rbbst_delete_max(struct rbtree *bst)
 {
-	if(RBBST_ISEMPTY(bst))
-		return;
+	if (RBBST_ISEMPTY(bst))
+		return -1;
 	
-	/* 
-	 * if both children of root are black,
-	 * set root to red. 
-	 */
-	if(!RBBST_ISRED(bst->root->left) && !RBBST_ISRED(bst->root->right))
+	/* if both children of root are black, set root to red. */
+	if (!RBBST_ISRED(bst->root->left) && !RBBST_ISRED(bst->root->right))
 		bst->root->color = RED;
 	
-	bst->root = delete_min_node(bst->root);
-	
-	if(!RBBST_ISEMPTY(bst))
+	bst->root = delete_max_node(bst->root, bst->keysize);
+	if (!RBBST_ISEMPTY(bst))
 		bst->root->color = BLACK;
+
+	return 0;
 }
 
-/* 
- * Remove the largest key associated with value from 
- * this Red-Black BST.
- */
-void
-rbbst_delete_max(struct redblack_bst *bst)
+/* Removes the specified key from this Red-Black BST. */
+int
+rbbst_delete(struct rbtree *bst, const void *key)
 {
-	if(RBBST_ISEMPTY(bst))
-		return;
+	if (RBBST_ISEMPTY(bst))
+		return -1;
 	
-	/* 
-	 * if both children of root are black, 
-	 * set root to red. 
-	 */
-	if(!RBBST_ISRED(bst->root->left) && !RBBST_ISRED(bst->root->right))
+	if (rbbst_get(bst, key) == NULL)
+		return -2;
+	
+	if (!RBBST_ISRED(bst->root->left) && !RBBST_ISRED(bst->root->right))
 		bst->root->color = RED;
+	bst->root = delete_node(bst, bst->root, key);
 	
-	bst->root = delete_max_node(bst->root);
-	
-	if(!RBBST_ISEMPTY(bst))
+	if (!RBBST_ISEMPTY(bst))
 		bst->root->color = BLACK;
-}
-
-/* 
- * Removes the specified key and its associated with value 
- * from this Red-Black BST. 
- */
-void
-rbbst_delete(struct redblack_bst *bst, const char *key)
-{
-	if(RBBST_ISEMPTY(bst))
-		return;
 	
-	if(rbbst_get(bst, key) == NULL)
-		return;
-	
-	if(!RBBST_ISRED(bst->root->left) && !RBBST_ISRED(bst->root->right))
-		bst->root->color = RED;
-	
-	bst->root = delete_node(bst->root, key);
-	
-	if(!RBBST_ISEMPTY(bst))
-		bst->root->color = BLACK;
+	return 0;
 }
 
 /* Check integrity of red-black tree data structure. */
 int 
-rbbst_check(const struct redblack_bst *bst)
+rbbst_check(const struct rbtree *bst)
 {
 	int flag = 1;
 	
-	if(!isbst(bst->root, NULL, NULL)) {
+	if (!isbst(bst->root, NULL, NULL, bst->cmp)) {
 		printf("Not in symmetric order.\n");
 		flag = 0;
 	}
 	
-	if(!is23(bst->root, bst->root)) {
+	if (!is23(bst->root, bst->root)) {
 		printf("Not a 2-3 tree.\n");
 		flag = 0;
 	}
 	
-	if(!isbalanced(bst->root)) {
+	if (!isbalanced(bst->root)) {
 		printf("Not balanced.\n");
 		flag = 0;
 	}
 	
-	if(!is_size_consistent(bst->root)) {
+	if (!is_size_consistent(bst->root)) {
 		printf("Subtree counts not consistent.\n");
 		flag = 0;
 	}
 	
-	if(!is_rank_consistent(bst)) {
+	if (!is_rank_consistent(bst)) {
 		printf("Ranks not consistent.\n");
 		flag = 0;
 	}
@@ -235,90 +237,81 @@ rbbst_check(const struct redblack_bst *bst)
 	return flag;
 }
 
-/* 
- * Returns the largest key in the symbol table less than 
- * or equal to Key.
- */
-struct element * 
-rbbst_floor(const struct redblack_bst *bst, const char *key)
+/* Returns the largest key in the Red-Black tree less than or equal to Key. */
+void * 
+rbbst_floor(const struct rbtree *bst, const void *key)
 {
-	struct rbbst_node *current;
+	struct rbtree_node *current;
 	
-	current = floor_node(bst->root, key);
+	current = floor_node(bst->root, key, bst->cmp);
 	/* NULL is the specified key to small. */
-	return current == NULL ? NULL : &(current->item);	
+	return (current == NULL ? NULL : current->key);	
 }
 
-/* 
- * Returns the smallest key in the symbol table 
- * greater than or equal to Key.
- */
-struct element * 
-rbbst_ceiling(const struct redblack_bst *bst, const char *key)
+/* Returns the smallest key in the Red-Black greater than or equal to Key. */
+void * 
+rbbst_ceiling(const struct rbtree *bst, const void *key)
 {
-	struct rbbst_node *current;
+	struct rbtree_node *current;
 	
-	current = ceiling_node(bst->root, key);
+	current = ceiling_node(bst->root, key, bst->cmp);
 	/* NULL is the specified key to large. */
-	return current == NULL ? NULL : &(current->item);
+	return (current == NULL ? NULL : current->key);
 }
 
-/* 
- * Return the number of keys in the Red-Black BST 
- * strictly less than Key.
- */
+/* Return the number of keys in the Red-Black BST strictly less than Key. */
 unsigned long 
-rbbst_rank(const struct redblack_bst *bst, const char *key)
+rbbst_rank(const struct rbtree *bst, const void *key)
 {
-	return rank_node(key, bst->root);
+	return rank_node(bst->root, key, bst->cmp);
 }
 
 /* 
  * Return the key in the BST of a given rank.
- * This key has the property that there are rank keys in
- * the BST that are smaller. In other words, this key is 
- * the (rank+1)st smallest key in the BST.
+ * This key has the property that there are rank keys in the BST that are
+ * smaller.
+ * In other words, this key is the (rank+1)st smallest key in the BST.
  */
-struct element * 
-rbbst_select(const struct redblack_bst *bst, unsigned long rank)
+void * 
+rbbst_select(const struct rbtree *bst, unsigned long rank)
 {
 	if(rank < RBBST_SIZE(bst))
-		return select_node(rank, bst->root);
+		return select_node(bst->root, rank);
 	return NULL;
 }
 
 /* 
- * Returns all keys in the Red-Black BST in 
- * the given range in ascending order. 
+ * Returns all keys in the Red-Black BST in the given range in ascending order.
  */
 void
-rbbst_keys(const struct redblack_bst *bst, const char *lokey,
-				const char *hikey, struct queue *keys)
+rbbst_keys(const struct rbtree *bst, const void *lokey, const void *hikey,
+		struct single_list *keys)
 {
-	keys_range(bst->root, lokey ,hikey, keys);
+	slist_init(keys, 0, bst->cmp);
+	keys_range(bst->root, lokey, hikey, bst->cmp, keys);
 }
 
 /******************** static function boundary ********************/
 
 /* 
- * Item associated with the given key in subtree 
- * rooted at NODE; if null no search key.
+ * The Key with the given key in subtree rooted at node;
+ * if null no search key.
  */
-static struct element * 
-get_node(struct rbbst_node *node, const char *key)
+static void * 
+get_node(struct rbtree_node *node, const void *key, algcomp_ft *kcmp)
 {
-	int cmp;
-	struct rbbst_node *proot;
+	int cr;
+	struct rbtree_node *proot;
 	
 	proot = node;
-	while(proot != NULL) {
-		cmp = strcmp(key, proot->item.key);
-		if(cmp < 0)
+	while (proot != NULL) {
+		cr = kcmp(key, proot->key);
+		if (cr == 1)
 			proot = proot->left;
-		else if(cmp > 0)
+		else if (cr == -1)
 			proot = proot->right;
 		else
-			return &(proot->item);
+			return (proot->key);
 	}
 	return NULL;
 }
@@ -327,14 +320,18 @@ get_node(struct rbbst_node *node, const char *key)
  * New create Red-Black BST node using 
  * the specified key-value pair. 
  */
-static struct rbbst_node * 
-make_node(const struct element *item)
+static struct rbtree_node * 
+make_node(const void *key, unsigned int ksize)
 {
-	struct rbbst_node *current;
+	struct rbtree_node *current;
 	
-	current = (struct rbbst_node *)algmalloc(sizeof(struct rbbst_node));
+	current = (struct rbtree_node *)algmalloc(sizeof(struct rbtree_node));
 	
-	current->item = *item;
+	if (ksize != 0) {
+		current->key = algmalloc(ksize);
+		memcpy(current->key, key, ksize);
+	} else
+		current->key = (void *)key;
 	current->left = NULL;
 	current->right = NULL;
 	current->color = RED;	/* default red link */
@@ -345,10 +342,10 @@ make_node(const struct element *item)
 }
 
 /* Make a left-leaning link lean to the right */
-static inline struct rbbst_node * 
-rotate_right(struct rbbst_node *hnode)
+static inline struct rbtree_node * 
+rotate_right(struct rbtree_node *hnode)
 {
-	struct rbbst_node *lnode;
+	struct rbtree_node *lnode;
 	
 	assert(hnode != NULL && RBBST_ISRED(hnode->left));
 	
@@ -360,23 +357,23 @@ rotate_right(struct rbbst_node *hnode)
 	lnode->size = hnode->size;		/* update size */
 	
 	/* update the size of high node. */
-	hnode->size = RBBST_SIZE_NODE(hnode->left) + 
+	hnode->size = RBBST_SIZE_NODE(hnode->left) +
 		RBBST_SIZE_NODE(hnode->right) + 1;
 	
 	/* update the height of high node and low node */
-	hnode->height = 1 + MAX(RBBST_HEIGHT_NODE(hnode->left), 
+	hnode->height = 1 + MAX(RBBST_HEIGHT_NODE(hnode->left),
 		RBBST_HEIGHT_NODE(hnode->right));
-	lnode->height = 1 + MAX(RBBST_HEIGHT_NODE(lnode->left), 
+	lnode->height = 1 + MAX(RBBST_HEIGHT_NODE(lnode->left),
 		RBBST_HEIGHT_NODE(lnode->right));
 	
 	return lnode;	/* now this is a left high node */
 }
 
 /* Make a right-leaning link lean to the left */
-static inline struct rbbst_node * 
-rotate_left(struct rbbst_node *hnode)
+static inline struct rbtree_node * 
+rotate_left(struct rbtree_node *hnode)
 {
-	struct rbbst_node *lnode;
+	struct rbtree_node *lnode;
 	
 	assert(hnode != NULL && RBBST_ISRED(hnode->right));
 	
@@ -388,8 +385,8 @@ rotate_left(struct rbbst_node *hnode)
 	lnode->size = hnode->size;		/* update size */
 	
 	/* update the size of high node. */
-	hnode->size = RBBST_SIZE_NODE(hnode->left) + 
-				  RBBST_SIZE_NODE(hnode->right) + 1;
+	hnode->size = RBBST_SIZE_NODE(hnode->left) +
+		RBBST_SIZE_NODE(hnode->right) + 1;
 	
 	/* update the height of high node and low node */
 	hnode->height = 1 + MAX(RBBST_HEIGHT_NODE(hnode->left),
@@ -401,113 +398,99 @@ rotate_left(struct rbbst_node *hnode)
 }
 
 /* Restore red-black BST invariant */
-static inline struct rbbst_node * 
-balance(struct rbbst_node *hnode)
+static inline struct rbtree_node * 
+balance(struct rbtree_node *hnode)
 {
-	if(RBBST_ISRED(hnode->right) &&
-		!RBBST_ISRED(hnode->left))
+	if (RBBST_ISRED(hnode->right) && !RBBST_ISRED(hnode->left))
 		hnode = rotate_left(hnode);
-	if(RBBST_ISRED(hnode->left) &&
-		RBBST_ISRED(hnode->left->left))
+	if (RBBST_ISRED(hnode->left) && RBBST_ISRED(hnode->left->left))
 		hnode = rotate_right(hnode);
-	if(RBBST_ISRED(hnode->left) &&
-		RBBST_ISRED(hnode->right))
+	if (RBBST_ISRED(hnode->left) && RBBST_ISRED(hnode->right))
 		FLIP_COLORS(hnode);
 	
-	hnode->size = RBBST_SIZE_NODE(hnode->left) + 
+	hnode->size = RBBST_SIZE_NODE(hnode->left) +
 		RBBST_SIZE_NODE(hnode->right) + 1;
-	hnode->height = 1 + MAX(RBBST_HEIGHT_NODE(hnode->left), 
+	hnode->height = 1 + MAX(RBBST_HEIGHT_NODE(hnode->left),
 		RBBST_HEIGHT_NODE(hnode->right));
 	
 	return hnode;
 }
 
-/* 
- * Insert the key-value pair in 
- * the subtree rooted as HNODE.
- */
-static struct rbbst_node * 
-put_node(struct rbbst_node *hnode,
-		const struct element *item)
+/* Insert the key-value pair in the subtree rooted as hnode. */
+static struct rbtree_node * 
+put_node(const struct rbtree *bst, struct rbtree_node *hnode, const void *key)
 {
-	int cmp;
+	int cr;
 	
-	if(hnode == NULL)
-		return make_node(item);
+	if (hnode == NULL)
+		return make_node(key, bst->keysize);
 	
-	cmp = strcmp(item->key, hnode->item.key);
-	if(cmp < 0)
-		hnode->left = put_node(hnode->left, item);
-	else if(cmp > 0)
-		hnode->right = put_node(hnode->right, item);
+	cr = bst->cmp(key, hnode->key);
+	if (cr == 1)
+		hnode->left = put_node(bst, hnode->left, key);
+	else if (cr == -1)
+		hnode->right = put_node(bst, hnode->right, key);
 	else
-		hnode->item.value = item->value;
+		return hnode;
 	
 	return balance(hnode);
 }
 
 static void 
-postorder_nodes(struct rbbst_node *root, 
-				void (*release)(struct rbbst_node *node))
+release_subtree(struct rbtree_node *root, unsigned int ksize)
 {
-	if(root != NULL) {
-		postorder_nodes(root->left, release);
-		postorder_nodes(root->right, release);
-		(*release)(root);
+	if (root != NULL) {
+		release_subtree(root->left, ksize);
+		release_subtree(root->right, ksize);
+		if (ksize != 0)
+			ALGFREE(root->key);
+		ALGFREE(root);
 	}
 }
 
-static inline void 
-release_node(struct rbbst_node *node)
-{
-	ALGFREE(node);
-}
-
 static void
-preorder_nodes(struct rbbst_node *root, 
-			void (*print)(struct element *item))
+preorder_nodes(struct rbtree_node *root, struct single_list *keys)
 {
-	if(root != NULL) {
-		(*print)(&(root->item));
-		preorder_nodes(root->left, print);
-		preorder_nodes(root->right, print);
+	if (root != NULL) {
+		slist_append(keys, root->key);
+		preorder_nodes(root->left, keys);
+		preorder_nodes(root->right, keys);
 	}
 }
 
 /* 
- * The smallest key in the subtree rooted at NODE; 
+ * The smallest key in the subtree rooted at node; 
  * null if no search key.
  */
-static struct rbbst_node * 
-min_node(struct rbbst_node *node)
+static struct rbtree_node * 
+min_node(struct rbtree_node *node)
 {
-	if(node->left == NULL)
+	if (node->left == NULL)
 		return node;
 	return min_node(node->left);
 }
 
 /* 
- * The largest key in the subtree rooted at NODE;
+ * The largest key in the subtree rooted at node;
  * null if no search key.
  */
-static struct rbbst_node * 
-max_node(struct rbbst_node *node)
+static struct rbtree_node * 
+max_node(struct rbtree_node *node)
 {
-	if(node->right == NULL)
+	if (node->right == NULL)
 		return node;
 	return max_node(node->right);
 }
 
 /* 
  * Assuming that hnode is red and both hnode->left and 
- * hnode->left->left are black, make hnode->left or 
- * its children red.
+ * hnode->left->left are black, make hnode->left or its children red.
  */
-static struct rbbst_node * 
-move_red_left(struct rbbst_node *hnode)
+static struct rbtree_node * 
+move_red_left(struct rbtree_node *hnode)
 {
 	FLIP_COLORS(hnode);
-	if(hnode != NULL && hnode->right != NULL && 
+	if (hnode != NULL && hnode->right != NULL &&
 	   RBBST_ISRED(hnode->right->left)) {
 		hnode->right = rotate_right(hnode->right);
 		hnode = rotate_left(hnode);
@@ -519,15 +502,13 @@ move_red_left(struct rbbst_node *hnode)
 
 /* 
  * Assuming that hnode is red and both hnode->right and 
- * hnode->right->left are black, make hnode->right or 
- * its children red.
+ * hnode->right->left are black, make hnode->right or its children red.
  */
-static struct rbbst_node * 
-move_red_right(struct rbbst_node *hnode)
+static struct rbtree_node * 
+move_red_right(struct rbtree_node *hnode)
 {
 	FLIP_COLORS(hnode);
-	if(RBBST_ISRED(hnode->left) && 
-		RBBST_ISRED(hnode->left->left)) {
+	if (RBBST_ISRED(hnode->left) && RBBST_ISRED(hnode->left->left)) {
 		hnode = rotate_right(hnode);
 		FLIP_COLORS(hnode);
 	}
@@ -535,49 +516,43 @@ move_red_right(struct rbbst_node *hnode)
 	return hnode;
 }
 
-/* 
- * Delete the key-value pair with 
- * the minimum key rooted at NODE.
- */
-static struct rbbst_node * 
-delete_min_node(struct rbbst_node *node)
+/* Delete the minimum key rooted at node. */
+static struct rbtree_node * 
+delete_min_node(struct rbtree_node *node, unsigned int ksize)
 {	
-	if(node->left == NULL) {
-		release_node(node);
+	if (node->left == NULL) {
+		if (ksize != 0)
+			ALGFREE(node->key);
+		ALGFREE(node);
 		return NULL;
 	}
 
 	/* node is 2-node */
-	if(!RBBST_ISRED(node->left) &&
-		!RBBST_ISRED(node->left->left))
+	if (!RBBST_ISRED(node->left) && !RBBST_ISRED(node->left->left))
 		node = move_red_left(node);
-		
-	node->left = delete_min_node(node->left);
+	node->left = delete_min_node(node->left, ksize);
 	
 	return balance(node);
 }
 
-/* 
- * Delete the key-value pair with 
- * the maximum key rooted at NODE.
- */
-static struct rbbst_node * 
-delete_max_node(struct rbbst_node *node)
+/* Delete the maximum key rooted at node. */
+static struct rbtree_node * 
+delete_max_node(struct rbtree_node *node, unsigned int ksize)
 {
-	if(RBBST_ISRED(node->left))		/* node is 3-node */
+	if (RBBST_ISRED(node->left))		/* node is 3-node */
 		node = rotate_right(node);
 		
-	if(node->right == NULL) {
-		release_node(node);
+	if (node->right == NULL) {
+		if (ksize != 0)
+			ALGFREE(node->key);
+		ALGFREE(node);
 		return NULL;
 	}
 
 	/* left node is 2-node */
-	if(!RBBST_ISRED(node->right) &&
-		!RBBST_ISRED(node->right->left))
+	if (!RBBST_ISRED(node->right) && !RBBST_ISRED(node->right->left))
 		node = move_red_right(node);
-		
-	node->right = delete_max_node(node->right);
+	node->right = delete_max_node(node->right, ksize);
 	
 	return balance(node);
 }
@@ -586,65 +561,65 @@ delete_max_node(struct rbbst_node *node)
  * Delete the key-value pair with 
  * the given key rooted at NODE.
  */
-static struct rbbst_node * 
-delete_node(struct rbbst_node *node, const char *key)
+static struct rbtree_node * 
+delete_node(const struct rbtree *bst, struct rbtree_node *node, const void *key)
 {
-	struct rbbst_node *minnode;
+	struct rbtree_node *minnode;
 	
-	if(node == NULL)
+	if (node == NULL)
 		return NULL;
 	
-	if(strcmp(key, node->item.key) < 0) {
-		if(!RBBST_ISRED(node->left) && 
-			!RBBST_ISRED(node->left->left))
+	if (bst->cmp(key, node->key) == 1) {
+		if (!RBBST_ISRED(node->left) && !RBBST_ISRED(node->left->left))
 			node = move_red_left(node);
-		node->left = delete_node(node->left, key);
-	} 
-	else {
-		if(RBBST_ISRED(node->left))
+		node->left = delete_node(bst, node->left, key);
+	} else {
+		if (RBBST_ISRED(node->left))
 			node = rotate_right(node);
 	
 		/* may max key */
-		if(strcmp(key, node->item.key) == 0 &&
-			node->right == NULL) {
-			release_node(node);
+		if (bst->cmp(key, node->key) == 0 && node->right == NULL) {
+			if (bst->keysize != 0)
+				ALGFREE(node->key);
+			ALGFREE(node);
 			return NULL;
 		}
 		
-		if(!RBBST_ISRED(node->right) && 
-			!RBBST_ISRED(node->right->left))
+		if (!RBBST_ISRED(node->right) && !RBBST_ISRED(node->right->left))
 			node = move_red_right(node);
 		
-		if(strcmp(key, node->item.key) == 0) {
+		if (bst->cmp(key, node->key) == 0) {
 			minnode = min_node(node->right);
 			/* coping delete */
-			node->item = minnode->item;
-			node->right = delete_min_node(node->right);
-		}
-		else
-			node->right = delete_node(node->right, key);
+			if (bst->keysize == 0)
+				node->key = minnode->key;
+			else
+				memcpy(node->key, minnode->key, bst->keysize);
+			node->right = delete_min_node(node->right, bst->keysize);
+		} else
+			node->right = delete_node(bst, node->right, key);
 	}
 	
 	return balance(node);
 }
 
 /* 
- * Is the tree rooted at Node a BST with all keys 
- * strictly between min and max (if min or max is null,
- * treat as empty constraint).
+ * Is the tree rooted at Node a BST with all keys strictly between min and max
+ * (if min or max is null, treat as empty constraint).
  */
 static int
-isbst(const struct rbbst_node *node, const char *minkey, const char *maxkey)
+isbst(const struct rbtree_node *node, const void *minkey, const void *maxkey,
+	algcomp_ft *kcmp)
 {
-	if(node == NULL)
+	if (node == NULL)
 		return 1;	/* empty tree */
 	
-	if(minkey != NULL && strcmp(node->item.key, minkey) <= 0)
+	if (minkey != NULL && kcmp(node->key, minkey) == 1)
 		return 0;
-	if(maxkey != NULL && strcmp(node->item.key, maxkey) >= 0)
+	if (maxkey != NULL && kcmp(node->key, maxkey) == -1)
 		return 0;
-	return isbst(node->left, minkey, node->item.key) && 
-		isbst(node->right, node->item.key, maxkey);
+	return isbst(node->left, minkey, node->key, kcmp) &&
+		isbst(node->right, node->key, maxkey, kcmp);
 }
 
 /* 
@@ -652,13 +627,13 @@ isbst(const struct rbbst_node *node, const char *minkey, const char *maxkey)
  * and at most one (left) red links in a row on any path? 
  */
 static int
-is23(const struct rbbst_node *root, const struct rbbst_node *node)
+is23(const struct rbtree_node *root, const struct rbtree_node *node)
 {
-	if(node == NULL)
+	if (node == NULL)
 		return 1;
-	if(RBBST_ISRED(node->right))
+	if (RBBST_ISRED(node->right))
 		return 0;
-	if(root != node && RBBST_ISRED(node) && RBBST_ISRED(node->left))
+	if (root != node && RBBST_ISRED(node) && RBBST_ISRED(node->left))
 		return 0;
 	
 	return is23(root, node->left) && is23(root, node->right);
@@ -669,29 +644,25 @@ is23(const struct rbbst_node *root, const struct rbbst_node *node)
  * he given number of black links? 
  */
 static inline int 
-isbal_node(const struct rbbst_node *node, int blacks)
+isbal_node(const struct rbtree_node *node, int blacks)
 {
-	if(node == NULL)
+	if (node == NULL)
 		return blacks == 0;
-	if(!RBBST_ISRED(node))
+	if (!RBBST_ISRED(node))
 		blacks--;
-	return isbal_node(node->left, blacks) && 
-		isbal_node(node->right, blacks);
+	return isbal_node(node->left, blacks) && isbal_node(node->right, blacks);
 }
 
-/* 
- * Do all paths from root to leaf have same 
- * number of black links?
- */
+/* Do all paths from root to leaf have same number of black links? */
 static int 
-isbalanced(const struct rbbst_node *root)
+isbalanced(const struct rbtree_node *root)
 {
-	const struct rbbst_node *proot;
+	const struct rbtree_node *proot;
 	int blacks = 0;	/* number of black links on path from root to min */
 	
 	proot = root;
-	while(proot != NULL) {
-		if(!RBBST_ISRED(proot))
+	while (proot != NULL) {
+		if (!RBBST_ISRED(proot))
 			blacks++;
 		proot = proot->left;
 	}
@@ -701,42 +672,42 @@ isbalanced(const struct rbbst_node *root)
 
 /* Are the size of fields correct ? */
 static int 
-is_size_consistent(const struct rbbst_node *node)
+is_size_consistent(const struct rbtree_node *node)
 {
-	if(node == NULL)
+	if (node == NULL)
 		return 1;	/* empty consistent */
-	if(RBBST_SIZE_NODE(node) != RBBST_SIZE_NODE(node->left) + 
+	if (RBBST_SIZE_NODE(node) != RBBST_SIZE_NODE(node->left) +
 		RBBST_SIZE_NODE(node->right) + 1) {
 		return 0;
 	}
-	return is_size_consistent(node->left) && 
-		is_size_consistent(node->right);
+	return is_size_consistent(node->left) && is_size_consistent(node->right);
 }
 
 /* check that ranks are consistent */
 static int 
-is_rank_consistent(const struct redblack_bst *bst)
+is_rank_consistent(const struct rbtree *bst)
 {
 	unsigned long i;
-	char *key;
-	struct element *el;
-	struct queue keys;
+	void *key, *el;
+	struct single_list keys;
+	struct slist_node *loc;
 	
 	for(i = 0; i < RBBST_SIZE(bst); i++) {
 		el = rbbst_select(bst, i);
-		if(i != rbbst_rank(bst, el->key))
+		if(i != rbbst_rank(bst, el))
 			return 0;
 	}
 	
-	QUEUE_INIT(&keys, 0);
 	rbbst_keys(bst, rbbst_min(bst), rbbst_max(bst), &keys);
-	while(!QUEUE_ISEMPTY(&keys)) {
-		dequeue(&keys, (void **)&key);
+	slist_rewind(&keys, &loc);
+	while (slist_has_next(loc)) {
+		key = slist_next_key(&loc);
 		el = rbbst_select(bst, rbbst_rank(bst, key));
-		if(strcmp(key, el->key) != 0)
+		if (bst->cmp(key, el) != 0)
 			return 0;
+
 	}
-	queue_clear(&keys);
+	slist_clear(&keys);
 	
 	return 1;
 }
@@ -745,65 +716,61 @@ is_rank_consistent(const struct redblack_bst *bst)
  * The largest key in the subtree rooted at Node less than 
  * or equal to the given key.
  */
-static struct rbbst_node * 
-floor_node(struct rbbst_node *node, const char *key)
+static struct rbtree_node * 
+floor_node(struct rbtree_node *node, const void *key, algcomp_ft *kcmp)
 {
-	int cmp;
-	struct rbbst_node *rnode;
+	int cr;
+	struct rbtree_node *rnode;
 	
-	if(node == NULL)	/* not found the specified key */
+	if (node == NULL)	/* not found the specified key */
 		return NULL;
 
-	if((cmp = strcmp(key, node->item.key)) == 0)
+	if ((cr = kcmp(key, node->key)) == 0)
 		return node;
-	if(cmp < 0)
-		return floor_node(node->left, key);
-	if((rnode = floor_node(node->right, key)) != NULL)
+	if(cr == 1)
+		return floor_node(node->left, key, kcmp);
+	if ((rnode = floor_node(node->right, key, kcmp)) != NULL)
 		return rnode;
 	else
 		return node;
 }
 
 /* 
- * The smallest key in the subtree rooted at Node 
- * greater than or equal to the given key.
+ * The smallest key in the subtree rooted at Node greater than
+ * or equal to the given key.
  */
-static struct rbbst_node * 
-ceiling_node(struct rbbst_node *node, const char *key)
+static struct rbtree_node * 
+ceiling_node(struct rbtree_node *node, const void *key, algcomp_ft *kcmp)
 {
-	int cmp;
-	struct rbbst_node *lnode;
+	int cr;
+	struct rbtree_node *lnode;
 	
-	if(node == NULL)
+	if (node == NULL)
 		return NULL;
 	
-	if((cmp = strcmp(key, node->item.key)) == 0)
+	if ((cr = kcmp(key, node->key)) == 0)
 		return node;
-	if(cmp > 0)
-		return ceiling_node(node->right, key);
-	if((lnode = ceiling_node(node->left, key)) != NULL)
+	if (cr == -1)
+		return ceiling_node(node->right, key, kcmp);
+	if ((lnode = ceiling_node(node->left, key, kcmp)) != NULL)
 		return lnode;
 	else
 		return node;
 }
 
-/* 
- * Number of keys less than key in 
- * the subtree rooted at Node.
- */
+/* Number of keys less than key in the subtree rooted at Node. */
 static unsigned long 
-rank_node(const char *key, const struct rbbst_node *node)
+rank_node(const struct rbtree_node *node, const void *key, algcomp_ft *kcmp)
 {
-	int cmp;
+	int cr;
 	
-	if(node == NULL)
+	if (node == NULL)
 		return 0;
 	
-	if((cmp = strcmp(key, node->item.key)) < 0)
-		return rank_node(key, node->left);
-	if(cmp > 0)
-		return 1 + RBBST_SIZE_NODE(node->left) + 
-			rank_node(key, node->right);
+	if ((cr = kcmp(key, node->key)) == 1)
+		return rank_node(node->left, key, kcmp);
+	if (cr == -1)
+		return 1 + RBBST_SIZE_NODE(node->left) + rank_node(node->right, key, kcmp);
 	else
 		return RBBST_SIZE_NODE(node->left);
 }
@@ -812,22 +779,21 @@ rank_node(const char *key, const struct rbbst_node *node)
  * Return key in BST rooted at Node of given rank.
  * Precondition: rank is in legal range. 
  */
-static struct element * 
-select_node(unsigned long rank, struct rbbst_node *node)
+static void * 
+select_node(struct rbtree_node *node, unsigned long rank)
 {
 	unsigned long leftsize;
 	
-	if(node == NULL)
+	if (node == NULL)
 		return NULL;
 	
 	leftsize = RBBST_SIZE_NODE(node->left);
-	if(rank < leftsize)
-		return select_node(rank, node->left);
-	if(rank > leftsize)
-		return select_node(rank - leftsize - 1,
-			node->right);
+	if (rank < leftsize)
+		return select_node(node->left, rank);
+	if (rank > leftsize)
+		return select_node(node->right, rank - leftsize - 1);
 	else
-		return &(node->item);
+		return (node->key);
 }
 
 /* 
@@ -835,21 +801,21 @@ select_node(unsigned long rank, struct rbbst_node *node)
  * rooted at Node to queue.
  */
 static void 
-keys_range(const struct rbbst_node *node, const char *lokey,
-		const char *hikey, struct queue *qp)
+keys_range(const struct rbtree_node *node, const void *lokey, const void *hikey,
+		algcomp_ft *kcmp, struct single_list *keys)
 {
 	int cmplo, cmphi;
 	
-	if(node == NULL)
+	if (node == NULL)
 		return;
 	
-	cmplo = strcmp(lokey, node->item.key);
-	cmphi = strcmp(hikey, node->item.key);
+	cmplo = kcmp(lokey, node->key);
+	cmphi = kcmp(hikey, node->key);
 	
-	if(cmplo < 0)
-		keys_range(node->left, lokey, hikey, qp);
-	if(cmplo <= 0 && cmphi >= 0)
-		enqueue(qp, node->item.key);
-	if(cmphi > 0)
-		keys_range(node->right, lokey, hikey, qp);
+	if (cmplo == 1)
+		keys_range(node->left, lokey, hikey, kcmp, keys);
+	if ((cmplo == 1 || cmplo == 0) && (cmphi == -1 || cmphi == 0))
+		slist_append(keys, node->key);
+	if(cmphi == -1)
+		keys_range(node->right, lokey, hikey, kcmp, keys);
 }
