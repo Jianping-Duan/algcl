@@ -61,11 +61,11 @@ static void release_subtree(struct avl_node *, unsigned int);
 static void preorder_nodes(const struct avl_node *, struct single_list *);
 static struct avl_node * min_node(struct avl_node *);
 static struct avl_node * max_node(struct avl_node *);
-static struct avl_node * delete_min_node(struct avl_node *);
+static struct avl_node * delete_min_node(struct avl_node *, unsigned int);
 static struct avl_node * delete_min(struct avl_node *);
-static struct avl_node * delete_max_node(struct avl_node *);
-static struct avl_node * delete_node(struct avl_node *, const void *,
-	algcomp_ft *);
+static struct avl_node * delete_max_node(struct avl_node *, unsigned int);
+static struct avl_node * delete_node(const struct avl_tree *, struct avl_node *,
+	const void *);
 static struct avl_node * floor_node(struct avl_node *, const void *,
 	algcomp_ft *);
 static struct avl_node * ceiling_node(struct avl_node *, const void *,
@@ -152,7 +152,7 @@ void
 avlbst_delete_min(struct avl_tree *avl)
 {
 	if (!AVLBST_ISEMPTY(avl))
-		avl->root = delete_min_node(avl->root);
+		avl->root = delete_min_node(avl->root, avl->keysize);
 }
 
 /* Removes the largest key from this AVL tree. */
@@ -160,7 +160,7 @@ void
 avlbst_delete_max(struct avl_tree *avl)
 {
 	if (!AVLBST_ISEMPTY(avl))
-		avl->root = delete_max_node(avl->root);
+		avl->root = delete_max_node(avl->root, avl->keysize);
 }
 
 /* Removes the specified key from the AVL tree. */
@@ -173,7 +173,7 @@ avlbst_delete(struct avl_tree *avl, const void *key)
 	if (avlbst_get(avl, key) == NULL)
 		return -2;
 	
-	avl->root = delete_node(avl->root, key, avl->cmp);
+	avl->root = delete_node(avl, avl->root, key);
 	return 0;
 }
 
@@ -469,17 +469,19 @@ max_node(struct avl_node *node)
 
 /* Delete the keywith the minimum key rooted at Node. */
 static struct avl_node * 
-delete_min_node(struct avl_node *node)
+delete_min_node(struct avl_node *node, unsigned int ksize)
 {
 	struct avl_node *current;
 	
 	if (node->left == NULL) {
 		current = node->right;
+		if (ksize != 0)
+			ALGFREE(node->key);
 		ALGFREE(node);
 		return current;
 	}
 	
-	node->left = delete_min_node(node->left);
+	node->left = delete_min_node(node->left, ksize);
 	
 	node->size = 1 + AVLBST_SIZE_NODE(node->left) + 
 		AVLBST_SIZE_NODE(node->right);
@@ -511,17 +513,19 @@ delete_min(struct avl_node *node)
 
 /* Delete the key with the maximum key rooted at Node. */
 static struct avl_node * 
-delete_max_node(struct avl_node *node)
+delete_max_node(struct avl_node *node, unsigned int ksize)
 {
 	struct avl_node *current;
 	
-	if(node->right == NULL) {
+	if (node->right == NULL) {
 		current = node->left;
+		if (ksize != 0)
+			ALGFREE(node->key);
 		ALGFREE(node);
 		return current;
 	}
 	
-	node->right = delete_max_node(node->right);
+	node->right = delete_max_node(node->right, ksize);
 	
 	node->size = 1 + AVLBST_SIZE_NODE(node->left) + 
 		AVLBST_SIZE_NODE(node->right);
@@ -533,7 +537,7 @@ delete_max_node(struct avl_node *node)
 
 /* Delete the key by the given key rooted at Node. */
 static struct avl_node * 
-delete_node(struct avl_node *node, const void *key, algcomp_ft *kcmp)
+delete_node(const struct avl_tree *avl, struct avl_node *node, const void *key)
 {
 	int cr;
 	struct avl_node *current;
@@ -541,18 +545,22 @@ delete_node(struct avl_node *node, const void *key, algcomp_ft *kcmp)
 	if (node == NULL)
 		return NULL;
 	
-	cr = kcmp(key, node->key);
+	cr = avl->cmp(key, node->key);
 	if (cr == 1)
-		node->left = delete_node(node->left, key, kcmp);
+		node->left = delete_node(avl, node->left, key);
 	else if (cr == -1)
-		node->right = delete_node(node->right, key, kcmp);
+		node->right = delete_node(avl, node->right, key);
 	else {
 		if (node->left == NULL) {
 			current = node->right;
+			if (avl->keysize != 0)
+				ALGFREE(node->key);
 			ALGFREE(node);
 			return current;
 		} else if (node->right == NULL) {
 			current = node->left;
+			if (avl->keysize != 0)
+				ALGFREE(node->key);
 			ALGFREE(node);
 			return current;
 		} else {
@@ -560,6 +568,8 @@ delete_node(struct avl_node *node, const void *key, algcomp_ft *kcmp)
 			node = min_node(current->right);
 			node->right = delete_min(current->right);
 			node->left = current->left;
+			if (avl->keysize != 0)
+				ALGFREE(current->key);
 			ALGFREE(current);
 		}
 	}
