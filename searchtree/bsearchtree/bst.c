@@ -33,14 +33,15 @@
 #include <getopt.h>
 
 static void usage_info(const char *);
-static void check(const struct bsearch_tree *);
+static void check(const struct bstree *);
+static int less(const void *, const void *);
 
 int
 main(int argc, char *argv[])
 {
 	FILE *fp;
-	struct bsearch_tree bst;
-	struct element item, *el;
+	struct bstree bst;
+	struct element item, *el, *minel, *maxel;
 	clock_t start_time, end_time;
 	char *fname = NULL, *key = NULL, *rand_key = NULL;
 	int rank, len;
@@ -51,11 +52,11 @@ main(int argc, char *argv[])
 	extern char *optarg;
 	extern int optind;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'f':
 				fname = optarg;
 				break;
@@ -68,11 +69,10 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 	
-	BST_INIT(&bst);
-	
+	bst_init(&bst, sizeof(struct element), less);	
 	printf("Start read data from \"%s\" file to the BST...\n", fname);
 	start_time = clock();
 	fp = open_file(fname, "rb");
@@ -83,8 +83,9 @@ main(int argc, char *argv[])
 	}
 	close_file(fp);
 	end_time = clock();
-	printf("Read completed, estimated time(s): %.3f\n\n", 
+	printf("Read completed, estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
+	printf("\n");
 	
 	printf("The height of the BST is: %ld\n", BST_HEIGHT(&bst));
 	printf("The number of nodes in this BST is: %ld\n",	BST_SIZE(&bst));
@@ -93,14 +94,16 @@ main(int argc, char *argv[])
 	check(&bst);
 
 	start_time = clock();
-	printf("The BST of minimum key: %s\n", bst_min(&bst));
-	printf("The BST of maximum key: %s\n", bst_max(&bst));
+	minel = (struct element *)bst_min(&bst);
+	printf("The BST of minimum key: %s\n", minel->key);
+	maxel = (struct element *)bst_max(&bst);
+	printf("The BST of maximum key: %s\n", maxel->key);
 	end_time = clock();
-	printf("Estimated time(s): %.3f\n\n", 
+	printf("Estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
+	printf("\n");
 	
-	printf("Begin delete the minimum key and "
-		"the maximum key from the BST...\n");
+	printf("Begin delete the minimum key and the maximum key from the BST.\n");
 	start_time = clock();
 	bst_delete_min(&bst);
 	bst_delete_max(&bst);
@@ -112,57 +115,67 @@ main(int argc, char *argv[])
 	check(&bst);
 	
 	printf("Begin search key: %s\n", key);
+	strncpy(item.key, key, MAX_KEY_LEN);
+	item.value = -1;
 	start_time = clock();
-	if((el = bst_get(&bst, key)) != NULL)
+	if((el = (struct element *)bst_get(&bst, &item)) != NULL) {
 		printf("It's value: %ld\n", el->value);
-	else
+		printf("The rank of key '%s' is %ld\n", key, bst_rank(&bst, &item));
+	} else
 		printf("Not found.\n");
 	end_time = clock();
 	printf("Search completed, estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 	
-	printf("The rank of key '%s' is %ld\n\n", key, bst_rank(&bst, key));
-	
 	rank = rand_range_integer(0, BST_SIZE(&bst));
 	printf("The element of rank %d:\n", rank);
 	start_time = clock();
-	el = bst_select(&bst, rank);
+	el = (struct element *)bst_select(&bst, rank);
 	end_time = clock();
 	printf("Key: %s, value: %ld\n", el->key, el->value);
-	printf("Estimated time(s): %.3f\n\n", 
+	printf("Estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
+	printf("\n");
 	
 	len = (int)strlen(key);
 	rand_key = rand_string(len);
+	strncpy(item.key, rand_key, MAX_KEY_LEN);
+	item.value = -1;
 	printf("The largest key in this BST less than or equal to '%s'\n",
 		rand_key);
 	start_time = clock();
-	if((el = bst_floor(&bst, rand_key)) != NULL)
+	if((el = (struct element *)bst_floor(&bst, &item)) != NULL)
 		printf("It's key %s, value is %ld\n", el->key, el->value);
 	else
 		printf("The given key '%s' is too small.\n", rand_key);
 	end_time = clock();
-	printf("Estimated time(s): %.3f\n\n", 
+	printf("Estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	ALGFREE(rand_key);
+	printf("\n");
 	
 	rand_key = rand_string(len);
+	strncpy(item.key, rand_key, MAX_KEY_LEN);
+	item.value = -1;
 	printf("The smallest key in this BST greater than or equal to '%s'\n",
 		rand_key);
 	start_time = clock();
-	if((el = bst_ceiling(&bst, rand_key)) != NULL)
+	if((el = (struct element *)bst_ceiling(&bst, &item)) != NULL)
 		printf("It's key %s, value is %ld\n", el->key, el->value);
 	else
 		printf("The given key '%s' is too large.\n", rand_key);
 	end_time = clock();
-	printf("Estimated time(s): %.3f\n\n", 
+	printf("Estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	ALGFREE(rand_key);
+	printf("\n");
 	
 	printf("Begin delete key: %s\n", key);
+	strncpy(item.key, key, MAX_KEY_LEN);
+	item.value = -1;
 	start_time = clock();
-	bst_delete(&bst, key);
+	bst_delete(&bst, &item);
 	end_time = clock();
 	printf("Deletion completed, estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
@@ -179,7 +192,7 @@ main(int argc, char *argv[])
 }
 
 static void
-check(const struct bsearch_tree *bst)
+check(const struct bstree *bst)
 {
 	clock_t start_time, end_time;
 	
@@ -199,4 +212,20 @@ usage_info(const char *pname)
 	fprintf(stderr, "-f: The data file will be read in memory..\n");
 	fprintf(stderr, "-k: The key will be searched.\n");
 	exit(EXIT_FAILURE);
+}
+
+static int 
+less(const void *key1, const void *key2)
+{
+	struct element *k1, *k2;
+
+	k1 = (struct element *)key1;
+	k2 = (struct element *)key2;
+
+	if (strcmp(k1->key, k2->key) < 0)
+		return 1;
+	else if (strcmp(k1->key, k2->key) == 0)
+		return 0;
+	else
+		return -1;
 }

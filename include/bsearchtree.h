@@ -34,16 +34,18 @@
 
 #include "algcomm.h"
 
-struct bst_node {
-	struct element item;		/* key-value pairs */
-	struct bst_node *left;		/* left subtrees */
-	struct bst_node *right;		/* right subtrees */
+struct bstree_node {
+	void *key;					/* key contained by the Node */
+	struct bstree_node *left;	/* left subtrees */
+	struct bstree_node *right;	/* right subtrees */
 	unsigned long size;			/* number of nodes in subtree */
 	long height;				/* height of the subtree */
 };
 
-struct bsearch_tree {
-	struct bst_node *root;
+struct bstree {
+	struct bstree_node *root;	/* root node */
+	unsigned int keysize;		/* the bytes of the key */
+	algcomp_ft *cmp;			/* comparator over the keys */
 };
 
 /* Returns the number of key-value pairs in this BST */
@@ -55,8 +57,8 @@ struct bsearch_tree {
 
 /* 
  * Returns the height of the internal BST.
- * It is assumed that the height of an empty tree is -1 
- * and the height of a tree with just one node is 0.
+ * It is assumed that the height of an empty tree is -1 and the height of a
+ * tree with just one node is 0.
  */
 #define BST_HEIGHT(bst)	\
 	((bst)->root == NULL ? (-1) : (bst)->root->height)
@@ -64,80 +66,70 @@ struct bsearch_tree {
 /* Initializes an empty binary search tree */
 #define BST_INIT(b)	((b)->root = NULL)
 
-struct queue;
+struct single_list;
 
-/* Inserts the specified key-value pair into the BST */
-void bst_put(struct bsearch_tree *bst,	const struct element *item);
+/* Initializes an empty binary search tree */
+void bst_init(struct bstree *bst, unsigned int ksize, algcomp_ft *kcmp);
 
-/* Returns the value associated with the given key. */
-struct element * bst_get(const struct bsearch_tree *bst, const char *key);
+/* Inserts the key into the BST */
+int bst_put(struct bstree *bst, const void *key);
+
+/* Returns the Key with the given key. */
+void * bst_get(const struct bstree *bst, const void *key);
 
 /* Prints all elements using previous order traverse. */
-void bst_preorder(const struct bsearch_tree *bst, 
-				void (*print)(const struct element *el));
+void bst_preorder(const struct bstree *bst, struct single_list *keys);
 
 /* Releases this binary search tree */
-void bst_clear(struct bsearch_tree *bst);
+void bst_clear(struct bstree *bst);
 
 /* Returns the smallest key is the BST */
-char * bst_min(const struct bsearch_tree *bst);
+void * bst_min(const struct bstree *bst);
 
 /* Returns the largest key is the BST */
-char * bst_max(const struct bsearch_tree *bst);
+void * bst_max(const struct bstree *bst);
+
+/* Removes the smallest key from the BST. */
+int bst_delete_min(struct bstree *bst);
+
+/* Removes the largest key from the BST. */
+int bst_delete_max(struct bstree *bst);
+
+/* Removes the specified key from the BST. */
+int bst_delete(struct bstree *bst, const void *key);
 
 /* 
- * Removes the smallest key and associated 
- * with value from the BST.
- */
-void bst_delete_min(struct bsearch_tree *bst);
-
-/* 
- * Removes the largest key and associated 
- * with value from the BST.
- */
-void bst_delete_max(struct bsearch_tree *bst);
-
-/* 
- * Removes the specified key and its 
- * associated value from the BST.
- */
-void bst_delete(struct bsearch_tree *bst, const char *key);
-
-/* 
- * Return the number of keys in the BST strictly 
+ * Return the number of keys in the BST strictly
  * less than the specified key.
  */
-unsigned long bst_rank(const struct bsearch_tree *bst, const char *key);
+unsigned long bst_rank(const struct bstree *bst, const void *key);
 
 /* Return the key in the BST of a given rank. */
-struct element * bst_select(const struct bsearch_tree *bst, 
-							unsigned long rank);
+void * bst_select(const struct bstree *bst, unsigned long rank);
 
 /* 
  * Returns the largest key in the BST less than 
  * or equal to the specified key. 
  */
-struct element * bst_floor(const struct bsearch_tree *bst, const char *key);
+void * bst_floor(const struct bstree *bst, const void *key);
 
 /* 
  * Returns the smallest key in the BST greater than 
  * or equal to the specified key. 
  */
-struct element * bst_ceiling(const struct bsearch_tree *bst, const char *key);
+void * bst_ceiling(const struct bstree *bst, const void *key);
 
 /* Returns the number of leaf nodes */
-long bst_leaf_nodes(const struct bsearch_tree *bst);
+long bst_leaf_nodes(const struct bstree *bst);
 
 /* Breadth-first search traverse. */
-void bst_breadth_first(const struct bsearch_tree *bst, struct queue *keys);
+void bst_breadth_first(const struct bstree *bst, struct single_list *keys);
 
-/* 
- * Gets all keys in the BST in the given range in ascending order.
- */
-void bst_keys(const struct bsearch_tree *bst, const char *lokey,
-			const char *hikey, struct queue *keys);
+/* Gets all keys in the BST in the given range in ascending order. */
+void bst_keys(const struct bstree *bst, const void *lokey, const void *hikey,
+			struct single_list *keys);
 
 /* Check integrity of BST data structure. */
-int bst_check(const struct bsearch_tree *bst);
+int bst_check(const struct bstree *bst);
 
 #endif /* _BSEARCHTREE_H_ */
