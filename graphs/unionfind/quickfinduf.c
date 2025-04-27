@@ -50,7 +50,7 @@ qfuf_init(struct quick_find_uf *uf, unsigned long n)
 	uf->count = n;
 	
 	uf->id = (long *)algmalloc(n * sizeof(long));
-	for(i = 0; i < (long)n; i++)
+	for (i = 0; i < (long)n; i++)
 		uf->id[i] = i;
 }
 
@@ -87,19 +87,16 @@ qfuf_union(struct quick_find_uf *uf, long p, long q)
 	validate(uf, p);
 	validate(uf, q);
 
-	/* 
-	 * Needed for correctness to reduce 
-	 * the number of array accesses.
-	 */
+	/* Needed for correctness to reduce the number of array accesses. */
 	pid = uf->id[p];
 	qid = uf->id[q];
 
 	/* p and q are already in the same component */
-	if(pid == qid)
+	if (pid == qid)
 		return;
 
-	for(i = 0; i < (long)uf->len; i++)
-		if(pid == uf->id[i])
+	for (i = 0; i < (long)uf->len; i++)
+		if (pid == uf->id[i])
 			uf->id[i] = qid;
 	uf->count--;
 }
@@ -110,6 +107,6 @@ qfuf_union(struct quick_find_uf *uf, long p, long q)
 static void 
 validate(const struct quick_find_uf *uf, long p)
 {
-	if(p < 0 || p >= (long)uf->len)
+	if (p < 0 || p >= (long)uf->len)
 		errmsg_exit("index %ld is not between 0 and %ld.\n", p, uf->len - 1);
 }

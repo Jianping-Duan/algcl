@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 	int i, n, p, q;
 	clock_t start_time, end_time;
 	
-	if(argc != 2)
+	if (argc != 2)
 		errmsg_exit("Usage: %s <datafile>\n", argv[0]);
 	
 	fin = open_file(argv[1], "r");
@@ -50,10 +50,10 @@ int main(int argc, char *argv[])
 
 	start_time = clock();
 	wquuf_init(&uf, (unsigned)n);
-	for(i = 0; i < n; i++) {
+	for (i = 0; i < n; i++) {
 		fgets(buf, BUFSIZE, fin);
 		sscanf(buf, "%d %d", &p, &q);
-		if(wquuf_connected(&uf, p, q))
+		if (wquuf_connected(&uf, p, q))
 			continue;
 		wquuf_union(&uf, p, q);
 		printf("%d %d\n", p, q);
@@ -62,8 +62,7 @@ int main(int argc, char *argv[])
 
 	printf("%ld components.\n", WQUUF_COUNT(&uf));
 	printf("Estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 
 	WQUUF_CLEAR(&uf);
 

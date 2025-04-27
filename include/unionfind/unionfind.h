@@ -35,24 +35,19 @@
 #include "algcomm.h"
 
 /* 
- * The union–find data type models a collection of sets 
- * containing N elements, 
+ * The union–find data type models a collection of sets containing N elements,
  * with each element in exactly one set.
  * The elements are named 0 through N–1.
- * Initially, there are N sets, with each element in its
- * own set. The canonical element of a set
- * (also known as the Root, Identifier, Leader, 
- * or Set representative)
- * is one distinguished element in the set. 
+ * Initially, there are N sets, with each element in its own set.
+ * The canonical element of a set (also known as the Root, Identifier, Leader,
+ * or Set representative) is one distinguished element in the set. 
  * Here is a summary of the operations:
- *	find(P) returns the canonical element of the set 
- *	containing P. 
- *	The find operation returns the same value for two 
- *	elements if and only if they are in the same set.
- *  union(P, Q) merges the set containing element P with 
- *  the set containing element Q. 
- *  That is, if P and Q are in different sets, replace these
- *  two sets with a new set that is the union of the two.
+ *	find(P) returns the canonical element of the set containing P. 
+ *	The find operation returns the same value for two elements if and only if
+ *	they are in the same set.
+ *  union(P, Q) merges the set containing element P with the set containing
+ *  element Q. That is, if P and Q are in different sets, replace these two
+ *  sets with a new set that is the union of the two.
  *  count() returns the number of sets.
  */
 
@@ -72,28 +67,21 @@ struct union_find {
 	ALGFREE((uf)->rank);			\
 	(uf)->len = 0;					\
 	(uf)->count = 0;				\
-} while(0)
+} while (0)
 
 /* 
- * Initializes an empty union-find data structure with
- * N elements 0 through N - 1.
- * Initially, each element is in its own set. 
+ * Initializes an empty union-find data structure with N elements 0 through
+ * N - 1. Initially, each element is in its own set. 
  */
 void uf_init(struct union_find *uf, unsigned long n);
 
-/* 
- * Returns the canonical element of 
- * the set containing element p.
- */
+/* Returns the canonical element of the set containing element p. */
 long uf_find(const struct union_find *uf, long p);
 
 /* Returns true if the two elements are in the same set. */
 int uf_connected(const struct union_find *uf, long p, long q);
 
-/* 
- * Merges the set containing element P with 
- * the set containing element Q. 
- */
+/* Merges the set containing element P with the set containing element Q. */
 void uf_union(struct union_find *uf, long p, long q);
 
 #endif	/* _UNIONFIND_H_ */ 

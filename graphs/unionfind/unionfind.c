@@ -35,9 +35,8 @@
 static void validate(const struct union_find *, long);
 
 /* 
- * Initializes an empty union-find data structure with
- * N elements 0 through N - 1.
- * Initially, each element is in its own set. 
+ * Initializes an empty union-find data structure with N elements 0 through
+ * N - 1. Initially, each element is in its own set. 
  */
 void 
 uf_init(struct union_find *uf, unsigned long n)
@@ -51,21 +50,18 @@ uf_init(struct union_find *uf, unsigned long n)
 	
 	uf->parent = (long *)algmalloc(n * sizeof(long));
 	uf->rank = (short *)algmalloc(n * sizeof(short));
-	for(i = 0; i < (long)n; i++) {
+	for (i = 0; i < (long)n; i++) {
 		uf->parent[i] = i;
 		uf->rank[i] = 0;
 	}
 }
 
-/* 
- * Returns the canonical element of 
- * the set containing element p.
- */
+/* Returns the canonical element of the set containing element p. */
 long 
 uf_find(const struct union_find *uf, long p)
 {
 	validate(uf, p);
-	while(p != uf->parent[p])
+	while (p != uf->parent[p])
 		/* path compression by halving */
 		p = uf->parent[uf->parent[p]];
 
@@ -82,10 +78,7 @@ uf_connected(const struct union_find *uf, long p, long q)
 	return uf_find(uf, p) == uf_find(uf, q);
 }
 
-/* 
- * Merges the set containing element P with 
- * the set containing element Q. 
- */
+/* Merges the set containing element P with the set containing element Q. */
 void 
 uf_union(struct union_find *uf, long p, long q)
 {
@@ -94,24 +87,18 @@ uf_union(struct union_find *uf, long p, long q)
 	validate(uf, p);
 	validate(uf, q);
 
-	/* 
-	 * Needed for correctness to reduce 
-	 * the number of array accesses.
-	 */
+	/* Needed for correctness to reduce the number of array accesses. */
 	pid = uf_find(uf, p);
 	qid = uf_find(uf, q);
 
 	/* p and q are already in the same component */
-	if(pid == qid)
+	if (pid == qid)
 		return;
 
-	/* 
-	 * Make root of smaller rank point to 
-	 * root of larger rank.
-	 */
-	if(uf->rank[pid] < uf->rank[qid])
+	/* Make root of smaller rank point to root of larger rank. */
+	if (uf->rank[pid] < uf->rank[qid])
 		uf->parent[pid] = qid;
-	else if(uf->rank[pid] > uf->rank[qid])
+	else if (uf->rank[pid] > uf->rank[qid])
 		uf->parent[qid] = pid;
 	else {
 		uf->parent[qid] = pid;
@@ -126,6 +113,6 @@ uf_union(struct union_find *uf, long p, long q)
 static void 
 validate(const struct union_find *uf, long p)
 {
-	if(p < 0 || p >= (long)uf->len)
+	if (p < 0 || p >= (long)uf->len)
 		errmsg_exit("index %ld is not between 0 and %ld.\n", p, uf->len - 1);
 }

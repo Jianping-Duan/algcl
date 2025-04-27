@@ -35,9 +35,8 @@
 static void validate(const struct quick_union_uf *, long);
 
 /* 
- * Initializes an empty union-find data structure with
- * N elements 0 through N - 1.
- * Initially, each element is in its own set. 
+ * Initializes an empty union-find data structure with N elements 0 through
+ * N - 1. Initially, each element is in its own set. 
  */
 void 
 quuf_init(struct quick_union_uf *uf, unsigned long n)
@@ -50,7 +49,7 @@ quuf_init(struct quick_union_uf *uf, unsigned long n)
 	uf->count = n;
 	
 	uf->parent = (long *)algmalloc(n * sizeof(long));
-	for(i = 0; i < (long)n; i++)
+	for (i = 0; i < (long)n; i++)
 		uf->parent[i] = i;
 }
 
@@ -62,7 +61,7 @@ long
 quuf_find(const struct quick_union_uf *uf, long p)
 {
 	validate(uf, p);
-	while(p != uf->parent[p])
+	while (p != uf->parent[p])
 		p = uf->parent[p];
 
 	return p;
@@ -90,15 +89,12 @@ quuf_union(struct quick_union_uf *uf, long p, long q)
 	validate(uf, p);
 	validate(uf, q);
 
-	/* 
-	 * Needed for correctness to reduce 
-	 * the number of array accesses.
-	 */
+	/* Needed for correctness to reduce the number of array accesses. */
 	pid = quuf_find(uf, p);
 	qid = quuf_find(uf, q);
 
 	/* p and q are already in the same component */
-	if(pid == qid)
+	if (pid == qid)
 		return;
 
 	uf->parent[pid] = qid;
@@ -111,6 +107,6 @@ quuf_union(struct quick_union_uf *uf, long p, long q)
 static void 
 validate(const struct quick_union_uf *uf, long p)
 {
-	if(p < 0 || p >= (long)uf->len)
+	if (p < 0 || p >= (long)uf->len)
 		errmsg_exit("index %ld is not between 0 and %ld.\n", p, uf->len - 1);
 }
