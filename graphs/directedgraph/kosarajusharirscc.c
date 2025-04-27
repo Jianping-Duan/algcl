@@ -51,7 +51,7 @@ kjsscc_init(struct kosaraju_sharir_scc *scc, const struct digraph *g)
 	scc->marked = (bool *)algcalloc(DIGRAPH_VERTICES(g), sizeof(bool));
 	scc->id = (unsigned int *)algcalloc(DIGRAPH_VERTICES(g), sizeof(int));
 
-	for(v = 0; v < DIGRAPH_VERTICES(g); v++) {
+	for (v = 0; v < DIGRAPH_VERTICES(g); v++) {
 		scc->marked[v] = false;
 		scc->id[v] = 0;
 	}
@@ -68,7 +68,7 @@ kjsscc_init(struct kosaraju_sharir_scc *scc, const struct digraph *g)
 	 * using reverse postorder to guide calculation.
 	 */
 	SLIST_FOREACH(&order, nptr, unsigned int, w) {
-		if(!scc->marked[*w]) {
+		if (!scc->marked[*w]) {
 			dfs(scc, g, *w);
 			scc->count++;
 		}
@@ -93,7 +93,7 @@ dfs(struct kosaraju_sharir_scc *scc, const struct digraph *g, unsigned int v)
 
 	adj = DIGRAPH_ADJLIST(g, v);
 	SLIST_FOREACH(adj, nptr, unsigned int, w) {
-		if(!scc->marked[*w])
+		if (!scc->marked[*w])
 			dfs(scc, g, *w);
 	}
 }

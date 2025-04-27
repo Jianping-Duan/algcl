@@ -49,15 +49,15 @@ tjscc_init(struct tarjan_scc *scc, const struct digraph *g)
 	scc->id = (unsigned int *)algcalloc(DIGRAPH_VERTICES(g), sizeof(int));
 	scc->low = (unsigned int *)algcalloc(DIGRAPH_VERTICES(g), sizeof(int));
 
-	for(v = 0; v < DIGRAPH_VERTICES(g); v++) {
+	for (v = 0; v < DIGRAPH_VERTICES(g); v++) {
 		scc->marked[v] = false;
 		scc->id[v] = 0;
 		scc->low[v] = 0;
 	}
 
 	STACK_INIT(&st, sizeof(int));
-	for(v = 0; v < DIGRAPH_VERTICES(g); v++)
-		if(!scc->marked[v])
+	for (v = 0; v < DIGRAPH_VERTICES(g); v++)
+		if (!scc->marked[v])
 			dfs(scc, g, v, &st);
 	stack_clear(&st);
 }
@@ -79,14 +79,14 @@ dfs(struct tarjan_scc *scc, const struct digraph *g, unsigned int v,
 
 	adj = DIGRAPH_ADJLIST(g, v);
 	SLIST_FOREACH(adj, nptr, unsigned int, w) {
-		if(!scc->marked[*w])
+		if (!scc->marked[*w])
 			dfs(scc, g, *w, st);
 
-		if(scc->low[*w] < min)
+		if (scc->low[*w] < min)
 			min = scc->low[*w];
 	}
 
-	if(min < scc->low[v]) {
+	if (min < scc->low[v]) {
 		scc->low[v] = min;
 		return;
 	}
@@ -96,7 +96,7 @@ dfs(struct tarjan_scc *scc, const struct digraph *g, unsigned int v,
 		stack_pop(st, (void **)&x);
 		scc->id[*x] = scc->count;
 		scc->low[*x] = DIGRAPH_VERTICES(g);
-	} while(v != *x && !STACK_ISEMPTY(st));
+	} while (v != *x && !STACK_ISEMPTY(st));
 	scc->count++;
 	ALGFREE(x);
 }

@@ -44,7 +44,7 @@ main(int argc, char *argv[])
 	struct single_list *comps;
 	unsigned int i, m, v;
 
-	if(argc != 2)
+	if (argc != 2)
 		errmsg_exit("Usage: %s <datafile> \n", argv[0]);
 	
 	fin = open_file(argv[1], "r");
@@ -57,17 +57,17 @@ main(int argc, char *argv[])
 
 	/* number of connected components */
 	m = KJSSCC_COUNT(&scc);
-	printf("%u strong components.\n", m);
+	printf("%u strongly-connected components.\n", m);
 
 	/* compute list of vertices in each strong component */
 	comps = (struct single_list *)algcalloc(m, sizeof(struct single_list));
-	for(i = 0; i < m; i++)
+	for (i = 0; i < m; i++)
 		slist_init(&comps[i], sizeof(int), vequal);
 
-	for(v = 0; v < DIGRAPH_VERTICES(&g); v++)
+	for (v = 0; v < DIGRAPH_VERTICES(&g); v++)
 		slist_append(&comps[KJSSCC_ID(&scc, v)], &v);
 	
-	for(i = 0; i < m; i++) {
+	for (i = 0; i < m; i++) {
 		display(&comps[i]);
 		slist_clear(&comps[i]);
 	}

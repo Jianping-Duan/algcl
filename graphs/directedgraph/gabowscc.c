@@ -50,7 +50,7 @@ gbscc_init(struct gabow_scc *scc, const struct digraph *g)
 	scc->id = (long *)algcalloc(DIGRAPH_VERTICES(g), sizeof(long));
 	scc->preorder = (unsigned int *)algcalloc(DIGRAPH_VERTICES(g), sizeof(int));
 
-	for(v = 0; v < DIGRAPH_VERTICES(g); v++) {
+	for (v = 0; v < DIGRAPH_VERTICES(g); v++) {
 		scc->marked[v] = false;
 		scc->id[v] = -1;
 		scc->preorder[v] = 0;
@@ -59,8 +59,8 @@ gbscc_init(struct gabow_scc *scc, const struct digraph *g)
 	STACK_INIT(&st1, sizeof(int));
 	STACK_INIT(&st2, sizeof(int));
 
-	for(v = 0; v < DIGRAPH_VERTICES(g); v++)
-		if(!scc->marked[v])
+	for (v = 0; v < DIGRAPH_VERTICES(g); v++)
+		if (!scc->marked[v])
 			dfs(scc, g, v, &st1, &st2);
 
 	stack_clear(&st1);
@@ -84,11 +84,11 @@ dfs(struct gabow_scc *scc, const struct digraph *g, unsigned int v,
 
 	adj = DIGRAPH_ADJLIST(g, v);
 	SLIST_FOREACH(adj, nptr, unsigned int, w) {
-		if(!scc->marked[*w])
+		if (!scc->marked[*w])
 			dfs(scc, g, *w, st1, st2);
-		else if(scc->id[*w] == -1) {
+		else if (scc->id[*w] == -1) {
 			x = (unsigned int *)stack_peek(st2);
-			while(scc->preorder[*x] > scc->preorder[*w] &&
+			while (scc->preorder[*x] > scc->preorder[*w] &&
 				  !STACK_ISEMPTY(st2)) {
 				stack_pop(st2, (void **)&x);
 				x = (unsigned int *)stack_peek(st2);
@@ -99,12 +99,12 @@ dfs(struct gabow_scc *scc, const struct digraph *g, unsigned int v,
 	/* found strong component containing v */
 	w = (unsigned int *)algmalloc(sizeof(int));
 	x = (unsigned int *)stack_peek(st2);
-	if(*x == v) {
+	if (*x == v) {
 		stack_pop(st2, (void **)&x);
 		do {
 			stack_pop(st1, (void **)&w);
 			scc->id[*w] = scc->count;
-		} while(*w != v && !STACK_ISEMPTY(st1));
+		} while (*w != v && !STACK_ISEMPTY(st1));
 		scc->count++;
 	}
 	ALGFREE(w);
