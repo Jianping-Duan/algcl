@@ -45,8 +45,7 @@ struct digraph_cycle {
 };
 
 /* Returns true if the digraph g has a cycle */
-#define DIGRAPH_HASCYCLE(gc)	\
-	(!STACK_ISEMPTY((gc)->cycle))
+#define DIGRAPH_HASCYCLE(gc)	(!STACK_ISEMPTY((gc)->cycle))
 
 /* Returns a cycle in the digraph g. */
 #define DIGRAPH_CYCLE_GET(gc)	((gc)->cycle)
@@ -57,11 +56,11 @@ struct digraph_cycle {
 	ALGFREE((gc)->onstack);					\
 	stack_clear((gc)->cycle);				\
 	ALGFREE((gc)->cycle);					\
-} while(0)
+} while (0)
 
 /* 
- * Determines whether the digraph G has a 
- * directed cycle and, if so, finds such a cycle.
+ * Determines whether the digraph G has a directed cycle and,
+ * if so, finds such a cycle.
  */
 void digraph_cycle_init(struct digraph_cycle *gc, const struct digraph *g);
 

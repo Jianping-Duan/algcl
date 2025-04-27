@@ -46,7 +46,7 @@ digraph_bfsp_init(struct digraph_bfsp *bfs, unsigned int s,
 {
 	unsigned int i;
 	
-	if(s >= g->vertices)
+	if (s >= g->vertices)
 		errmsg_exit("vertex %u is not between 0 and %u\n", s, g->vertices - 1);
 	
 	bfs->vertices = g->vertices;
@@ -55,7 +55,7 @@ digraph_bfsp_init(struct digraph_bfsp *bfs, unsigned int s,
 	bfs->edgeto = (long *)algmalloc(g->vertices * sizeof(long));
 	bfs->distto = (long *)algmalloc(g->vertices * sizeof(long));
 	
-	for(i = 0; i < bfs->vertices; i++) {
+	for (i = 0; i < bfs->vertices; i++) {
 		bfs->marked[i] = false;
 		bfs->distto[i] = 0;
 		bfs->edgeto[i] = -1;
@@ -74,18 +74,16 @@ digraph_bfsp_paths(const struct digraph_bfsp *bfs, unsigned int v,
 {
 	long w;
 	
-	if(v >= bfs->vertices)
+	if (v >= bfs->vertices)
 		errmsg_exit("vertex %u is not between 0 and %u\n", v, bfs->vertices - 1);
 	
 	STACK_INIT(paths, sizeof(long));
 
-	if(!DIGRAPH_BFSP_HASPATH(bfs, v)) 
+	if (!DIGRAPH_BFSP_HASPATH(bfs, v)) 
 		return;
 	
-	for(w = v; w != -1 && bfs->distto[w] != 0;
-		w = bfs->edgeto[w]) {
+	for (w = v; w != -1 && bfs->distto[w] != 0; w = bfs->edgeto[w])
 		stack_push(paths, &w);
-	}
 	stack_push(paths, &w);	/* source vertex */
 }
 
@@ -103,18 +101,18 @@ gbfs(struct digraph_bfsp *bfs, unsigned int s, const struct digraph *g)
 	QUEUE_INIT(&qu, sizeof(int));
 	v = (unsigned int *)algmalloc(sizeof(int));
 	
-	for(i = 0; i < g->vertices; i++)
+	for (i = 0; i < g->vertices; i++)
 		bfs->distto[i] = INFINITY;
 	
 	bfs->distto[s] = 0;
 	bfs->marked[s] = true;
 	enqueue(&qu, &s);
 	
-	while(!QUEUE_ISEMPTY(&qu)) {
+	while (!QUEUE_ISEMPTY(&qu)) {
 		dequeue(&qu, (void **)&v);
 		slist = DIGRAPH_ADJLIST(g, *v);
 		SLIST_FOREACH(slist, nptr, unsigned int, w) {
-			if(!bfs->marked[*w]) {
+			if (!bfs->marked[*w]) {
 				bfs->marked[*w] = true;
 				bfs->edgeto[*w] = *v;
 				bfs->distto[*w] = bfs->distto[*v] + 1;

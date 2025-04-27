@@ -52,11 +52,11 @@ main(int argc, char *argv[])
 	extern char *optarg;
 	extern int optind;
 
-	if(argc < (int)strlen(optstr) + 1)
+	if (argc < (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 
 #if defined(__FreeBSD__)
-	if(argv[1][1] != 'f')
+	if (argv[1][1] != 'f')
 		errmsg_exit("The argument '-f' is must be first.\n");
 #endif
 
@@ -64,20 +64,18 @@ main(int argc, char *argv[])
 
 	vset = (unsigned int *)algmalloc((argc - 3) * sizeof(int));
 
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'f':
 				fname = optarg;
 				break;
 			case 'S':
-				for(i = optind - 1, j = 0;
-					(i < argc && argv[i][0] != '-') && j < argc - 4;
-					i++, j++) {
-					if(sscanf(argv[i], "%u", &s) == 1) {
+				for (i = optind - 1, j = 0; (i < argc && argv[i][0] != '-') &&
+					j < argc - 4; i++, j++) {
+					if (sscanf(argv[i], "%u", &s) == 1) {
 						vset[j] = s;
 						cnt++;
-					}
-					else
+					} else
 						errmsg_exit("Illegal number. -S %s\n", argv[i]);
 				}
 				break;
@@ -94,14 +92,14 @@ main(int argc, char *argv[])
 	printf("\n");
 
 	slist_init(&svset, sizeof(int), NULL);
-	for(i = 0; i < cnt; i++)
+	for (i = 0; i < cnt; i++)
 		slist_append(&svset, &vset[i]);
 	ALGFREE(vset);
 
 	digraph_dfs_svset(&dfs, &g, &svset);
 
-	for(v = 0; v < DIGRAPH_VERTICES(&g); v++)
-		if(DIGRAPH_DFS_MARKED(&dfs, v))
+	for (v = 0; v < DIGRAPH_VERTICES(&g); v++)
+		if (DIGRAPH_DFS_MARKED(&dfs, v))
 			printf("%u ", v);
 	printf("\n");
 	

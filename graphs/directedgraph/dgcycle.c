@@ -43,7 +43,7 @@ main(int argc, char *argv[])
 	
 	SET_RANDOM_SEED;
 	
-	if(argc != 2)
+	if (argc != 2)
 		errmsg_exit("Usage: %s <datafile> \n", argv[0]);
 	
 	fin = open_file(argv[1], "r");
@@ -55,15 +55,14 @@ main(int argc, char *argv[])
 	w = (unsigned int *)algmalloc(sizeof(int));
 	digraph_cycle_init(&gc, &g);
 	
-	if(DIGRAPH_HASCYCLE(&gc)) {
+	if (DIGRAPH_HASCYCLE(&gc)) {
 		cycle = DIGRAPH_CYCLE_GET(&gc);
-		while(!STACK_ISEMPTY(cycle)) {
+		while (!STACK_ISEMPTY(cycle)) {
 			stack_pop(cycle, (void **)&w);
 			printf("%u ", *w);
 		}
 		printf("\n");
-	}
-	else
+	} else
 		printf("No directed cycle.\n");
 	
 	ALGFREE(w);

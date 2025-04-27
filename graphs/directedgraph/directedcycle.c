@@ -33,8 +33,8 @@
 #include "linearlist.h"
 
 /* 
- * Gets a directed cycle if the digraph has a 
- * directed cycle, and null otherwise. 
+ * Gets a directed cycle if the digraph has a directed cycle,
+ * and null otherwise. 
  */
 void 
 directed_cycle_get(const struct digraph *g, struct stack *cycle)
@@ -49,48 +49,44 @@ directed_cycle_get(const struct digraph *g, struct stack *cycle)
 
 	/* indegrees of remaining vertices */
 	indegrees = (int *)algcalloc(DIGRAPH_VERTICES(g), sizeof(int));
-	for(v = 0; v < DIGRAPH_VERTICES(g); v++)
+	for (v = 0; v < DIGRAPH_VERTICES(g); v++)
 		indegrees[v] = DIGRAPH_INDEGREE(g, v);
 
-	/* 
-	 * Initialize queue to contain all 
-	 * vertices with indegree = 0.
-	 */
+	/* Initialize queue to contain all vertices with indegree = 0. */
 	QUEUE_INIT(&qu, sizeof(int));
-	for(v = 0; v < DIGRAPH_VERTICES(g); v++)
-		if(indegrees[v] == 0)
+	for (v = 0; v < DIGRAPH_VERTICES(g); v++)
+		if (indegrees[v] == 0)
 			enqueue(&qu, &v);
 	
 	w = (unsigned int *)algmalloc(sizeof(int));
-	while(!QUEUE_ISEMPTY(&qu)) {
+	while (!QUEUE_ISEMPTY(&qu)) {
 		dequeue(&qu, (void **)&w);
 		slist = DIGRAPH_ADJLIST(g, *w);
 		SLIST_FOREACH(slist, nptr, unsigned int, x) {
 			indegrees[*x]--;
-			if(indegrees[*x] == 0)
+			if (indegrees[*x] == 0)
 				enqueue(&qu, x);
 		}
 	}
 	ALGFREE(w);
 	
 	/* 
-	 * There is a directed cycle in subgraph of
-	 * vertices with indegree >= 1. 
+	 * There is a directed cycle in subgraph of vertices with indegree >= 1.
 	 */
 	edgeto = (long *)algcalloc(DIGRAPH_VERTICES(g), sizeof(long));
-	for(v = 0; v < DIGRAPH_VERTICES(g); v++)
+	for (v = 0; v < DIGRAPH_VERTICES(g); v++)
 		edgeto[v] = -1;
 
 	root = -1; /* any vertex with indegree >= -1 */
-	for(v = 0; v < DIGRAPH_VERTICES(g); v++) {
-		if(indegrees[v] == 0)
+	for (v = 0; v < DIGRAPH_VERTICES(g); v++) {
+		if (indegrees[v] == 0)
 			continue;
 		else
 			root = v;
 
 		slist = DIGRAPH_ADJLIST(g, v);
 		SLIST_FOREACH(slist, nptr, unsigned int, w) {
-			if(indegrees[*w] > 0)
+			if (indegrees[*w] > 0)
 				edgeto[*w] = v;
 		}
 	}
@@ -98,13 +94,13 @@ directed_cycle_get(const struct digraph *g, struct stack *cycle)
 	/* initialize empty stack */
 	STACK_INIT(cycle, sizeof(int));
 
-	if(root != -1) {
+	if (root != -1) {
 		visited = (bool *)algcalloc(DIGRAPH_VERTICES(g), sizeof(bool));
-		for(v = 0; v < DIGRAPH_VERTICES(g); v++)
+		for (v = 0; v < DIGRAPH_VERTICES(g); v++)
 			visited[v] = false;
 		
 		/* find any vertex on cycle */
-		while(root != -1 && !visited[root]) {
+		while (root != -1 && !visited[root]) {
 			visited[root] = true;
 			root = edgeto[root];
 		}
@@ -114,7 +110,7 @@ directed_cycle_get(const struct digraph *g, struct stack *cycle)
 		do {
 			stack_push(cycle, &v);
 			v = edgeto[v];
-		} while(v != root);
+		} while (v != root);
 		stack_push(cycle, &root);
 	}
 }

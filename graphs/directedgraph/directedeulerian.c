@@ -52,7 +52,7 @@ dieuler_cycle_get(struct stack *cycle, const struct digraph *g)
 	STACK_INIT(cycle, sizeof(int));
 	
 	/* must have at least one edge */
-	if(DIGRAPH_EDGES(g) == 0)
+	if (DIGRAPH_EDGES(g) == 0)
 		return;
 	
 	/* 
@@ -60,12 +60,12 @@ dieuler_cycle_get(struct stack *cycle, const struct digraph *g)
 	 * for each vertex v (without this check, DFS might
 	 * return a path instead of a cycle) 
 	 */
-	for(v = 0; v < DIGRAPH_VERTICES(g); v++)
-		if(DIGRAPH_OUTDEGREE(g, v) != DIGRAPH_INDEGREE(g, v))
+	for (v = 0; v < DIGRAPH_VERTICES(g); v++)
+		if (DIGRAPH_OUTDEGREE(g, v) != DIGRAPH_INDEGREE(g, v))
 			return;
 	
 	/* Initialize stack with any non-isolated vertex */
-	if((ns = nonisolated_vertex(g)) == -1)
+	if ((ns = nonisolated_vertex(g)) == -1)
 		return;
 	STACK_INIT(&st, sizeof(int));
 	stack_push(&st, (unsigned int *)&ns);
@@ -74,9 +74,8 @@ dieuler_cycle_get(struct stack *cycle, const struct digraph *g)
 	 * Create local view of adjacency lists,
 	 * to iterate one vertex at a time.
 	 */
-	adj = (struct queue *)
-		algcalloc(DIGRAPH_VERTICES(g), sizeof(struct queue));
-	for(v = 0; v < DIGRAPH_VERTICES(g); v++) {
+	adj = (struct queue *)algcalloc(DIGRAPH_VERTICES(g), sizeof(struct queue));
+	for (v = 0; v < DIGRAPH_VERTICES(g); v++) {
 		QUEUE_INIT(&adj[v], sizeof(int));
 		slist = DIGRAPH_ADJLIST(g, v);
 		SLIST_FOREACH(slist, nptr, unsigned int, w) {
@@ -89,9 +88,9 @@ dieuler_cycle_get(struct stack *cycle, const struct digraph *g)
 	 * depth-first search style.
 	 */
 	w = (unsigned int *)algmalloc(sizeof(int));
-	while(!STACK_ISEMPTY(&st)) {
+	while (!STACK_ISEMPTY(&st)) {
 		stack_pop(&st, (void **)&w);
-		while(!QUEUE_ISEMPTY(&adj[*w])) {
+		while (!QUEUE_ISEMPTY(&adj[*w])) {
 			stack_push(&st, w);
 			dequeue(&adj[*w], (void **)&w);
 		}
@@ -131,31 +130,29 @@ dieuler_path_get(struct stack *path, const struct digraph *g)
 	 * outdegree(v) > 0.
 	 */
 	ns = nonisolated_vertex(g);
-	for(v = 0, deficit = 0; v < DIGRAPH_VERTICES(g); v++)
-		if(DIGRAPH_OUTDEGREE(g, v) > 
-			DIGRAPH_INDEGREE(g, v)) {
+	for (v = 0, deficit = 0; v < DIGRAPH_VERTICES(g); v++)
+		if (DIGRAPH_OUTDEGREE(g, v) > DIGRAPH_INDEGREE(g, v)) {
 			deficit += (DIGRAPH_OUTDEGREE(g, v) - DIGRAPH_INDEGREE(g, v));
 			ns = v;
 		}
 
 	/* digraph can't have an Eulerian path */
-	if(deficit > 1)
+	if (deficit > 1)
 		return;
 
 	/* 
 	 * Special case for digraph with zero edges
 	 * (has a degenerate Eulerian path)
 	 */
-	if(ns == -1)
+	if (ns == -1)
 		ns = 0;
 
 	/* 
 	 * Create local view of adjacency lists,
 	 * to iterate one vertex at a time.
 	 */
-	adj = (struct queue *)
-		algcalloc(DIGRAPH_VERTICES(g), sizeof(struct queue));
-	for(v = 0; v < DIGRAPH_VERTICES(g); v++) {
+	adj = (struct queue *)algcalloc(DIGRAPH_VERTICES(g), sizeof(struct queue));
+	for (v = 0; v < DIGRAPH_VERTICES(g); v++) {
 		QUEUE_INIT(&adj[v], sizeof(int));
 		slist = DIGRAPH_ADJLIST(g, v);
 		SLIST_FOREACH(slist, nptr, unsigned int, w) {
@@ -170,9 +167,9 @@ dieuler_path_get(struct stack *path, const struct digraph *g)
 	STACK_INIT(&st, sizeof(int));
 	stack_push(&st, (unsigned int *)&ns);
 	w = (unsigned int *)algmalloc(sizeof(int));
-	while(!STACK_ISEMPTY(&st)) {
+	while (!STACK_ISEMPTY(&st)) {
 		stack_pop(&st, (void **)&w);
-		while(!QUEUE_ISEMPTY(&adj[*w])) {
+		while (!QUEUE_ISEMPTY(&adj[*w])) {
 			stack_push(&st, w);
 			dequeue(&adj[*w], (void **)&w);
 		}
@@ -198,8 +195,8 @@ nonisolated_vertex(const struct digraph *g)
 {
 	unsigned int v;
 
-	for(v = 0; v < DIGRAPH_VERTICES(g); v++)
-		if(DIGRAPH_OUTDEGREE(g, v) > 0)
+	for (v = 0; v < DIGRAPH_VERTICES(g); v++)
+		if (DIGRAPH_OUTDEGREE(g, v) > 0)
 			return v;
 	return -1;
 }

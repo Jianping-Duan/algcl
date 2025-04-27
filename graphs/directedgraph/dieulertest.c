@@ -49,22 +49,18 @@ main(int argc, char *argv[])
 	extern char *optarg;
 	extern int optind;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'v':
-				if(sscanf(optarg, "%u", &v) != 1) {
-					errmsg_exit("Illegal number. -v %s\n",
-						optarg);
-				}
+				if (sscanf(optarg, "%u", &v) != 1)
+					errmsg_exit("Illegal number. -v %s\n", optarg);
 				break;
 			case 'e':
-				if(sscanf(optarg, "%u", &e) != 1) {
-					errmsg_exit("Illegal number. -e %s\n",
-						optarg);
-				}
+				if (sscanf(optarg, "%u", &e) != 1)
+					errmsg_exit("Illegal number. -e %s\n", optarg);
 				break;
 			default:
 				fprintf(stderr, "Parameters error.\n");
@@ -72,7 +68,7 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 	
 	/* Eulerian cycle */
@@ -95,7 +91,7 @@ main(int argc, char *argv[])
 	print_dieuler(&g[3], "Simple digraph");
 	printf("\n");
 	
-	for(v = 0; v < 4; v++)
+	for (v = 0; v < 4; v++)
 		digraph_clear(&g[v]);
 	
 	return 0;
@@ -128,25 +124,23 @@ print_dieuler(const struct digraph *g, const char *desc)
 	v = (unsigned int *)algmalloc(sizeof(int));
 
 	printf("Eulerian cycle:\n");
-	if(!STACK_ISEMPTY(&cycle)) {
-		while(!STACK_ISEMPTY(&cycle)) {
+	if (!STACK_ISEMPTY(&cycle)) {
+		while (!STACK_ISEMPTY(&cycle)) {
 			stack_pop(&cycle, (void **)&v);
 			printf("%u ", *v);
 		}
 		printf("\n");
-	}
-	else
+	} else
 		printf("None.\n");
 	
 	printf("Eulerian path:\n");
-	if(!STACK_ISEMPTY(&path)) {
-		while(!STACK_ISEMPTY(&path)) {
+	if (!STACK_ISEMPTY(&path)) {
+		while (!STACK_ISEMPTY(&path)) {
 			stack_pop(&path, (void **)&v);
 			printf("%u ", *v);
 		}
 		printf("\n");
-	}
-	else
+	} else
 		printf("None.\n");
 	
 	printf("------------------------------------------\n");

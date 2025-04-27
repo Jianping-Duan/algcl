@@ -37,8 +37,8 @@
 struct stack;
 
 /* 
- * Gets a directed cycle if the digraph has a
- * directed cycle, and null otherwise.
+ * Gets a directed cycle if the digraph has a directed cycle,
+ * and null otherwise.
  */
 void directed_cycle_get(const struct digraph *g, struct stack *cycle);
 

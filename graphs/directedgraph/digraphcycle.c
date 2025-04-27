@@ -50,14 +50,14 @@ digraph_cycle_init(struct digraph_cycle *gc, const struct digraph *g)
 	gc->cycle = (struct stack *)algmalloc(sizeof(struct stack));
 	STACK_INIT(gc->cycle, sizeof(int));
 	
-	for(v = 0; v < DIGRAPH_VERTICES(g); v++) {
+	for (v = 0; v < DIGRAPH_VERTICES(g); v++) {
 		gc->marked[v] = false;
 		gc->edgeto[v] = -1;
 		gc->onstack[v] = false;
 	}
 
-	for(v = 0; v < DIGRAPH_VERTICES(g); v++)
-		if(!gc->marked[v] && STACK_ISEMPTY(gc->cycle))
+	for (v = 0; v < DIGRAPH_VERTICES(g); v++)
+		if (!gc->marked[v] && STACK_ISEMPTY(gc->cycle))
 			dfs(gc, g, v);
 }
 
@@ -77,19 +77,17 @@ dfs(struct digraph_cycle *gc, const struct digraph *g, unsigned int v)
 	slist = DIGRAPH_ADJLIST(g, v);
 	SLIST_FOREACH(slist, nptr, unsigned int, w) {
 		/* short circuit if cycle already found */
-		if(!STACK_ISEMPTY(gc->cycle))
+		if (!STACK_ISEMPTY(gc->cycle))
 			return;
 			
-		if(!gc->marked[*w]) {
+		if (!gc->marked[*w]) {
 			gc->edgeto[*w] = v;
 			dfs(gc, g, *w);
 		}
 		/* trace back digraph cycle */
-		else if(gc->onstack[*w]) {
-			for(x = v; x != -1 && x != *w;
-				x = gc->edgeto[x]) {
+		else if (gc->onstack[*w]) {
+			for (x = v; x != -1 && x != *w; x = gc->edgeto[x])
 				stack_push(gc->cycle, &x);
-			}
 			stack_push(gc->cycle, w);
 			stack_push(gc->cycle, &v);
 		}

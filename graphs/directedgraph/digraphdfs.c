@@ -35,8 +35,8 @@
 static void dfs(struct digraph_dfs *, const struct digraph *, unsigned int);
 
 /* 
- * Computes the vertices in digraph g 
- * that are reachable from the source vertex s.
+ * Computes the vertices in digraph g that are reachable from the source 
+ * vertex s.
  */
 void 
 digraph_dfs_init(struct digraph_dfs *ddfs, const struct digraph *g,
@@ -44,7 +44,7 @@ digraph_dfs_init(struct digraph_dfs *ddfs, const struct digraph *g,
 {
 	unsigned int v;
 
-	if(s >= DIGRAPH_VERTICES(g)) {
+	if (s >= DIGRAPH_VERTICES(g)) {
 		errmsg_exit("Vertex %u is not between 0 and %u.\n", s,
 			DIGRAPH_VERTICES(g) - 1);
 	}
@@ -52,15 +52,15 @@ digraph_dfs_init(struct digraph_dfs *ddfs, const struct digraph *g,
 	ddfs->count = 0;
 	ddfs->vertices = DIGRAPH_VERTICES(g);
 	ddfs->marked = (bool *)algcalloc(DIGRAPH_VERTICES(g), sizeof(bool));
-	for(v = 0; v < DIGRAPH_VERTICES(g); v++)
+	for (v = 0; v < DIGRAPH_VERTICES(g); v++)
 		ddfs->marked[v] = false;
 
 	dfs(ddfs, g, s);
 }
 
 /* 
- * Computes the vertices in digraph G that are
- * connected to any of the source vertices svset.
+ * Computes the vertices in digraph G that are connected to any of the source
+ * vertices svset.
  */
 void 
 digraph_dfs_svset(struct digraph_dfs *ddfs, const struct digraph *g,
@@ -69,26 +69,26 @@ digraph_dfs_svset(struct digraph_dfs *ddfs, const struct digraph *g,
 	unsigned int i, *v;
 	struct slist_node *nptr;
 
-	if(svset == NULL)
+	if (svset == NULL)
 		errmsg_exit("Argument source vertices set is null.\n");
 
-	if(SLIST_LENGTH(svset) == 0)
+	if (SLIST_LENGTH(svset) == 0)
 		errmsg_exit("Zero vertices.\n");
 
 	ddfs->count = 0;
 	ddfs->vertices = DIGRAPH_VERTICES(g);
 	ddfs->marked = (bool *)algcalloc(DIGRAPH_VERTICES(g), sizeof(bool));
-	for(i = 0; i < DIGRAPH_VERTICES(g); i++)
+	for (i = 0; i < DIGRAPH_VERTICES(g); i++)
 		ddfs->marked[i] = false;
 
 	SLIST_FOREACH(svset, nptr, unsigned int, v) {
-		if(*v >= DIGRAPH_VERTICES(g)) {
+		if (*v >= DIGRAPH_VERTICES(g)) {
 			DIGRAPH_DFS_CLEAR(ddfs);
 			errmsg_exit("Vertex %u is not between 0 and %u.\n", *v,
 				DIGRAPH_VERTICES(g) - 1);
 		}
 		
-		if(!ddfs->marked[*v])
+		if (!ddfs->marked[*v])
 			dfs(ddfs, g, *v);
 	}
 }
@@ -107,7 +107,7 @@ dfs(struct digraph_dfs *ddfs, const struct digraph *g, unsigned int v)
 
 	adjlist = DIGRAPH_ADJLIST(g, v);
 	SLIST_FOREACH(adjlist, nptr, unsigned int, w) {
-		if(!ddfs->marked[*w])
+		if (!ddfs->marked[*w])
 			dfs(ddfs, g, *w);
 	}
 }

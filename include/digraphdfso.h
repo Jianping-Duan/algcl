@@ -65,7 +65,7 @@ struct digraph_dfso {
 #define DIGRAPH_DFSO_REVERSEPOST(dfs, order)	do {	\
 	slist_clone((dfs)->postorder, order);				\
 	slist_reverse(order);								\
-} while(0)
+} while (0)
 
 #define DIGRAPH_DFSO_CLEAR(dfs)		do {	\
 	ALGFREE((dfs)->marked);					\
@@ -78,7 +78,7 @@ struct digraph_dfso {
 	(dfs)->precounter = 0;					\
 	(dfs)->postcounter = 0;					\
 	(dfs)->vertices = 0;					\
-} while(0)
+} while (0)
 
 /* Determines a depth-first order for the digraph. */
 void digraph_dfso_init(struct digraph_dfso *dfs, const struct digraph *g);

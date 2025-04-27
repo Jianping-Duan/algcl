@@ -45,7 +45,7 @@ digraph_dfsp_init(struct digraph_dfsp *dfs, unsigned int s,
 {
 	unsigned int i;
 	
-	if(s > g->vertices)
+	if (s > g->vertices)
 		errmsg_exit("vertex %u is not between 0 and %u\n", s, g->vertices - 1);
 	
 	dfs->sv = s;
@@ -54,7 +54,7 @@ digraph_dfsp_init(struct digraph_dfsp *dfs, unsigned int s,
 	dfs->marked = (bool *)algmalloc(g->vertices * sizeof(bool));
 	dfs->edgeto = (long *)algmalloc(g->vertices * sizeof(long));
 	
-	for(i = 0; i < g->vertices; i++) {
+	for (i = 0; i < g->vertices; i++) {
 		dfs->marked[i] = false;
 		dfs->edgeto[i] = -1;
 	}
@@ -72,17 +72,17 @@ digraph_dfsp_paths(struct digraph_dfsp *dfs, unsigned int v,
 {
 	long x, s;
 	
-	if(v > dfs->vertices) {
+	if (v > dfs->vertices) {
 		errmsg_exit("vertex %u is not between 0 and %u\n", v,
 			dfs->vertices - 1);
 	}
 	
 	STACK_INIT(paths, sizeof(long));
 	
-	if(!DIGRAPH_DFSP_HASPATH(dfs, v))
+	if (!DIGRAPH_DFSP_HASPATH(dfs, v))
 		return;
 	
-	for(x = v; x != dfs->sv && x != -1; x = dfs->edgeto[x])
+	for (x = v; x != dfs->sv && x != -1; x = dfs->edgeto[x])
 		stack_push(paths, &x);
 	s = (long)dfs->sv;
 	stack_push(paths, &s);
@@ -102,7 +102,7 @@ gdfs(struct digraph_dfsp *dfs, unsigned int v, const struct digraph *g)
 	
 	slist = DIGRAPH_ADJLIST(g, v);
 	SLIST_FOREACH(slist, nptr, unsigned int, w) {
-		if(!dfs->marked[*w]) {
+		if (!dfs->marked[*w]) {
 			dfs->edgeto[*w] = v;
 			gdfs(dfs, *w, g);
 		}

@@ -49,28 +49,22 @@ main(int argc, char *argv[])
 	extern char *optarg;
 	extern int optind;
 	
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'v':
-				if(sscanf(optarg, "%u", &vs) != 1) {
-					errmsg_exit("Illegal number. -v %s\n",
-						optarg);
-				}
+				if (sscanf(optarg, "%u", &vs) != 1)
+					errmsg_exit("Illegal number. -v %s\n", optarg);
 				break;
 			case 'e':
-				if(sscanf(optarg, "%u", &es) != 1) {
-					errmsg_exit("Illegal number. -e %s\n",
-						optarg);
-				}
+				if (sscanf(optarg, "%u", &es) != 1)
+					errmsg_exit("Illegal number. -e %s\n", optarg);
 				break;
 			case 'E':
-				if(sscanf(optarg, "%u", &f) != 1) {
-					errmsg_exit("Illegal number. -f %s\n",
-						optarg);
-				}
+				if (sscanf(optarg, "%u", &f) != 1)
+					errmsg_exit("Illegal number. -f %s\n", optarg);
 				break;
 			default:
 				fprintf(stderr, "Parameters error.\n");
@@ -78,13 +72,13 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 
 	SET_RANDOM_SEED;
 
 	simple_acyclic_digraph(vs, es, &g);
-	for(i = 0; i < f; i++) {
+	for (i = 0; i < f; i++) {
 		v = rand_range_integer(0, vs);
 		w = rand_range_integer(0, vs);
 		digraph_add_edge(&g, v, w);
@@ -94,10 +88,10 @@ main(int argc, char *argv[])
 
 	x = (unsigned int *)algmalloc(sizeof(int));
 	directed_cycle_get(&g, &cycle);
-	if(STACK_ISEMPTY(&cycle))
+	if (STACK_ISEMPTY(&cycle))
 		printf("No directed cycle.\n");
 	else {
-		while(!STACK_ISEMPTY(&cycle)) {
+		while (!STACK_ISEMPTY(&cycle)) {
 			stack_pop(&cycle, (void **)&x);
 			printf("%u ", *x);
 		}

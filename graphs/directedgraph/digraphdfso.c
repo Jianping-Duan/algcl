@@ -53,7 +53,7 @@ digraph_dfso_init(struct digraph_dfso *dfs, const struct digraph *g)
 	dfs->postcounter = 0;
 	dfs->vertices = DIGRAPH_VERTICES(g);
 
-	for(v = 0; v < DIGRAPH_VERTICES(g); v++) {
+	for (v = 0; v < DIGRAPH_VERTICES(g); v++) {
 		dfs->marked[v] = false;
 		dfs->pre[v] = 0;
 		dfs->post[v] = 0;
@@ -62,8 +62,8 @@ digraph_dfso_init(struct digraph_dfso *dfs, const struct digraph *g)
 	slist_init(dfs->preorder, sizeof(int), vequal);
 	slist_init(dfs->postorder, sizeof(int), vequal);
 
-	for(v = 0; v < DIGRAPH_VERTICES(g); v++)
-		if(!dfs->marked[v])
+	for (v = 0; v < DIGRAPH_VERTICES(g); v++)
+		if (!dfs->marked[v])
 			dfso(dfs, v, g);
 }
 
@@ -76,10 +76,7 @@ vequal(const void *k1, const void *k2)
 	return *v == *w;
 }
 
-/* 
- * Run DFS in digraph G from vertex v and 
- * compute preorder/postorder.
- */
+/* Run DFS in digraph G from vertex v and compute preorder/postorder. */
 static void 
 dfso(struct digraph_dfso *dfs, unsigned int v, const struct digraph *g)
 {
@@ -93,7 +90,7 @@ dfso(struct digraph_dfso *dfs, unsigned int v, const struct digraph *g)
 
 	adjlist = DIGRAPH_ADJLIST(g, v);
 	SLIST_FOREACH(adjlist, nptr, unsigned int, w) {
-		if(!dfs->marked[*w])
+		if (!dfs->marked[*w])
 			dfso(dfs, *w, g);
 	}
 

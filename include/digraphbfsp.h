@@ -42,16 +42,13 @@ struct digraph_bfsp {
 	unsigned int vertices;	/* digraph of vertices */
 };
 
-/* 
- * Is there a path between the source 
- * vertex s and vertex v? 
- */
+/* Is there a path between the source vertex s and vertex v? */
 #define DIGRAPH_BFSP_HASPATH(bfs, v)	\
 	((v) >= (bfs)->vertices ? false : (bfs)->marked[v])
 
 /* 
- * Returns the number of edges in a shortest path between
- * the source vertex s and vertex v? 
+ * Returns the number of edges in a shortest path between the source vertex s
+ * and vertex v? 
  */
 #define DIGRAPH_BFSP_DISTTO(bfs, v)	\
 	((v) >= (bfs)->vertices ? (-1) : (bfs)->distto[v])
@@ -61,7 +58,7 @@ struct digraph_bfsp {
 	ALGFREE((bfs)->edgeto);					\
 	ALGFREE((bfs)->distto);					\
 	(bfs)->vertices = 0;					\
-} while(0)
+} while (0)
 
 struct stack;
 
@@ -76,7 +73,7 @@ void digraph_bfsp_init(struct digraph_bfsp *bfs, unsigned int s,
  * Gets a shortest path between the source vertex s and v,
  * or if no such path. 
  */
-void digraph_bfsp_paths(const struct digraph_bfsp *bfs, 
-					unsigned int v, struct stack *paths);
+void digraph_bfsp_paths(const struct digraph_bfsp *bfs, unsigned int v,
+						struct stack *paths);
 
 #endif	/* _DIGRAPHBFSP_H_ */

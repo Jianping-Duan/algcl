@@ -43,7 +43,7 @@ main(int argc, char *argv[])
 	struct single_list *order, repost;
 	unsigned int v;
 	
-	if(argc != 2)
+	if (argc != 2)
 		errmsg_exit("Usage: %s <datafile> \n", argv[0]);
 	
 	SET_RANDOM_SEED;
@@ -58,7 +58,7 @@ main(int argc, char *argv[])
 
 	printf("   v  pre post\n");
 	printf("--------------\n");
-	for(v = 0; v < DIGRAPH_VERTICES(&g); v++) {
+	for (v = 0; v < DIGRAPH_VERTICES(&g); v++) {
 		printf("%4u %4u %4u\n", v, DIGRAPH_DFSO_PRE(&gdfs, v),
 			DIGRAPH_DFSO_POST(&gdfs, v));
 	}

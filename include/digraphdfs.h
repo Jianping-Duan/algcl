@@ -37,7 +37,7 @@
 /* Digraph depth-first search. */
 struct digraph_dfs {
 	bool *marked;	/* marked[v] = true iff v is reachable from source(s) */
-	unsigned int count;	/* number of vertices reachable from source(s) */
+	unsigned int count;		/* number of vertices reachable from source(s) */
 	unsigned int vertices;	/* digraph of vertices */
 };
 
@@ -58,23 +58,22 @@ struct digraph_dfs {
 	ALGFREE((dfs)->marked);					\
 	(dfs)->count = 0;						\
 	(dfs)->vertices = 0;					\
-} while(0)
+} while (0)
 
 struct single_list;
 
 /* 
- * Computes the vertices in digraph g 
- * that are reachable from the source vertex s.
+ * Computes the vertices in digraph g that are reachable from the source
+ * vertex s.
  */
 void digraph_dfs_init(struct digraph_dfs *ddfs, const struct digraph *g,
 					unsigned int s);
 
 /* 
- * Computes the vertices in digraph G that are 
- * connected to any of the source vertices svset. 
+ * Computes the vertices in digraph G that are connected to any of the source
+ * vertices svset. 
  */
-void digraph_dfs_svset(struct digraph_dfs *ddfs, 
-						const struct digraph *g, 
-						const struct single_list *svset);
+void digraph_dfs_svset(struct digraph_dfs *ddfs, const struct digraph *g,
+					const struct single_list *svset);
 
 #endif	/*	_DIGRAPHDFS_H_	*/

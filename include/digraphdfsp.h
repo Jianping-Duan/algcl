@@ -42,25 +42,19 @@ struct digraph_dfsp {
 	unsigned int vertices;	/* digraph of vertices */
 };
 
-/* 
- * Is there a path between the source
- * vertex sv and vertex v? 
- */
+/* Is there a path between the source vertex sv and vertex v? */
 #define DIGRAPH_DFSP_HASPATH(dfs, v)	\
 	((v) >= (dfs)->vertices ? false : (dfs)->marked[v])
 
-#define DIGRAPH_DFSP_CLEAR(dfs)	do {		\
-	ALGFREE((dfs)->marked);					\
-	ALGFREE((dfs)->edgeto);					\
-	(dfs)->vertices = 0;					\
-} while(0)
+#define DIGRAPH_DFSP_CLEAR(dfs)	do {	\
+	ALGFREE((dfs)->marked);				\
+	ALGFREE((dfs)->edgeto);				\
+	(dfs)->vertices = 0;				\
+} while (0)
 
 struct stack;
 
-/* 
- * Computes a path between s and every other 
- * vertex in digraph g. 
- */
+/* Computes a path between s and every other vertex in digraph g. */
 void digraph_dfsp_init(struct digraph_dfsp *dfs, unsigned int s,
 					const struct digraph *g);
 

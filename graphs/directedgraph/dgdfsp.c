@@ -52,19 +52,17 @@ main(int argc, char *argv[])
 	extern char *optarg;
 	extern int optind;
 	
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'f':
 				fname = optarg;
 				break;
 			case 's':
-				if(sscanf(optarg, "%u", &s) != 1) {
-					errmsg_exit("Illegal number. -s %s\n",
-						optarg);
-				}
+				if (sscanf(optarg, "%u", &s) != 1)
+					errmsg_exit("Illegal number. -s %s\n", optarg);
 				break;
 			default:
 				fprintf(stderr, "Parameters error.\n");
@@ -72,7 +70,7 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 
 	SET_RANDOM_SEED;
@@ -85,21 +83,20 @@ main(int argc, char *argv[])
 	
 	digraph_dfsp_init(&gdfs, s, &g);
 	w = (long *)algmalloc(sizeof(long));
-	for(v = 0; v < DIGRAPH_VERTICES(&g); v++) {
-		if(DIGRAPH_DFSP_HASPATH(&gdfs, v)) {
+	for (v = 0; v < DIGRAPH_VERTICES(&g); v++) {
+		if (DIGRAPH_DFSP_HASPATH(&gdfs, v)) {
 			printf("%u to %u: ", s, v);
 			digraph_dfsp_paths(&gdfs, v, &paths);
-			while(!STACK_ISEMPTY(&paths)) {
+			while (!STACK_ISEMPTY(&paths)) {
 				stack_pop(&paths, (void **)&w);
-				if(s == *w)
+				if (s == *w)
 					printf("%ld", *w);
 				else
 					printf("-%ld", *w);
 			}
 			stack_clear(&paths);
 			printf("\n");
-		}
-		else
+		} else
 			printf("%u to %u: not connected.\n", s, v);
 	}
 	
