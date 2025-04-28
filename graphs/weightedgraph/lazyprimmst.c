@@ -31,10 +31,11 @@
  */
 #include "lazyprimmst.h"
 #include "linearlist.h"
-#include "heap.h"
+#include "pairingheap.h"
+#include <math.h>	/* islessequal() */
 
 /* minimum rooted-heap */
-static int greater(const void *, const void *);
+static int lessequal(const void *, const void *);
 static void scan(struct lazy_prim_mst *, const struct ewgraph *, unsigned int);
 static void prim(struct lazy_prim_mst *, const struct ewgraph *, unsigned int);
 
@@ -49,17 +50,17 @@ lpmst_init(struct lazy_prim_mst *lpmst, const struct ewgraph *g)
 
 	lpmst->marked = (bool *)algcalloc(EWGRAPH_VERTICES(g), sizeof(bool));
 	lpmst->mst = (struct single_list *)algmalloc(sizeof(struct single_list));
-	lpmst->pq = (struct binomialpq *)algmalloc(sizeof(struct binomialpq));
+	lpmst->pq = (struct pairing_heap *)algmalloc(sizeof(struct pairing_heap));
 
-	binompq_init(lpmst->pq, 0, greater);
+	pheap_init(lpmst->pq, 0, lessequal);
 	slist_init(lpmst->mst, sizeof(struct edge), edge_equals);
 	lpmst->weight = 0.0;
 
-	for(v = 0; v < EWGRAPH_VERTICES(g); v++)
+	for (v = 0; v < EWGRAPH_VERTICES(g); v++)
 		lpmst->marked[v] = false;
 
-	for(v = 0; v < EWGRAPH_VERTICES(g); v++)
-		if(!lpmst->marked[v])
+	for (v = 0; v < EWGRAPH_VERTICES(g); v++)
+		if (!lpmst->marked[v])
 			prim(lpmst, g, v);
 }
 
@@ -67,12 +68,12 @@ lpmst_init(struct lazy_prim_mst *lpmst, const struct ewgraph *g)
 
 /* minimum rooted-heap */
 static int 
-greater(const void *k1, const void *k2)
+lessequal(const void *k1, const void *k2)
 {
 	struct edge *e1, *e2;
 
 	e1 = (struct edge *)k1, e2 = (struct edge *)k2;
-	return e1->weight > e2->weight ? 1 : 0;
+	return islessequal(e1->weight, e2->weight) ? 1 : -1;
 }
 
 /* 
@@ -91,8 +92,8 @@ scan(struct lazy_prim_mst *lpmst, const struct ewgraph *g, unsigned int v)
 	lpmst->marked[v] = true;
 	adj = EWGRAPH_ADJLIST(g, v);
 	SLIST_FOREACH(adj, nptr, struct edge, e) {
-		if(!lpmst->marked[edge_other(e, v)])
-			binompq_insert(lpmst->pq, e);
+		if (!lpmst->marked[edge_other(e, v)])
+			pheap_insert(lpmst->pq, e);
 	}
 }
 
@@ -106,23 +107,23 @@ prim(struct lazy_prim_mst *lpmst, const struct ewgraph *g, unsigned int s)
 	scan(lpmst, g, s);
 
 	/* better to stop when mst has V-1 edges */
-	while(!BINOMPQ_ISEMPTY(lpmst->pq)) {
+	while (!PHEAP_ISEMPTY(lpmst->pq)) {
 		/* smallest edge on pq */
-		e = (struct edge *)binompq_delete(lpmst->pq);
+		e = (struct edge *)pheap_delete(lpmst->pq);
 		v = EDGE_EITHER(e); /* two endpoints */
 		w = edge_other(e, v);
 
 		/* lazy, both v and w already scanned */
-		if(lpmst->marked[v] && lpmst->marked[w])
+		if (lpmst->marked[v] && lpmst->marked[w])
 			continue;
 
 		slist_append(lpmst->mst, e); /* add e to MST */
 		lpmst->weight += EDGE_WEIGHT(e);
 
-		if(!lpmst->marked[v])
+		if (!lpmst->marked[v])
 			scan(lpmst, g, v); /* v becomes part of tree */
 
-		if(!lpmst->marked[w])
+		if (!lpmst->marked[w])
 			scan(lpmst, g, w); /* w becomes part of tree */
 	}
 }

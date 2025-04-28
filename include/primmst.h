@@ -34,7 +34,7 @@
 
 #include "edgeweightedgraph.h"
 
-struct index_binompq;
+struct index_pheap;
 struct single_list;
 
 struct prim_mst {
@@ -42,7 +42,7 @@ struct prim_mst {
 							   non-tree vertex */
 	float *distto;	/* distTo[v] = weight of shortest such edge */
 	bool *marked;	/* marked[v] = true if v on tree, false otherwise */
-	struct index_binompq *pq;	/* edge of weight, index is vertex */ 
+	struct index_pheap *pq;	/* edge of weight, index is vertex */ 
 	unsigned int vertices;	/* edge-weighted graph of vertices */
 };
 
@@ -50,16 +50,13 @@ struct prim_mst {
 	ALGFREE((pmst)->edgeto);		\
 	ALGFREE((pmst)->distto);		\
 	ALGFREE((pmst)->marked);		\
-	ibinompq_clear((pmst)->pq);		\
+	ipheap_clear((pmst)->pq);		\
 	ALGFREE((pmst)->pq);			\
 	(pmst)->vertices = 0;			\
-} while(0)
+} while (0)
 
 
-/* 
- * Compute a minimum spanning tree (or forest) 
- * of an edge-weighted graph.
- */
+/* Compute a minimum spanning tree (or forest) of an edge-weighted graph. */
 void pmst_init(struct prim_mst *pmst, const struct ewgraph *g);
 
 /* 
