@@ -50,7 +50,7 @@ struct pairing_heap {
 };
 
 /* Whether the priority queue is empty. */
-#define PHEAP_ISEMPTY(ph)	((ph)->root == NULL)
+#define PHEAP_ISEMPTY(ph)	((ph)->size == 0)
 
 /* 
  * Gets the minimum or maximum key currently 

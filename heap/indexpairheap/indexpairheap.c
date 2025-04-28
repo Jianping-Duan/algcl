@@ -90,14 +90,13 @@ ipheap_delete(struct index_pheap *iph)
 	curr = iph->root;
 	ind = curr->index;
 
-	if (curr->child != NULL) {
+	if (curr->child != NULL)
 		iph->root = combine_siblings(iph, curr->child, curr->degree);
-		if (iph->keysize != 0)
-			ALGFREE(curr->key);
-		ALGFREE(curr);
-	}
 	/* else only root node */
 
+	if (iph->keysize != 0)
+		ALGFREE(curr->key);
+	ALGFREE(curr);
 	iph->nodes[ind] = NULL;
 	iph->size--;
 

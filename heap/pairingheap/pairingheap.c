@@ -87,11 +87,10 @@ pheap_delete(struct pairing_heap *ph)
 	current = ph->root;
 	key = current->key;
 
-	if (current->child != NULL) {
+	if (current->child != NULL)
 		ph->root = combine_siblings(ph, current->child,	current->degree);
-		ALGFREE(current);
-	}
 	ph->size--;
+	ALGFREE(current);
 
 	return key;
 }
