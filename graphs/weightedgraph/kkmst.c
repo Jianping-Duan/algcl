@@ -44,7 +44,7 @@ main(int argc, char *argv[])
 	double weight;
 	clock_t start_time, end_time;
 	
-	if(argc != 2)
+	if (argc != 2)
 		errmsg_exit("Usage: %s <datafile>\n", argv[0]);
 
 	SET_RANDOM_SEED;
@@ -64,10 +64,9 @@ main(int argc, char *argv[])
 		printf("%s\n", se);
 	}
 	end_time = clock();
-	printf("Total weights: %.5f\n\n", weight);
+	printf("Total weights: %.5f\n", weight);
 	printf("Estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	
 	slist_clear(&mst);
 	ewgraph_clear(&g);

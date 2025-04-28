@@ -32,8 +32,9 @@
 #include "boruvkamst.h"
 #include "unionfind/unionfind.h"
 #include "singlelist.h"
+#include <math.h>	/* isless() */
 
-static int less(const void *, const void *);
+static inline int less(const void *, const void *);
 
 /* 
  * Compute a minimum spanning tree (or forest) 
@@ -54,41 +55,37 @@ boruvka_mst_get(const struct ewgraph *g, struct single_list *mst)
 	uf_init(&uf, EWGRAPH_VERTICES(g));
 	closest = (struct edge **)
 		algcalloc(EWGRAPH_VERTICES(g), sizeof(struct edge *));
-	for(k = 0; k < EWGRAPH_VERTICES(g); k++)
+	for (k = 0; k < EWGRAPH_VERTICES(g); k++)
 		closest[k] = NULL;
 
-	/* 
-	 * Repeat at most log V times or 
-	 * until we have V-1 edges.
-	 */
-	for(k = 1; k < EWGRAPH_VERTICES(g) && 
+	/* Repeat at most log V times or until we have V-1 edges. */
+	for (k = 1; k < EWGRAPH_VERTICES(g) &&
 		SLIST_LENGTH(mst) < EWGRAPH_VERTICES(g) - 1;
 		k += k) {
 
 		/* 
-		 * Foreach tree in forest, find closest edge
-		 * if edge weights are equal, ties are broken
-		 * in favor of first edge in edgeset.
+		 * Foreach tree in forest, find closest edge if edge weights are equal,
+		 * ties are broken in favor of first edge in edgeset.
 		 */
 		ewgraph_edges_get(g, &edgeset);
 		SLIST_FOREACH(&edgeset, nptr, struct edge, e) {
 			v = EDGE_EITHER(e), w = edge_other(e, v);
 			i = uf_find(&uf, v), j = uf_find(&uf, w);
-			if(i == j) /* same tree */
+			if (i == j)	/* same tree */
 				continue;
-			if(closest[i] == NULL || less(e, closest[i]))
+			if (closest[i] == NULL || less(e, closest[i]))
 				closest[i] = e;
-			if(closest[j] == NULL || less(e, closest[j]))
+			if (closest[j] == NULL || less(e, closest[j]))
 				closest[j] = e;
 		}
 
 		/* add newly discovered edges to MST */
-		for(i = 0; i < EWGRAPH_VERTICES(g); i++) 
-			if((e = closest[i]) != NULL) {
+		for (i = 0; i < EWGRAPH_VERTICES(g); i++) 
+			if ((e = closest[i]) != NULL) {
 				v = EDGE_EITHER(e);
 				w = edge_other(e, v);
 				/* don't add the same edge twice */
-				if(!uf_connected(&uf, v, w)) {
+				if (!uf_connected(&uf, v, w)) {
 					uf_union(&uf, v, w);
 					slist_append(mst, e);
 					wt += EDGE_WEIGHT(e);
@@ -106,13 +103,12 @@ boruvka_mst_get(const struct ewgraph *g, struct single_list *mst)
 
 /******************** static function boundary ********************/
 
-static int 
+static inline int 
 less(const void *k1, const void *k2)
 {
 	struct edge *e1, *e2;
 
 	e1 = (struct edge *)k1;
 	e2 = (struct edge *)k2;
-
-	return e1->weight < e2->weight ? 1 : 0;
+	return isless(e1->weight, e2->weight) ? 1 : 0;
 }

@@ -33,13 +33,13 @@
 #include "unionfind/unionfind.h"
 #include "sortalg.h"
 #include "singlelist.h"
+#include <math.h>	/* islessequal() */
 
-static int less(const void *, const void *);
+static int lessequal(const void *, const void *);
 
 /* 
- * Compute a minimum spanning tree (or forest) of 
- * an edge-weighted graph, and returns the sum of 
- * the edge weights is this minimum spanning tree.
+ * Compute a minimum spanning tree (or forest) of an edge-weighted graph,
+ * and returns the sum of the edge weights is this minimum spanning tree.
  */
 float 
 kruskal_mst_get(const struct ewgraph *g, struct single_list *mst)
@@ -57,7 +57,7 @@ kruskal_mst_get(const struct ewgraph *g, struct single_list *mst)
 
 	/* create array of edges, sorted by weight */
 	edges = (struct edge **)algcalloc(EWGRAPH_EDGES(g), sizeof(struct edge *));
-	for(i = 0; i < EWGRAPH_EDGES(g); i++)
+	for (i = 0; i < EWGRAPH_EDGES(g); i++)
 		edges[i] = NULL;
 
 	ewgraph_edges_get(g, &edgeset);
@@ -65,18 +65,18 @@ kruskal_mst_get(const struct ewgraph *g, struct single_list *mst)
 		edges[cnt++] = e;	
 	}
 	/* Shell-sort better than Quick-sort */
-	SHELL_SORT(edges, cnt, sizeof(struct edge *), less);
+	SHELL_SORT(edges, cnt, sizeof(struct edge *), lessequal);
 
 	/* run greedy algorithm */
 	uf_init(&uf, EWGRAPH_VERTICES(g));
-	for(i = 0; i < cnt && 
+	for (i = 0; i < cnt && 
 		SLIST_LENGTH(mst) < EWGRAPH_VERTICES(g) - 1; i++) {
 		e = edges[i];
 		v = EDGE_EITHER(e);
 		w = edge_other(e, v);
 		
 		/* v-w does not create a cycle */
-		if(!uf_connected(&uf, v, w)) {
+		if (!uf_connected(&uf, v, w)) {
 			uf_union(&uf, v, w);
 			slist_append(mst, e);
 			wt += EDGE_WEIGHT(e);
@@ -92,29 +92,11 @@ kruskal_mst_get(const struct ewgraph *g, struct single_list *mst)
 
 /* using sort ascending algorithm */
 static int 
-less(const void *k1, const void *k2)
+lessequal(const void *k1, const void *k2)
 {
 	struct edge **e1, **e2;
-	char sw1[48], sw2[48];
-	int cmp;
 
 	e1 = (struct edge **)k1;
 	e2 = (struct edge **)k2;
-
-	if((*e1)->weight < (*e2)->weight)
-		return 1;
-	else if((*e1)->weight > (*e2)->weight)
-		return -1;
-	else {
-		sprintf(sw1, "%.5f", (double)(*e1)->weight);
-		sprintf(sw2, "%.5f", (double)(*e2)->weight);
-
-		cmp = strcmp(sw1, sw2);
-		if(cmp == 0)
-			return 0;
-		else if(cmp < 0)
-			return 1;
-		else
-			return -1;
-	}
+	return islessequal((*e1)->weight, (*e2)->weight) ? 1 : -1;
 }
