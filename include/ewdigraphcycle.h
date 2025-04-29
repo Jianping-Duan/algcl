@@ -59,9 +59,9 @@ struct ewdigraph_cycle {
 	ALGFREE((ewdc)->onstack);					\
 	stack_clear((ewdc)->cycle);					\
 	ALGFREE((ewdc)->cycle);						\
-} while(0)
+} while (0)
 
-void ewdigraph_cycle_init(struct ewdigraph_cycle *ewdc, 
+void ewdigraph_cycle_init(struct ewdigraph_cycle *ewdc,
 						const struct ewdigraph *g);
 
 #endif	/* _EWDIGRAPHCYCLE_H_ */

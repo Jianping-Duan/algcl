@@ -44,13 +44,13 @@ adjmatewdg_init(struct adjmatrix_ewdigraph *g, unsigned int vs)
 	g->vertices = vs;
 	g->edges = 0;
 	g->adjmat = (struct diedge **)algmalloc(vs * sizeof(struct diedge *));
-	for(v = 0; v < vs; v++) {
+	for (v = 0; v < vs; v++) {
 		*(g->adjmat + v) = (struct diedge *)
 			algmalloc(vs * sizeof(struct diedge));
 	}
 
-	for(v = 0; v < vs; v++)
-		for(w = 0; w < vs; w++) {
+	for (v = 0; v < vs; v++)
+		for (w = 0; w < vs; w++) {
 			diedge_set_value(&e, -1, -1, 0.0);
 			g->adjmat[v][w] = e;
 		}
@@ -58,8 +58,7 @@ adjmatewdg_init(struct adjmatrix_ewdigraph *g, unsigned int vs)
 
 /* 
  * Adds the directed edge e to the edge-weighted digraph
- * (if there is not already an edge with 
- * the same endpoints) 
+ * (if there is not already an edge with the same endpoints) 
  */
 void 
 adjmatewdg_add_edge(struct adjmatrix_ewdigraph *g, const struct diedge *e)
@@ -69,26 +68,22 @@ adjmatewdg_add_edge(struct adjmatrix_ewdigraph *g, const struct diedge *e)
 	v = DIEDGE_FROM(e);
 	w = DIEDGE_TO(e);
 
-	if(v < 0 || v >= ADJMATEWDG_VERTICES(g)) {
+	if (v < 0 || v >= ADJMATEWDG_VERTICES(g)) {
 		errmsg_exit("Vertex %lu is not between 0 and %u.\n", v,
 			ADJMATEWDG_VERTICES(g) - 1);
 	}
-
-	if(w < 0 || w >= ADJMATEWDG_VERTICES(g)) {
+	if (w < 0 || w >= ADJMATEWDG_VERTICES(g)) {
 		errmsg_exit("Vertex %lu is not between 0 and %u.\n", w,
 			ADJMATEWDG_VERTICES(g) - 1);
 	}
 
-	if(!diedge_isvalid(&(g->adjmat[v][w]))) {
+	if (!diedge_isvalid(&(g->adjmat[v][w]))) {
 		g->adjmat[v][w] = *e;
 		g->edges++;
 	}
 }
 
-/* 
- * Initializes a random edge-weighted digraph 
- * with vs vertices and es edges. 
- */
+/* Initializes a random edge-weighted digraph with vs vertices and es edges. */
 void 
 adjmatewdg_init_randomly(struct adjmatrix_ewdigraph *g, unsigned int vs,
 						unsigned int es)
@@ -97,11 +92,11 @@ adjmatewdg_init_randomly(struct adjmatrix_ewdigraph *g, unsigned int vs,
 	float wt;
 	struct diedge e;
 
-	if(es > vs * vs)
+	if (es > vs * vs)
 		errmsg_exit("Too many edges.\n");
 
 	adjmatewdg_init(g, vs);
-	while(cnt++ != es) {
+	while (cnt++ != es) {
 		v = rand_range_integer(0, vs);
 		w = rand_range_integer(0, vs);
 		wt = (float)0.01 * (float)(rand_range_integer(1, 100));
@@ -119,12 +114,12 @@ adjmatewdg_print(const struct adjmatrix_ewdigraph *g)
 
 	printf("%u vertices, %u edges\n", ADJMATEWDG_VERTICES(g),
 		ADJMATEWDG_EDGES(g));
-	for(v = 0; v < ADJMATEWDG_VERTICES(g); v++) {
+	for (v = 0; v < ADJMATEWDG_VERTICES(g); v++) {
 		printf("%u: ", v);
 		adj = ADJMATEWDG_ADJMAT(g, v);
-		for(w = 0; w < ADJMATEWDG_VERTICES(g); w++) {
+		for (w = 0; w < ADJMATEWDG_VERTICES(g); w++) {
 			e = adj[w];
-			if(diedge_isvalid(&e)) {
+			if (diedge_isvalid(&e)) {
 				DIEDGE_STRING(&e, se);
 				printf("%s ", se);
 			}
@@ -138,7 +133,7 @@ adjmatewdg_clear(struct adjmatrix_ewdigraph *g)
 {
 	unsigned int v;
 
-	for(v = 0; v < g->vertices; v++)
+	for (v = 0; v < g->vertices; v++)
 		ALGFREE(g->adjmat[v]);
 	ALGFREE(g->adjmat);
 

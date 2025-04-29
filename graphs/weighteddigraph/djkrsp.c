@@ -31,7 +31,7 @@
  */
 #include "dijkstrasp.h"
 #include "singlelist.h"
-#include "heap.h"
+#include "indexpairheap.h"
 #include <getopt.h>
 
 static void usage_info(const char *);
@@ -58,16 +58,16 @@ main(int argc, char *argv[])
 	
 	SET_RANDOM_SEED;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'f':
 				fname = optarg;
 				break;
 			case 's':
-				if(sscanf(optarg, "%u", &s) != 1)
+				if (sscanf(optarg, "%u", &s) != 1)
 					errmsg_exit("Illegal number. -s %s\n", optarg);
 				break;
 			default:
@@ -76,46 +76,43 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 	
 	printf("Prints a edge-weighted digraph from input stream.\n");
 	fin = open_file(fname, "r");
 	ewdigraph_init_fistream(&g, fin);
 	close_file(fin);
-	if(EWDIGRAPH_VERTICES(&g) <= 100)
+	if (EWDIGRAPH_VERTICES(&g) <= 100)
 		ewdigraph_print(&g);
 	else
 		printf("Vertices are too many!!!\n");
 	printf("\n");
 
-	if(s >= EWDIGRAPH_VERTICES(&g)) {
+	if (s >= EWDIGRAPH_VERTICES(&g)) {
 		ewdigraph_clear(&g);
-		errmsg_exit("soruce vertex must between 0 and %u\n", 
+		errmsg_exit("soruce vertex must between 0 and %u\n",
 			EWDIGRAPH_VERTICES(&g) - 1);
 	}
 
 	printf("Print it shortest path.\n");
 	start_time = clock();
 	dijkstrasp_init(&sp, &g, s);
-	for(v = 0; v < EWDIGRAPH_VERTICES(&g); v++) {
-		if(DIJKSTRASP_HAS_PATHTO(&sp, v)) {
-			printf("%u %u (%.3f)  ", s, v, 
-				(double)DIJKSTRASP_DISTTO(&sp, v));
+	for (v = 0; v < EWDIGRAPH_VERTICES(&g); v++) {
+		if (DIJKSTRASP_HAS_PATHTO(&sp, v)) {
+			printf("%u %u (%.3f)  ", s, v, (double)DIJKSTRASP_DISTTO(&sp, v));
 			dijkstrasp_pathto(&sp, v, &paths);
 			SLIST_FOREACH(&paths, nptr, struct diedge, e) {
 				DIEDGE_STRING(e, se);
 				printf("%s  ", se);
 			}
 			printf("\n");
-		}
-		else
+		} else
 			printf("%u to %u no path.\n", s, v); 
 	}
 	end_time = clock();
 	printf("Estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	
 	slist_clear(&paths);
 	DIJKSTRASP_CLEAR(&sp);
@@ -128,7 +125,7 @@ static void
 usage_info(const char *pname)
 {
 	fprintf(stderr, "Usage: %s -f -s\n", pname);
-	fprintf(stderr, "-f: The data file for the edge-weighted digraph..\n");
+	fprintf(stderr, "-f: The data file for the edge-weighted digraph.\n");
 	fprintf(stderr, "-s: The soruce vertex of the edge-weighted digraph.\n");
 	exit(EXIT_FAILURE);
 }

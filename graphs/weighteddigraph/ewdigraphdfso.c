@@ -55,7 +55,7 @@ ewdigraph_dfso_init(struct ewdigraph_dfso *dfs, const struct ewdigraph *g)
 	dfs->postcounter = 0;
 	dfs->vertices = EWDIGRAPH_VERTICES(g);
 
-	for(v = 0; v < EWDIGRAPH_VERTICES(g); v++) {
+	for (v = 0; v < EWDIGRAPH_VERTICES(g); v++) {
 		dfs->marked[v] = false;
 		dfs->pre[v] = 0;
 		dfs->post[v] = 0;
@@ -64,8 +64,8 @@ ewdigraph_dfso_init(struct ewdigraph_dfso *dfs, const struct ewdigraph *g)
 	slist_init(dfs->preorder, sizeof(int), vequal);
 	slist_init(dfs->postorder, sizeof(int), vequal);
 
-	for(v = 0; v < EWDIGRAPH_VERTICES(g); v++)
-		if(!dfs->marked[v])
+	for (v = 0; v < EWDIGRAPH_VERTICES(g); v++)
+		if (!dfs->marked[v])
 			dfso(dfs, v, g);
 }
 
@@ -97,7 +97,7 @@ dfso(struct ewdigraph_dfso *dfs, unsigned int v, const struct ewdigraph *g)
 	adjlist = EWDIGRAPH_ADJLIST(g, v);
 	SLIST_FOREACH(adjlist, nptr, struct diedge, e) {
 		w = DIEDGE_TO(e);
-		if(!dfs->marked[w])
+		if (!dfs->marked[w])
 			dfso(dfs, w, g);
 	}
 

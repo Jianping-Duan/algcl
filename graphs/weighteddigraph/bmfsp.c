@@ -56,16 +56,16 @@ main(int argc, char *argv[])
 	extern char *optarg;
 	extern int optind;
 	
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'f':
 				fname = optarg;
 				break;
 			case 's':
-				if(sscanf(optarg, "%u", &s) != 1)
+				if (sscanf(optarg, "%u", &s) != 1)
 					errmsg_exit("Illegal number. -s %s\n", optarg);
 				break;
 			default:
@@ -74,7 +74,7 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 	
 	SET_RANDOM_SEED;
@@ -83,13 +83,13 @@ main(int argc, char *argv[])
 	fin = open_file(fname, "r");
 	ewdigraph_init_fistream(&g, fin);
 	close_file(fin);
-	if(EWDIGRAPH_VERTICES(&g) <= 100)
+	if (EWDIGRAPH_VERTICES(&g) <= 100)
 		ewdigraph_print(&g);
 	else
 		printf("Vertices are too many!!!\n");
 	printf("\n");
 
-	if(s >= EWDIGRAPH_VERTICES(&g)) {
+	if (s >= EWDIGRAPH_VERTICES(&g)) {
 		ewdigraph_clear(&g);
 		errmsg_exit("soruce vertex must between 0 and %u\n", 
 			EWDIGRAPH_VERTICES(&g) - 1);
@@ -98,21 +98,20 @@ main(int argc, char *argv[])
 	start_time = clock();
 	bmfsp_init(&sp, &g, s);
 
-	if(BMFSP_HAS_NEGATIVE_CYCLE(&sp)) {
+	if (BMFSP_HAS_NEGATIVE_CYCLE(&sp)) {
 		printf("Prints it negative cycle.\n");
 		e = (struct diedge *)algmalloc(sizeof(struct diedge));
 		st = BMFSP_NEGATIVE_CYCLE(&sp);
-		while(!STACK_ISEMPTY(st)) {
+		while (!STACK_ISEMPTY(st)) {
 			stack_pop(st, (void **)&e);
 			DIEDGE_STRING(e, se);
 			printf("%s\n", se);
 		}
 		ALGFREE(e);
-	}
-	else {
+	} else {
 		printf("Prints it shortest path.\n");
-		for(v = 0; v < EWDIGRAPH_VERTICES(&g); v++) {
-			if(BMFSP_HAS_PATHTO(&sp, v)) {
+		for (v = 0; v < EWDIGRAPH_VERTICES(&g); v++) {
+			if (BMFSP_HAS_PATHTO(&sp, v)) {
 				printf("%u %u (%.3f)  ", s, v, (double)bmfsp_distto(&sp, v));
 				bmfsp_paths_get(&sp, v, &paths);
 				SLIST_FOREACH(&paths, nptr, struct diedge, e) {
@@ -120,16 +119,14 @@ main(int argc, char *argv[])
 					printf("%s  ", se);
 				}
 				printf("\n");
-			}
-			else
+			} else
 				printf("%u to %u no path.\n", s, v); 
 		}
 		slist_clear(&paths);
 	}
 	end_time = clock();
 	printf("Estimated time(s): %.3f\n", 
-		(double)(end_time - start_time) /
-		(double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	
 	BMFSP_CLEAR(&sp);
 	ewdigraph_clear(&g);
@@ -141,7 +138,7 @@ static void
 usage_info(const char *pname)
 {
 	fprintf(stderr, "Usage: %s -f -s\n", pname);
-	fprintf(stderr, "-f: The data file for the edge-weighted digraph..\n");
+	fprintf(stderr, "-f: The data file for the edge-weighted digraph.\n");
 	fprintf(stderr, "-s: The soruce vertex of the edge-weighted digraph.\n");
 	exit(EXIT_FAILURE);
 }

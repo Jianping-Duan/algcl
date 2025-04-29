@@ -54,17 +54,17 @@ main(int argc, char *argv[])
 	
 	SET_RANDOM_SEED;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'v':
-				if(sscanf(optarg, "%u", &vs) != 1)
+				if (sscanf(optarg, "%u", &vs) != 1)
 					errmsg_exit("Illegal number. -v %s\n", optarg);
 				break;
 			case 'e':
-				if(sscanf(optarg, "%u", &es) != 1)
+				if (sscanf(optarg, "%u", &es) != 1)
 					errmsg_exit("Illegal number. -e %s\n", optarg);
 				break;
 			default:
@@ -73,7 +73,7 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 	
 	adjmatewdg_init_randomly(&g, vs, es);
@@ -84,13 +84,13 @@ main(int argc, char *argv[])
 
 	printf("Prints all-pairs shortest path distances.\n");
 	printf("     ");
-	for(v = 0; v < ADJMATEWDG_VERTICES(&g); v++)
+	for (v = 0; v < ADJMATEWDG_VERTICES(&g); v++)
 		printf("%6d ", v);
 	printf("\n");
-	for(v = 0; v < ADJMATEWDG_VERTICES(&g); v++) {
+	for (v = 0; v < ADJMATEWDG_VERTICES(&g); v++) {
 		printf("%6d: ", v);
-		for(w = 0; w < ADJMATEWDG_VERTICES(&g); w++)
-			if(FWSP_HAS_PATH(&sp, v, w))
+		for (w = 0; w < ADJMATEWDG_VERTICES(&g); w++)
+			if (FWSP_HAS_PATH(&sp, v, w))
 				printf("%6.2f ", (double)fwsp_distto(&sp, v, w));
 			else
 				printf("   Inf ");
@@ -98,10 +98,10 @@ main(int argc, char *argv[])
 	}
 
 	printf("Prints all-pairs shortest paths.\n");
-	if(!FWSP_HAS_NEGATIVE_CYCLE(&sp)) {
-		for(v = 0; v < ADJMATEWDG_VERTICES(&g); v++)
-			for(w = 0; w < ADJMATEWDG_VERTICES(&g); w++)
-				if(FWSP_HAS_PATH(&sp, v, w)) {
+	if (!FWSP_HAS_NEGATIVE_CYCLE(&sp)) {
+		for (v = 0; v < ADJMATEWDG_VERTICES(&g); v++)
+			for (w = 0; w < ADJMATEWDG_VERTICES(&g); w++)
+				if (FWSP_HAS_PATH(&sp, v, w)) {
 					fwsp_path_get(&sp, v, w, &paths);
 					SLIST_FOREACH(&paths, nptr, struct diedge, e) {
 						DIEDGE_STRING(e, se);
@@ -109,8 +109,7 @@ main(int argc, char *argv[])
 					}
 					printf("\n");
 					slist_clear(&paths);
-				}
-				else
+				} else
 					printf("%u to %u no path.\n", v, w);
 	}
 	
@@ -124,7 +123,7 @@ static void
 usage_info(const char *pname)
 {
 	fprintf(stderr, "Usage: %s -v -e\n", pname);
-	fprintf(stderr, "-f: The data file for the edge-weighted digraph..\n");
+	fprintf(stderr, "-f: The data file for the edge-weighted digraph.\n");
 	fprintf(stderr, "-s: The soruce vertex of the edge-weighted digraph.\n");
 	exit(EXIT_FAILURE);
 }

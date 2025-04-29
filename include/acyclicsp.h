@@ -42,15 +42,14 @@ struct acyclicsp {
 };
 
 /* 
- * Returns the length of a shortest path from 
- * the source vertex s to vertex v.
+ * Returns the length of a shortest path from the source vertex s to vertex v.
  */
 static inline float 
 acycsp_distto(struct acyclicsp *sp, unsigned int v)
 {
-	if(v >= sp->vertices) {
-		errmsg_exit("vertex %u is not between 0 "
-			"and %u.\n", v, sp->vertices - 1);
+	if (v >= sp->vertices) {
+		errmsg_exit("vertex %u is not between 0 and %u.\n", v,
+			sp->vertices - 1);
 	}
 
 	return sp->distto[v];
@@ -72,11 +71,10 @@ struct single_list;
  * Computes a shortest paths tree from s to every other vertex in 
  * the directed acyclic graph g. 
  */
-void acycsp_init(struct acyclicsp *sp, const struct ewdigraph *g, unsigned int s);
+void acycsp_init(struct acyclicsp *sp, const struct ewdigraph *g,
+				unsigned int s);
 
-/* 
- * Gets a shortest path from the source vertex s to vertex v. 
- */
+/* Gets a shortest path from the source vertex s to vertex v. */
 void acycsp_paths_get(const struct acyclicsp *sp, unsigned int v, 
 					struct single_list *paths);
 

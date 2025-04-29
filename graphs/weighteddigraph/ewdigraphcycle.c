@@ -48,14 +48,14 @@ ewdigraph_cycle_init(struct ewdigraph_cycle *ewdc, const struct ewdigraph *g)
 	ewdc->cycle = (struct stack *)algmalloc(sizeof(struct stack));
 	STACK_INIT(ewdc->cycle, 0);
 
-	for(v = 0; v < EWDIGRAPH_VERTICES(g); v++) {
+	for (v = 0; v < EWDIGRAPH_VERTICES(g); v++) {
 		ewdc->marked[v] = false;
 		ewdc->edgeto[v] = NULL;
 		ewdc->onstack[v] = false;
 	}
 
-	for(v = 0; v < EWDIGRAPH_VERTICES(g); v++)
-		if(!ewdc->marked[v])
+	for (v = 0; v < EWDIGRAPH_VERTICES(g); v++)
+		if (!ewdc->marked[v])
 			dfs(ewdc, g, v);
 }
 
@@ -77,22 +77,21 @@ dfs(struct ewdigraph_cycle *ewdc, const struct ewdigraph *g, unsigned int v)
 		w = DIEDGE_TO(e);
 	
 		/* short circuit if directed cycle found */
-		if(!STACK_ISEMPTY(ewdc->cycle))
+		if (!STACK_ISEMPTY(ewdc->cycle))
 			return;
 		/* found new vertex, so recur */
-		else if(!ewdc->marked[w]) {
+		else if (!ewdc->marked[w]) {
 			ewdc->edgeto[w] = e;
 			dfs(ewdc, g, w);
 		}
 		/* trace back directed cycle */
-		else if(ewdc->onstack[w]) {
+		else if (ewdc->onstack[w]) {
 			f = e;
-			while(DIEDGE_FROM(f) != w) {
+			while (DIEDGE_FROM(f) != w) {
 				stack_push(ewdc->cycle, f);
 				f = ewdc->edgeto[DIEDGE_FROM(f)];
 			}
 			stack_push(ewdc->cycle, f);
-
 			return;
 		}
 	}

@@ -46,25 +46,22 @@ struct floyd_warshall_sp {
 /* Is there a negative cycle? */
 #define FWSP_HAS_NEGATIVE_CYCLE(sp)		((sp)->negcycle)
 
-/* 
- * Returns the length of a shortest path from 
- * vertex s to vertex t.
- */
+/* Returns the length of a shortest path from vertex s to vertex t. */
 static inline float 
 fwsp_distto(const struct floyd_warshall_sp *sp, 
 			unsigned int s, unsigned int t)
 {
-	if(s >= sp->vertices) {
+	if (s >= sp->vertices) {
 		errmsg_exit("vertex %u is not between 0 and %u.\n", s,
 			sp->vertices - 1);
 	}
 	
-	if(t >= sp->vertices) {
+	if (t >= sp->vertices) {
 		errmsg_exit("vertex %u is not between 0 and %u.\n", t,
 			sp->vertices - 1);
 	}
 
-	if(FWSP_HAS_NEGATIVE_CYCLE(sp))
+	if (FWSP_HAS_NEGATIVE_CYCLE(sp))
 		errmsg_exit("Negative cost cycle exists.\n");
 	
 	return sp->distto[s][t];
@@ -77,12 +74,12 @@ fwsp_distto(const struct floyd_warshall_sp *sp,
 struct single_list;
 
 /* 
- * Computes a shortest paths tree from each vertex to every
- * other vertex in the edge-weighted digraph g. 
- * If no such shortest path exists for some pair of
- * vertices, it computes a negative cycle. 
+ * Computes a shortest paths tree from each vertex to every other vertex in
+ * the edge-weighted digraph g. 
+ * If no such shortest path exists for some pair of vertices,
+ * it computes a negative cycle. 
  */
-void fwsp_init(struct floyd_warshall_sp *sp, 
+void fwsp_init(struct floyd_warshall_sp *sp,
 			const struct adjmatrix_ewdigraph *g);
 
 /* Returns a shortest path from vertex s to vertex t. */

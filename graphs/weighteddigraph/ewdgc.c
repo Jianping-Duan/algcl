@@ -54,21 +54,21 @@ main(int argc, char *argv[])
 
 	SET_RANDOM_SEED;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'v':
-				if(sscanf(optarg, "%u", &nv) != 1)
+				if (sscanf(optarg, "%u", &nv) != 1)
 					errmsg_exit("Illegal number. -v %s\n", optarg);
 				break;
 			case 'e':
-				if(sscanf(optarg, "%u", &ne) != 1)
+				if (sscanf(optarg, "%u", &ne) != 1)
 					errmsg_exit("Illegal number. -e %s\n", optarg);
 				break;
 			case 'E':
-				if(sscanf(optarg, "%u", &nf) != 1)
+				if (sscanf(optarg, "%u", &nf) != 1)
 					errmsg_exit("Illegal number. -f %s\n", optarg);
 				break;
 			default:
@@ -77,21 +77,21 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 
 	ewdigraph_init(&g, nv);
-	for(i = 0; i < ne; i++) {
+	for (i = 0; i < ne; i++) {
 		do {
 			v = rand_range_integer(0, nv);
 			w = rand_range_integer(0, nv);
-		} while(v >= w);
+		} while (v >= w);
 		weight = (float)rand_range_float(0.0, 1.0);
 		e = make_diedge(v, w, weight);
 		ewdigraph_add_edge(&g, e);
 	}
 
-	for(i = 0; i < nf; i++) {
+	for (i = 0; i < nf; i++) {
 		v = rand_range_integer(0, nv);
 		w = rand_range_integer(0, nv);
 		weight = (float)rand_range_float(0.0, 1.0);
@@ -103,17 +103,16 @@ main(int argc, char *argv[])
 	printf("\n");
 
 	ewdigraph_cycle_init(&dc, &g);
-	if(EWDIGRAPH_HAS_CYCLE(&dc)) {
+	if (EWDIGRAPH_HAS_CYCLE(&dc)) {
 		printf("Directed cycle:\n");
 		cycle = EWDIGRAPH_CYCLE_GET(&dc);
-		while(!STACK_ISEMPTY(cycle)) {
+		while (!STACK_ISEMPTY(cycle)) {
 			stack_pop(cycle, (void **)&e);
 			DIEDGE_STRING(e, se);
 			printf("%s ", se);
 		}
 		printf("\n");
-	}
-	else
+	} else
 		printf("No directed cycle.\n");
 	
 	ewdigraph_clear(&g);

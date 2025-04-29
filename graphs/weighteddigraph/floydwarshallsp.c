@@ -33,10 +33,10 @@
 #include "singlelist.h"
 
 /* 
- * Computes a shortest paths tree from each vertex to every
- * other vertex in the edge-weighted digraph g. 
- * If no such shortest path exists for some pair 
- * of vertices, it computes a negative cycle.
+ * Computes a shortest paths tree from each vertex to every other vertex in
+ * the edge-weighted digraph g. 
+ * If no such shortest path exists for some pair of vertices,
+ * it computes a negative cycle.
  */
 void 
 fwsp_init(struct floyd_warshall_sp *sp, const struct adjmatrix_ewdigraph *g)
@@ -50,7 +50,7 @@ fwsp_init(struct floyd_warshall_sp *sp, const struct adjmatrix_ewdigraph *g)
 	sp->distto = (float **)algcalloc(ADJMATEWDG_VERTICES(g), sizeof(float *));
 	sp->edgeto = (struct diedge **)
 		algcalloc(ADJMATEWDG_VERTICES(g), sizeof(struct diedge *));
-	for(v = 0; v < ADJMATEWDG_VERTICES(g); v++) {
+	for (v = 0; v < ADJMATEWDG_VERTICES(g); v++) {
 		sp->distto[v] = (float *)
 			algcalloc(ADJMATEWDG_VERTICES(g), sizeof(float));
 		sp->edgeto[v] = (struct diedge *)
@@ -58,45 +58,47 @@ fwsp_init(struct floyd_warshall_sp *sp, const struct adjmatrix_ewdigraph *g)
 	}
 
 	/* initialize distances to infinity */
-	for(v = 0; v < ADJMATEWDG_VERTICES(g); v++)
-		for(w = 0; w < ADJMATEWDG_VERTICES(g); w++) {
+	for (v = 0; v < ADJMATEWDG_VERTICES(g); v++)
+		for (w = 0; w < ADJMATEWDG_VERTICES(g); w++) {
 			sp->distto[v][w] = INFINITY;
 			diedge_set_value(&(sp->edgeto[v][w]), -1, -1, 0.0);
 		}
 
 	/* initialize distances using edge-weighted digraph's */
-	for(v = 0; v < ADJMATEWDG_VERTICES(g); v++) {
+	for (v = 0; v < ADJMATEWDG_VERTICES(g); v++) {
 		adj = ADJMATEWDG_ADJMAT(g, v);
-		for(w = 0; w < ADJMATEWDG_VERTICES(g); w++) {
+		for (w = 0; w < ADJMATEWDG_VERTICES(g); w++) {
 			e = adj[w];
-			if(diedge_isvalid(&e)) {
+			if (diedge_isvalid(&e)) {
 				sp->distto[DIEDGE_FROM(&e)][DIEDGE_TO(&e)] = DIEDGE_WEIGHT(&e);
 				sp->edgeto[DIEDGE_FROM(&e)][DIEDGE_TO(&e)] = e;
 			}
 		}
 
 		/* in case of self-loops */
-		if(sp->distto[v][v] > (float)0.0) {
+		if (sp->distto[v][v] > (float)0.0) {
 			sp->distto[v][v] = 0.0;
 			diedge_set_value(&(sp->edgeto[v][v]), -1, -1, 0.0);
 		}
 	}
 
 	/* Floyd-Warshall updates */
-	for(i = 0; i < ADJMATEWDG_VERTICES(g); i++)
-		/* compute shortest paths using only 0, 1, ..., i */
-		/* as intermediate vertices */
-		for(v = 0; v < ADJMATEWDG_VERTICES(g); v++) {
-			if(!diedge_isvalid(&(sp->edgeto[v][i])))
+	for (i = 0; i < ADJMATEWDG_VERTICES(g); i++)
+		/* 
+		 * compute shortest paths using only 0, 1, ..., i
+		 * as intermediate vertices.
+		 */
+		for (v = 0; v < ADJMATEWDG_VERTICES(g); v++) {
+			if (!diedge_isvalid(&(sp->edgeto[v][i])))
 				continue;	/* optimization */
-			for(w = 0; w < ADJMATEWDG_VERTICES(g); w++)
-				if(sp->distto[v][w] > sp->distto[v][i] + sp->distto[i][w]) {
+			for (w = 0; w < ADJMATEWDG_VERTICES(g); w++)
+				if (sp->distto[v][w] > sp->distto[v][i] + sp->distto[i][w]) {
 					sp->distto[v][w] = sp->distto[v][i] + sp->distto[i][w];
 					sp->edgeto[v][w] = sp->edgeto[i][w];
 				}
 
 			/* check for negative cycle */
-			if(sp->distto[v][v] < (float)0.0) {
+			if (sp->distto[v][v] < (float)0.0) {
 				sp->negcycle = true;
 				return;
 			}
@@ -110,15 +112,16 @@ fwsp_path_get(const struct floyd_warshall_sp *sp, unsigned int s,
 {
 	struct diedge e;
 
-	if(!FWSP_HAS_PATH(sp, s, t)) {
+	if (!FWSP_HAS_PATH(sp, s, t)) {
 		slist_init(paths, 0, NULL);
 		return;
 	}
 
 	slist_init(paths, sizeof(struct diedge), NULL);
-	for(e = sp->edgeto[s][t]; diedge_isvalid(&e); 
-		e = sp->edgeto[s][DIEDGE_FROM(&e)])
+	for (e = sp->edgeto[s][t]; diedge_isvalid(&e);
+		e = sp->edgeto[s][DIEDGE_FROM(&e)]) {
 		slist_put(paths, &e);
+	}
 }
 
 void 
@@ -126,10 +129,10 @@ fwsp_clear(struct floyd_warshall_sp *sp)
 {
 	unsigned int v;
 
-	if(sp->vertices == 0)
+	if (sp->vertices == 0)
 		return;
 
-	for(v = 0; v < sp->vertices; v++) {
+	for (v = 0; v < sp->vertices; v++) {
 		ALGFREE(sp->distto[v]);
 		ALGFREE(sp->edgeto[v]);
 	}

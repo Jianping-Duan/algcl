@@ -53,4 +53,7 @@
 /* pairing heap */
 #include "pairingheap.h"
 
+/* index pairing heap */
+#include "indexpairheap.h"
+
 #endif	/* _HEAP_H_ */

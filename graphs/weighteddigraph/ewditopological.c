@@ -43,7 +43,7 @@ ewdtplg_use_dfso(const struct ewdigraph *g, struct single_list *order)
 	struct ewdigraph_dfso dfso;
 
 	ewdigraph_cycle_init(&dc, g);
-	if(EWDIGRAPH_HAS_CYCLE(&dc)) {
+	if (EWDIGRAPH_HAS_CYCLE(&dc)) {
 		slist_init(order, 0, NULL);
 		return;
 	}
@@ -67,21 +67,18 @@ ewdtplg_use_queue(const struct ewdigraph *g, struct single_list *order)
 
 	/* indegrees of remaining vertices */
 	indegree = (int *)algcalloc(EWDIGRAPH_VERTICES(g), sizeof(int));
-	for(v = 0; v < EWDIGRAPH_VERTICES(g); v++)
+	for (v = 0; v < EWDIGRAPH_VERTICES(g); v++)
 		indegree[v] = EWDIGRAPH_INDEGREE(g, v);
 	
-	/* 
-	 * Initialize queue to contain all vertices
-	 * with indegree = 0.
-	 */
+	/* Initialize queue to contain all vertices with indegree = 0. */
 	QUEUE_INIT(&qu, sizeof(int));
-	for(v = 0; v < EWDIGRAPH_VERTICES(g); v++)
-		if(indegree[v] == 0)
+	for (v = 0; v < EWDIGRAPH_VERTICES(g); v++)
+		if (indegree[v] == 0)
 			enqueue(&qu, &v);
 
 	slist_init(order, sizeof(int), vequal);
 	w = (unsigned int *)algmalloc(sizeof(int));
-	while(!QUEUE_ISEMPTY(&qu)) {
+	while (!QUEUE_ISEMPTY(&qu)) {
 		dequeue(&qu, (void **)&w);
 		slist_append(order, w);
 		cnt++;
@@ -89,7 +86,7 @@ ewdtplg_use_queue(const struct ewdigraph *g, struct single_list *order)
 		SLIST_FOREACH(adj, nptr, struct diedge, e) {
 			x = DIEDGE_TO(e);
 			indegree[x]--;
-			if(indegree[x] == 0)
+			if (indegree[x] == 0)
 				enqueue(&qu, &x);
 		}
 	}
@@ -97,11 +94,8 @@ ewdtplg_use_queue(const struct ewdigraph *g, struct single_list *order)
 	ALGFREE(indegree);
 	queue_clear(&qu);
 
-	/* 
-	 * There is a directed cycle in subgraph of
-	 * vertices with indegree >= 1. 
-	 */
-	if(cnt != EWDIGRAPH_VERTICES(g))
+	/* There is a directed cycle in subgraph of vertices with indegree >= 1. */
+	if (cnt != EWDIGRAPH_VERTICES(g))
 		slist_clear(order);
 }
 

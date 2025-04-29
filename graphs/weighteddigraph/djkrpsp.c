@@ -44,23 +44,23 @@ main(int argc, char *argv[])
 	unsigned int v, w;
 	char se[128];
 	
-	if(argc != 2)
+	if (argc != 2)
 		errmsg_exit("Usage: %s <datafile> \n", argv[0]);
 
 	printf("Prints a edge-weighted digraph from input stream.\n");
 	fin = open_file(argv[1], "r");
 	ewdigraph_init_fistream(&g, fin);
 	close_file(fin);
-	if(EWDIGRAPH_VERTICES(&g) <= 100)
+	if (EWDIGRAPH_VERTICES(&g) <= 100)
 		ewdigraph_print(&g);
 	else
 		printf("Vertices are too many!!!\n");
 	printf("\n");
 
 	djkr_pairsp_init(&psp, &g);
-	for(v = 0; v < EWDIGRAPH_VERTICES(&g); v++)
-		for(w = 0; w < EWDIGRAPH_VERTICES(&g); w++)
-			if(DJKR_PAIRSP_HAS_PATH(&psp, v, w)) {
+	for (v = 0; v < EWDIGRAPH_VERTICES(&g); v++)
+		for (w = 0; w < EWDIGRAPH_VERTICES(&g); w++)
+			if (DJKR_PAIRSP_HAS_PATH(&psp, v, w)) {
 				printf("%u to %u (%5.3f)  ", v, w, 
 					(double)djkr_pairsp_dist(&psp, v, w));
 				paths = djkr_pairsp_path(&psp, v, w);
@@ -70,8 +70,7 @@ main(int argc, char *argv[])
 				}
 				printf("\n");
 				ALGFREE(paths);
-			}
-			else
+			} else
 				printf("%u to %u no path.\n", v, w);
 
 	djkr_pairsp_clear(&psp);

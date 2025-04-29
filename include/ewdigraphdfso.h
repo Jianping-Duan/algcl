@@ -78,11 +78,10 @@ struct ewdigraph_dfso {
 	(dfs)->precounter = 0;					\
 	(dfs)->postcounter = 0;					\
 	(dfs)->vertices = 0;					\
-} while(0)
+} while (0)
 
 
 /* Determines a depth-first order for the ewdigraph */
-void ewdigraph_dfso_init(struct ewdigraph_dfso *dfs,
-						const struct ewdigraph *g);
+void ewdigraph_dfso_init(struct ewdigraph_dfso *dfs, const struct ewdigraph *g);
 
 #endif	/* _EWDIGRAPHDFSO_H_ */

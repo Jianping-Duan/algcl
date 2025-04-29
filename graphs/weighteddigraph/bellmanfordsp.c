@@ -34,11 +34,12 @@
 #include "linearlist.h"
 
 static void find_negative_cycle(const struct bellmanford_sp *);
-static void relax(struct bellmanford_sp *, const struct ewdigraph *, unsigned int);
+static void relax(struct bellmanford_sp *, const struct ewdigraph *,
+	unsigned int);
 
 /* 
- * Computes a shortest paths tree from s to every 
- * other vertex in the edge-weighted digraph g.
+ * Computes a shortest paths tree from s to every other vertex in
+ * the edge-weighted digraph g.
  */
 void 
 bmfsp_init(struct bellmanford_sp *sp, const struct ewdigraph *g,
@@ -46,7 +47,7 @@ bmfsp_init(struct bellmanford_sp *sp, const struct ewdigraph *g,
 {
 	unsigned int v, *w;
 
-	if(s >= EWDIGRAPH_VERTICES(g)) {
+	if (s >= EWDIGRAPH_VERTICES(g)) {
 		errmsg_exit("vertex %u is not between 0 and %u.\n", s, 
 			EWDIGRAPH_VERTICES(g) - 1);
 	}
@@ -57,7 +58,7 @@ bmfsp_init(struct bellmanford_sp *sp, const struct ewdigraph *g,
 		algcalloc(EWDIGRAPH_VERTICES(g), sizeof(struct diedge *));
 	sp->onqueue = (bool *)algcalloc(EWDIGRAPH_VERTICES(g), sizeof(bool));
 
-	for(v = 0; v < EWDIGRAPH_VERTICES(g); v++) {
+	for (v = 0; v < EWDIGRAPH_VERTICES(g); v++) {
 		sp->distto[v] = INFINITY;
 		sp->edgeto[v] = NULL;
 		sp->onqueue[v] = false;
@@ -74,7 +75,7 @@ bmfsp_init(struct bellmanford_sp *sp, const struct ewdigraph *g,
 	w = (unsigned int *)algmalloc(sizeof(int));
 	enqueue(sp->quvr, &s);
 	sp->onqueue[s] = true;
-	while(!QUEUE_ISEMPTY(sp->quvr) && !BMFSP_HAS_NEGATIVE_CYCLE(sp)) {
+	while (!QUEUE_ISEMPTY(sp->quvr) && !BMFSP_HAS_NEGATIVE_CYCLE(sp)) {
 		dequeue(sp->quvr, (void **)&w);
 		sp->onqueue[*w] = false;
 		relax(sp, g, *w);
@@ -89,19 +90,16 @@ bmfsp_paths_get(const struct bellmanford_sp *sp, unsigned int v,
 {
 	struct diedge *e;
 
-	if(v >= sp->vertices) {
+	if (v >= sp->vertices) {
 		errmsg_exit("vertex %u is not between 0 and %u.\n", v, 
 			sp->vertices - 1);
 	}
-	
-	if(BMFSP_HAS_NEGATIVE_CYCLE(sp))
+	if (BMFSP_HAS_NEGATIVE_CYCLE(sp))
 		errmsg_exit("Negative cost cycle exists.\n");
 
 	slist_init(paths, 0, NULL);
-	for(e = sp->edgeto[v]; e != NULL;
-		e = sp->edgeto[DIEDGE_FROM(e)]) {
+	for (e = sp->edgeto[v]; e != NULL; e = sp->edgeto[DIEDGE_FROM(e)])
 		slist_put(paths, e);
-	}
 }
 
 /******************** static function boundary ********************/
@@ -117,18 +115,18 @@ find_negative_cycle(const struct bellmanford_sp *sp)
 	unsigned int v;
 
 	ewdigraph_init(&g, sp->vertices);
-	for(v = 0; v < sp->vertices; v++)
-		if(sp->edgeto[v] != NULL) {
+	for (v = 0; v < sp->vertices; v++)
+		if (sp->edgeto[v] != NULL) {
 			e = sp->edgeto[v];
 			f = make_diedge(e->v, e->w, e->weight);
 			ewdigraph_add_edge(&g, f);
 		}
 
 	ewdigraph_cycle_init(&dc, &g);
-	if(EWDIGRAPH_HAS_CYCLE(&dc)) {
+	if (EWDIGRAPH_HAS_CYCLE(&dc)) {
 		st = EWDIGRAPH_CYCLE_GET(&dc);
 		h = (struct diedge *)algmalloc(sizeof(struct diedge));
-		while(!STACK_ISEMPTY(st)) {
+		while (!STACK_ISEMPTY(st)) {
 			stack_pop(st, (void **)&h);
 			stack_push(sp->cycle, h);
 		}
@@ -155,19 +153,19 @@ relax(struct bellmanford_sp *sp, const struct ewdigraph *g,
 	adj = EWDIGRAPH_ADJLIST(g, v);
 	SLIST_FOREACH(adj, nptr, struct diedge, e) {
 		w = DIEDGE_TO(e);
-		if(sp->distto[w] > sp->distto[v] + DIEDGE_WEIGHT(e)) {
+		if (sp->distto[w] > sp->distto[v] + DIEDGE_WEIGHT(e)) {
 			sp->distto[w] = sp->distto[v] + DIEDGE_WEIGHT(e);
 			sp->edgeto[w] = e;
 			
-			if(!sp->onqueue[w]) {
+			if (!sp->onqueue[w]) {
 				enqueue(sp->quvr, &w);
 				sp->onqueue[w] = true;
 			}
 		}
 
-		if(++(sp->cost) % EWDIGRAPH_VERTICES(g) == 0) {
+		if (++(sp->cost) % EWDIGRAPH_VERTICES(g) == 0) {
 			find_negative_cycle(sp);
-			if(BMFSP_HAS_NEGATIVE_CYCLE(sp))
+			if (BMFSP_HAS_NEGATIVE_CYCLE(sp))
 				return;
 		}
 	}

@@ -36,8 +36,8 @@
 static void relax(struct acyclicsp *, const struct diedge *);
 
 /* 
- * Computes a shortest paths tree from s to every 
- * other vertex in the directed acyclic graph g.
+ * Computes a shortest paths tree from s to every other vertex in the
+ * directed acyclic graph g.
  */
 void 
 acycsp_init(struct acyclicsp *sp, const struct ewdigraph *g, unsigned int s)
@@ -47,13 +47,13 @@ acycsp_init(struct acyclicsp *sp, const struct ewdigraph *g, unsigned int s)
 	struct slist_node *nptr1, *nptr2;
 	struct diedge *e;
 
-	if(s >= EWDIGRAPH_VERTICES(g)) {
+	if (s >= EWDIGRAPH_VERTICES(g)) {
 		errmsg_exit("vertex %u is not between 0 and %u.\n", s, 
 			EWDIGRAPH_VERTICES(g) - 1);
 	}
 
 	ewdtplg_use_queue(g, &vset);
-	if(SLIST_LENGTH(&vset) == 0)
+	if (SLIST_LENGTH(&vset) == 0)
 		errmsg_exit("This digraph is not acyclic.\n");
 
 	sp->vertices = EWDIGRAPH_VERTICES(g);
@@ -61,7 +61,7 @@ acycsp_init(struct acyclicsp *sp, const struct ewdigraph *g, unsigned int s)
 	sp->edgeto = (struct diedge **)
 		algcalloc(EWDIGRAPH_VERTICES(g), sizeof(struct diedge *));
 	
-	for(v = 0; v < EWDIGRAPH_VERTICES(g); v++) {
+	for (v = 0; v < EWDIGRAPH_VERTICES(g); v++) {
 		sp->distto[v] = INFINITY;
 		sp->edgeto[v] = NULL;
 	}
@@ -76,10 +76,7 @@ acycsp_init(struct acyclicsp *sp, const struct ewdigraph *g, unsigned int s)
 	slist_clear(&vset);
 }
 
-/* 
- * Gets a shortest path from the source 
- * vertex s to vertex v.
- */
+/* Gets a shortest path from the source vertex s to vertex v. */
 void 
 acycsp_paths_get(const struct acyclicsp *sp, unsigned int v,
 				struct single_list *paths)
@@ -88,15 +85,13 @@ acycsp_paths_get(const struct acyclicsp *sp, unsigned int v,
 
 	slist_init(paths, 0, NULL);
 
-	if(v >= sp->vertices) {
+	if (v >= sp->vertices) {
 		errmsg_exit("vertex %u is not between 0 and %u.\n", v,
 			sp->vertices - 1);
 	}
 	
-	for(e = sp->edgeto[v]; e != NULL;
-		e = sp->edgeto[DIEDGE_FROM(e)]) {
+	for (e = sp->edgeto[v]; e != NULL; e = sp->edgeto[DIEDGE_FROM(e)])
 		slist_put(paths, e);
-	}
 }
 
 /******************** static function boundary ********************/
@@ -107,7 +102,7 @@ relax(struct acyclicsp *sp, const struct diedge *e)
 	unsigned int v, w;
 
 	v = DIEDGE_FROM(e), w = DIEDGE_TO(e);
-	if(sp->distto[w] > sp->distto[v] + DIEDGE_WEIGHT(e)) {
+	if (sp->distto[w] > sp->distto[v] + DIEDGE_WEIGHT(e)) {
 		sp->distto[w] = sp->distto[v] + DIEDGE_WEIGHT(e);
 		sp->edgeto[w] = (void *)e;
 	}

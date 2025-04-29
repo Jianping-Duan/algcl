@@ -41,13 +41,13 @@ main(int argc, char *argv[])
 	struct ewdigraph g;
 	struct single_list ord1, ord2;
 	
-	if(argc != 2)
+	if (argc != 2)
 		errmsg_exit("Usage: %s <filename>\n", argv[0]);
 
 	fin = open_file(argv[1], "r");
 	ewdigraph_init_fistream(&g, fin);
 	close_file(fin);
-	if(EWDIGRAPH_VERTICES(&g) < 100)
+	if (EWDIGRAPH_VERTICES(&g) < 100)
 		ewdigraph_print(&g);
 	printf("\n");
 

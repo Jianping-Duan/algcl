@@ -48,17 +48,17 @@ main(int argc, char *argv[])
 	
 	SET_RANDOM_SEED;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'v':
-				if(sscanf(optarg, "%u", &vs) != 1)
+				if (sscanf(optarg, "%u", &vs) != 1)
 					errmsg_exit("Illegal number. -v %s\n", optarg);
 				break;
 			case 'e':
-				if(sscanf(optarg, "%u", &es) != 1)
+				if (sscanf(optarg, "%u", &es) != 1)
 					errmsg_exit("Illegal number. -e %s\n", optarg);
 				break;
 			default:
@@ -67,7 +67,7 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 	
 	adjmatewdg_init_randomly(&g, vs, es);
@@ -81,7 +81,7 @@ static void
 usage_info(const char *pname)
 {
 	fprintf(stderr, "Usage: %s -v -e\n", pname);
-	fprintf(stderr, "-f: The data file for the edge-weighted digraph..\n");
+	fprintf(stderr, "-f: The data file for the edge-weighted digraph.\n");
 	fprintf(stderr, "-s: The soruce vertex of the edge-weighted digraph.\n");
 	exit(EXIT_FAILURE);
 }

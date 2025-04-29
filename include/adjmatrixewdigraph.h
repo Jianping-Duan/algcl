@@ -47,7 +47,7 @@ struct diedge {
 static inline void 
 diedge_set_value(struct diedge *e, long v, long w, float wt)
 {
-	if(isnan(wt))
+	if (isnan(wt))
 		errmsg_exit("Weight is NaN.\n");
 
 	e->v = v;
@@ -73,14 +73,14 @@ diedge_isvalid(const struct diedge *e)
 	v = DIEDGE_FROM(e);
 	w = DIEDGE_TO(e);
 
-	return v >=0 && w >= 0;
+	return v >= 0 && w >= 0;
 }
 
 /* Returns a string representation of this edge. */
 #define DIEDGE_STRING(edge, str)	do {	\
-	sprintf((str), "%ld->%ld %5.3f", \
-	(edge)->v, (edge)->w, (double)((edge)->weight));	\
-} while(0)
+	sprintf((str), "%ld->%ld %5.3f",		\
+		(edge)->v, (edge)->w, (double)((edge)->weight));	\
+} while (0)
 
 struct adjmatrix_ewdigraph {
 	unsigned int edges;
@@ -88,16 +88,10 @@ struct adjmatrix_ewdigraph {
 	struct diedge **adjmat;
 };
 
-/* 
- * Returns the number of vertices in 
- * this edge-weighted graph.
- */
+/* Returns the number of vertices in this edge-weighted graph. */
 #define ADJMATEWDG_VERTICES(g)	((g)->vertices)
 
-/* 
- * Returns the number of edges in 
- * this edge-weighted graph.
- */
+/* Returns the number of edges in this edge-weighted graph. */
 #define ADJMATEWDG_EDGES(g)	((g)->edges)
 
 /* Returns the directed edges incident from vertex v */
@@ -111,14 +105,12 @@ void adjmatewdg_init(struct adjmatrix_ewdigraph *g, unsigned int vs);
 
 /* 
  * Adds the directed edge e to the edge-weighted digraph
- * (if there is not already an edge with
- * the same endpoints)
+ * (if there is not already an edge with the same endpoints)
  */
 void adjmatewdg_add_edge(struct adjmatrix_ewdigraph *g, const struct diedge *e);
 
 /* 
- * Initializes a random edge-weighted digraph 
- * with vs vertices and es edges.
+ * Initializes a random edge-weighted digraph with vs vertices and es edges.
  */
 void adjmatewdg_init_randomly(struct adjmatrix_ewdigraph *g, unsigned int vs,
 							unsigned int es);

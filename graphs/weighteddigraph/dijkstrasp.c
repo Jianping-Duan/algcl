@@ -30,11 +30,11 @@
  *
  */
 #include "dijkstrasp.h"
-#include "indexfibpq.h"
+#include "indexpairheap.h"
 #include "singlelist.h"
 
 /* minimum rooted-heap */
-static int greater(const void *, const void *);
+static int lessequal(const void *, const void *);
 static void relax(struct dijkstra_sp *, const struct diedge *);
 
 /* 
@@ -53,31 +53,31 @@ dijkstrasp_init(struct dijkstra_sp *sp, const struct ewdigraph *g,
 	
 	ewdigraph_edges_get(g, &edgeset);
 	SLIST_FOREACH(&edgeset, nptr, struct diedge, e) {
-		if(DIEDGE_WEIGHT(e) < 0) {
+		if (DIEDGE_WEIGHT(e) < 0) {
 			DIEDGE_STRING(e, se);
 			errmsg_exit("edge %s has negative weight.\n", se);
 		}
 	}
 
-	if(s >= EWDIGRAPH_VERTICES(g))
+	if (s >= EWDIGRAPH_VERTICES(g))
 		return;
 
 	sp->distto = (float *)algcalloc(EWDIGRAPH_VERTICES(g), sizeof(float));
 	sp->edgeto = (struct diedge **)
 		algcalloc(EWDIGRAPH_VERTICES(g), sizeof(struct diedge *));
-	sp->pq = (struct index_fibpq *)algmalloc(sizeof(struct index_fibpq));
+	sp->pq = (struct index_pheap *)algmalloc(sizeof(struct index_pheap));
 	sp->vertices = EWDIGRAPH_VERTICES(g);
 
-	for(v = 0; v < EWDIGRAPH_VERTICES(g); v++) {
+	for (v = 0; v < EWDIGRAPH_VERTICES(g); v++) {
 		sp->distto[v] = INFINITY;
 		sp->edgeto[v] = NULL;
 	}
 	sp->distto[s] = 0.0;
 
-	ifibpq_init(sp->pq, EWDIGRAPH_VERTICES(g), sizeof(float), greater);
-	ifibpq_insert(sp->pq, s, &(sp->distto[s]));
-	while(!IFIBPQ_ISEMPTY(sp->pq)) {
-		v = ifibpq_delete(sp->pq);
+	ipheap_init(sp->pq, EWDIGRAPH_VERTICES(g), sizeof(float), lessequal);
+	ipheap_insert(sp->pq, s, &(sp->distto[s]));
+	while (!IPHEAP_ISEMPTY(sp->pq)) {
+		v = ipheap_delete(sp->pq);
 		adj = EWDIGRAPH_ADJLIST(g, v);
 		SLIST_FOREACH(adj, nptr, struct diedge, e) {
 			relax(sp, e);
@@ -97,28 +97,25 @@ dijkstrasp_pathto(const struct dijkstra_sp *sp, unsigned int v,
 
 	slist_init(paths, 0, NULL);
 
-	if(v >= sp->vertices)
+	if (v >= sp->vertices)
 		return;
-	
-	if(!DIJKSTRASP_HAS_PATHTO(sp, v))
+	if (!DIJKSTRASP_HAS_PATHTO(sp, v))
 		return;
 
-	for(e = sp->edgeto[v]; e != NULL;
-		e = sp->edgeto[DIEDGE_FROM(e)]) {
+	for (e = sp->edgeto[v]; e != NULL; e = sp->edgeto[DIEDGE_FROM(e)])
 		slist_put(paths, e);
-	}
 }
 
 /******************** static function boundary ********************/
 
 /* minimum rooted-heap */
 static int 
-greater(const void *k1, const void *k2)
+lessequal(const void *k1, const void *k2)
 {
 	float *e1, *e2;
 
 	e1 = (float *)k1, e2 = (float *)k2;
-	return *e1 > *e2 ? 1 : 0;
+	return islessequal(*e1, *e2) ? 1 : -1;
 }
 
 /* Relax edge e and update pq if changed. */
@@ -130,12 +127,12 @@ relax(struct dijkstra_sp *sp, const struct diedge *e)
 	v = DIEDGE_FROM(e);
 	w = DIEDGE_TO(e);
 
-	if(sp->distto[w] > sp->distto[v] + DIEDGE_WEIGHT(e)) {
+	if (sp->distto[w] > sp->distto[v] + DIEDGE_WEIGHT(e)) {
 		sp->distto[w] = sp->distto[v] + DIEDGE_WEIGHT(e);
 		sp->edgeto[w] = (void *)e;
-		if(IFIBPQ_CONTAINS(sp->pq, w))
-			ifibpq_change(sp->pq, w, &(sp->distto[w]));
+		if (IPHEAP_CONTAINS(sp->pq, w))
+			ipheap_change(sp->pq, w, &(sp->distto[w]));
 		else
-			ifibpq_insert(sp->pq, w, &(sp->distto[w]));
+			ipheap_insert(sp->pq, w, &(sp->distto[w]));
 	}
 }

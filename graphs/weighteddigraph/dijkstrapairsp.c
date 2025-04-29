@@ -48,7 +48,7 @@ djkr_pairsp_init(struct dijkstra_pair_sp *psp, const struct ewdigraph *g)
 
 	psp->allsp = (struct dijkstra_sp **)
 		algmalloc(EWDIGRAPH_VERTICES(g) * sizeof(struct dijkstrasp *));
-	for(v = 0; v < EWDIGRAPH_VERTICES(g); v++) {
+	for (v = 0; v < EWDIGRAPH_VERTICES(g); v++) {
 		psp->allsp[v] = (struct dijkstra_sp *)
 			algmalloc(sizeof(struct dijkstra_sp));
 		dijkstrasp_init(psp->allsp[v], g, v);
@@ -89,7 +89,7 @@ djkr_pairsp_clear(struct dijkstra_pair_sp *psp)
 {
 	unsigned int v;
 
-	for(v = 0; v < psp->vertices; v++) {
+	for (v = 0; v < psp->vertices; v++) {
 		DIJKSTRASP_CLEAR(psp->allsp[v]);
 		ALGFREE(psp->allsp[v]);
 	}
@@ -103,7 +103,7 @@ djkr_pairsp_clear(struct dijkstra_pair_sp *psp)
 static void 
 validate(const struct dijkstra_pair_sp *psp, unsigned int v)
 {
-	if(v >= psp->vertices) {
+	if (v >= psp->vertices) {
 		errmsg_exit("vertex %u is not between 0 and %u.\n", v,
 			psp->vertices - 1);
 	}

@@ -45,13 +45,13 @@ main(int argc, char *argv[])
 	
 	SET_RANDOM_SEED;
 	
-	if(argc != 2)
+	if (argc != 2)
 		errmsg_exit("Usage: %s <datafile> \n", argv[0]);
 	
 	fin = open_file(argv[1], "r");
 	ewdigraph_init_fistream(&g, fin);
 	close_file(fin);
-	if(EWDIGRAPH_VERTICES(&g) < 100)
+	if (EWDIGRAPH_VERTICES(&g) < 100)
 		ewdigraph_print(&g);
 	printf("\n");
 	
@@ -59,7 +59,7 @@ main(int argc, char *argv[])
 
 	printf("   v  pre post\n");
 	printf("--------------\n");
-	for(v = 0; v < EWDIGRAPH_VERTICES(&g); v++) {
+	for (v = 0; v < EWDIGRAPH_VERTICES(&g); v++) {
 		printf("%4u %4u %4u\n", v, EWDIGRAPH_DFSO_PRE(&gdfs, v),
 			EWDIGRAPH_DFSO_POST(&gdfs, v));
 	}

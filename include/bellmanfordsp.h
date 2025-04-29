@@ -49,33 +49,26 @@ struct bellmanford_sp {
 	unsigned int vertices;	/* edge-weighted digraph of vertices */
 };
 
-/* 
- * Is there a negative cycle reachable from
- * the source vertex s?
- */
+/* Is there a negative cycle reachable from the source vertex s? */
 #define BMFSP_HAS_NEGATIVE_CYCLE(sp)	\
 	((sp)->cycle != NULL && !STACK_ISEMPTY((sp)->cycle))
 
-/* 
- * Returns a negative cycle reachable from
- * the source vertex s.
- */
+/* Returns a negative cycle reachable from the source vertex s. */
 #define BMFSP_NEGATIVE_CYCLE(sp)	((sp)->cycle)
 
 /* 
- * Returns the length of a shortest path from 
- * the source vertex s to vertex v.
+ * Returns the length of a shortest path from the source vertex s to vertex v.
  */
 static inline float 
 bmfsp_distto(const struct bellmanford_sp *sp,
 			unsigned int v)
 {
-	if(v >= sp->vertices) {
+	if (v >= sp->vertices) {
 		errmsg_exit("vertex %u is not between 0 and %u.\n", v,
 			sp->vertices - 1);
 	}
 	
-	if(BMFSP_HAS_NEGATIVE_CYCLE(sp))
+	if (BMFSP_HAS_NEGATIVE_CYCLE(sp))
 		errmsg_exit("Negative cost cycle exists.\n");
 
 	return sp->distto[v];
@@ -93,11 +86,11 @@ bmfsp_distto(const struct bellmanford_sp *sp,
 	ALGFREE((sp)->quvr);			\
 	stack_clear((sp)->cycle);		\
 	ALGFREE((sp)->cycle);			\
-} while(0)
+} while (0)
 
 /* 
- * Computes a shortest paths tree from s to every 
- * other vertex in the edge-weighted digraph g. 
+ * Computes a shortest paths tree from s to every other vertex in the
+ * edge-weighted digraph g. 
  */
 void bmfsp_init(struct bellmanford_sp *sp, const struct ewdigraph *g,
 				unsigned int s);
