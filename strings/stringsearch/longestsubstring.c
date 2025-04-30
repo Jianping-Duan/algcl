@@ -55,17 +55,17 @@ string_lcs(const char *s1, const char *s2)
 	*lcs = '\0';
 
 	/* find longest common substring by "merging" sorted suffixes */
-	while(i < len1 && j < len2) {
+	while (i < len1 && j < len2) {
 		p = strsuffix_index(&ss1, i);
 		q = strsuffix_index(&ss2, j);
 		x = lcp(s1, p, s2, q);
-		if(strlen(x) > strlen(lcs)) {
+		if (strlen(x) > strlen(lcs)) {
 			memset(lcs, 0, MIN(len1, len2));
 			strcpy(lcs, x);
 		}
 		ALGFREE(x);
 
-		if(compare(s1, p, s2, q) < 0)
+		if (compare(s1, p, s2, q) < 0)
 			i++;
 		else
 			j++;
@@ -77,10 +77,7 @@ string_lcs(const char *s1, const char *s2)
 	return lcs;
 }
 
-/* 
- * Returns the longest repeated substring of 
- * the specified string. 
- */
+/* Returns the longest repeated substring of the specified string. */
 char * 
 string_lrs(const char *text)
 {
@@ -91,8 +88,8 @@ string_lrs(const char *text)
 	tlen = strlen(text);
 	strsuffix_init(&ss, text);
 
-	for(i = 1; i < tlen; i++) 
-		if((slen = strsuffix_lcp(&ss, i)) > (long)strlen(lrs)) 
+	for (i = 1; i < tlen; i++) 
+		if ((slen = strsuffix_lcp(&ss, i)) > (long)strlen(lrs)) 
 			lrs = substring(text, strsuffix_index(&ss, i), 
 					strsuffix_index(&ss, i) + slen);
 
@@ -113,17 +110,17 @@ compare(const char *s1, long p, const char *s2, long q)
 	len2 = strlen(s2) - q;
 	n = MIN(len1, len2);
 
-	for(i = 0; i < n; i++)
-		if(string_char_at(s1, p + i) != string_char_at(s2, q + i))
+	for (i = 0; i < n; i++)
+		if (string_char_at(s1, p + i) != string_char_at(s2, q + i))
 			return string_char_at(s1, p + i) - string_char_at(s2, q + i);
 
 	/* 
 	 * iff left characters all equally, 
 	 * then need to compare with length.
 	 */
-	if(len1 < len2)
+	if (len1 < len2)
 		return -1;
-	else if(len1 > len2)
+	else if (len1 > len2)
 		return 1;
 	else
 		return 0;
@@ -143,8 +140,8 @@ lcp(const char *s1, long p, const char *s2, long q)
 	len2 = strlen(s2) - q;
 	n = MIN(len1, len2);
 
-	for(i = 0; i < n; i++)
-		if(string_char_at(s1, p + i) != string_char_at(s2, q + i)) {
+	for (i = 0; i < n; i++)
+		if (string_char_at(s1, p + i) != string_char_at(s2, q + i)) {
 			subs = substring(s1, p, p + i);
 			return subs;
 		}

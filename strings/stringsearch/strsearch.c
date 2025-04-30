@@ -48,15 +48,15 @@ main(int argc, char *argv[])
 	extern char *optarg;
 	extern int optind;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'f':
-				if(sscanf(optarg, "%d", &flag) != 1)
+				if (sscanf(optarg, "%d", &flag) != 1)
 					errmsg_exit("Illegal number. -n %s\n",	optarg);
-				switch(flag) {
+				switch (flag) {
 					case 1:
 					case 2:
 					case 3:
@@ -77,7 +77,7 @@ main(int argc, char *argv[])
 		}
 	}
 
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 
 	SET_RANDOM_SEED;
@@ -85,7 +85,7 @@ main(int argc, char *argv[])
 	offset = strsearch(flag, pat, txt);
 	printf("text:    %s\n", txt);
 	printf("pattern: ");
-	for(i = 0; i < offset; i++)
+	for (i = 0; i < offset; i++)
 		printf(" ");
 	printf("%s\n", pat);
 
@@ -95,7 +95,7 @@ main(int argc, char *argv[])
 static int 
 strsearch(int flag, const char *pat, const char *txt)
 {
-	switch(flag) {
+	switch (flag) {
 		case 1:
 			search_fptr = string_violence_search;
 			break;

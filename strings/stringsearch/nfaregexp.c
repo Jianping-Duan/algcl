@@ -54,23 +54,23 @@ nfa_regexp_init(struct nfa_regexp *nr, const char *regexp)
 	or = (int *)algmalloc(sizeof(int));
 	orv = (int *)algmalloc(sizeof(int));
 
-	for(i = 0; i < (int)nr->rlen; i++) {
+	for (i = 0; i < (int)nr->rlen; i++) {
 		*lp = i;
 
-		switch(nr->regexp[i]) {
+		switch (nr->regexp[i]) {
 			case '(':
 			case '|':
-				if(nr->regexp[i] == '(')
+				if (nr->regexp[i] == '(')
 					lpcnt++;
 				stack_push(&ops, &i);
 				break;
 			case ')': {
 				rpcnt++;
 
-				while(!STACK_ISEMPTY(&ops)) {
+				while (!STACK_ISEMPTY(&ops)) {
 					stack_pop(&ops, (void **)&or);
 
-					switch(nr->regexp[*or]) {
+					switch (nr->regexp[*or]) {
 						case '|':
 							digraph_add_edge(nr->eptran, *or, i);
 							ornext = (*or) + 1;
@@ -87,7 +87,7 @@ nfa_regexp_init(struct nfa_regexp *nr, const char *regexp)
 				}
 
 				/* other edges */
-				while(!STACK_ISEMPTY(&orpath)) {
+				while (!STACK_ISEMPTY(&orpath)) {
 					stack_pop(&orpath, (void **)&orv);
 					digraph_add_edge(nr->eptran, *lp, *orv);
 				}
@@ -99,8 +99,8 @@ nfa_regexp_init(struct nfa_regexp *nr, const char *regexp)
 		}
 			
 		/* closure operator (uses 1-character lookahead) */
-		if(i < (int)nr->rlen - 1)
-			switch(nr->regexp[i + 1]) {
+		if (i < (int)nr->rlen - 1)
+			switch (nr->regexp[i + 1]) {
 				case '*':
 					digraph_add_edge(nr->eptran, *lp, i + 1);
 					digraph_add_edge(nr->eptran, i + 1, *lp);
@@ -115,7 +115,7 @@ nfa_regexp_init(struct nfa_regexp *nr, const char *regexp)
 					break;
 			}
 
-		switch(nr->regexp[i]) {
+		switch (nr->regexp[i]) {
 			case '(':
 			case '*':
 			case '+':
@@ -132,7 +132,7 @@ nfa_regexp_init(struct nfa_regexp *nr, const char *regexp)
 	ALGFREE(or);
 	ALGFREE(orv);
 
-	if(lpcnt != rpcnt) {
+	if (lpcnt != rpcnt) {
 		stack_clear(&ops);
 		stack_clear(&orpath);
 		errmsg_exit("Invalid regular expression.\n");
@@ -153,14 +153,14 @@ nfa_regexp_recog(const struct nfa_regexp *nr, const char *txt)
 
 	digraph_dfs_init(&dfs, nr->eptran, 0);
 	slist_init(&pc, sizeof(int), NULL);
-	for(v = 0; v < DIGRAPH_VERTICES(nr->eptran); v++)
-		if(DIGRAPH_DFS_MARKED(&dfs, v))
+	for (v = 0; v < DIGRAPH_VERTICES(nr->eptran); v++)
+		if (DIGRAPH_DFS_MARKED(&dfs, v))
 			slist_append(&pc, &v);
 
 	slist_init(&match, sizeof(int), NULL);
 	tlen = strlen(txt);
-	for(i = 0; i < tlen; i++) {
-		switch(txt[i]) {
+	for (i = 0; i < tlen; i++) {
+		switch (txt[i]) {
 			case '*':
 			case '+':
 			case '|':
@@ -172,28 +172,27 @@ nfa_regexp_recog(const struct nfa_regexp *nr, const char *txt)
 		}
 
 		SLIST_FOREACH(&pc, nptr, unsigned int, w) {
-			if(*w == nr->rlen)
+			if (*w == nr->rlen)
 				continue;
-
-			if(nr->regexp[*w] == txt[i] || nr->regexp[*w] == '.') {
+			if (nr->regexp[*w] == txt[i] || nr->regexp[*w] == '.') {
 				x = (*w) + 1;	/* routine edge */
 				slist_append(&match, &x);
 			}
 		}
 
-		if(SLIST_LENGTH(&match) == 0)
+		if (SLIST_LENGTH(&match) == 0)
 			continue;
 
 		DIGRAPH_DFS_CLEAR(&dfs);
 		slist_clear(&pc);
 		digraph_dfs_svset(&dfs, nr->eptran, &match);
 		slist_init(&pc, sizeof(int), NULL);
-		for(v = 0; v < DIGRAPH_VERTICES(nr->eptran); v++)
-			if(DIGRAPH_DFS_MARKED(&dfs, v))
+		for (v = 0; v < DIGRAPH_VERTICES(nr->eptran); v++)
+			if (DIGRAPH_DFS_MARKED(&dfs, v))
 				slist_append(&pc, &v);
 
 		/* optimization if no states reachable */
-		if(SLIST_LENGTH(&pc) == 0) {
+		if (SLIST_LENGTH(&pc) == 0) {
 			DIGRAPH_DFS_CLEAR(&dfs);
 			slist_clear(&match);
 			slist_clear(&pc);
@@ -209,7 +208,7 @@ nfa_regexp_recog(const struct nfa_regexp *nr, const char *txt)
 
 	/* check for accept state */
 	SLIST_FOREACH(&pc, nptr, unsigned int, w) {
-		if(*w == nr->rlen) {
+		if (*w == nr->rlen) {
 			slist_clear(&pc);
 			return true;
 		}

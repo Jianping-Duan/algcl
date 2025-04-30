@@ -36,20 +36,19 @@
 
 struct string_suffixes {
 	char *text;		/* string text */
-	long *index;	/* index[i] = j means text substring(j) */
-					/* is ith largest suffix */
+	long *index;	/* index[i] = j means text substring(j)
+					   is ith largest suffix */
 	long tlen;		/* number of characters in text */
 };
 
 /* Returns the length of the input string. */
 #define STRSUFFIX_LENGTH(ss)	((ss)->tlen)
 
-/* Returns the index into the original string of 
-   the i th smallest suffix. */
+/* Returns the index into the original string of the i th smallest suffix. */
 static inline long 
 strsuffix_index(const struct string_suffixes *ss, long i)
 {
-	if(i < 0 || i >= ss->tlen)
+	if (i < 0 || i >= ss->tlen)
 		errmsg_exit("Index %ld is not between 0 and %ld.\n", i, ss->tlen - 1);
 
 	return ss->index[i];
@@ -59,7 +58,7 @@ strsuffix_index(const struct string_suffixes *ss, long i)
 	ALGFREE((ss)->text);				\
 	ALGFREE((ss)->index);				\
 	(ss)->tlen = 0;						\
-} while(0)
+} while (0)
 
 /* Initializes a suffix array for the given text string */
 void strsuffix_init(struct string_suffixes *ss, const char *txt);

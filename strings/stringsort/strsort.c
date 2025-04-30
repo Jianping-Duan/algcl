@@ -47,21 +47,21 @@ main(int argc, char *argv[])
 	extern char *optarg;
 	extern int optind;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 's':
-				if(sscanf(optarg, "%d", &sz) != 1)
+				if (sscanf(optarg, "%d", &sz) != 1)
 					errmsg_exit("Illegal number. -n %s\n",	optarg);
-				if(sz <= 0)
+				if (sz <= 0)
 					errmsg_exit("Given the size must be greater than 0.\n");
 				break;
 			case 'w':
-				if(sscanf(optarg, "%d", &width) != 1)
+				if (sscanf(optarg, "%d", &width) != 1)
 					errmsg_exit("Illegal number. -n %s\n",	optarg);
-				if(sz <= 0)
+				if (sz <= 0)
 					errmsg_exit("Given the width must be greater than 0.\n");
 				break;
 			default:
@@ -70,7 +70,7 @@ main(int argc, char *argv[])
 		}
 	}
 
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 
 	SET_RANDOM_SEED;
@@ -80,7 +80,7 @@ main(int argc, char *argv[])
 	sa3 = (char **)algcalloc(sz, sizeof(char *));
 	sa4 = (char **)algcalloc(sz, sizeof(char *));
 
-	for(i = 0; i < sz; i++) {
+	for (i = 0; i < sz; i++) {
 		sa1[i] = (char *)algcalloc(width + 1, sizeof(char));
 		sa2[i] = (char *)algcalloc(width + 1, sizeof(char));
 		sa3[i] = (char *)algcalloc(width + 1, sizeof(char));
@@ -128,7 +128,7 @@ show_strings(char **sa1, char **sa2, char **sa3, char **sa4, int n)
 		"INPLACE_MSTSORT");
 	printf("%-10s | %-10s | %-10s | %-10s\n", "--------", "--------", 
 		"--------", "--------");
-	for(i = 0; i < n; i++) {
+	for (i = 0; i < n; i++) {
 		printf("%-10s | %-10s | %-10s | %-10s\n", sa1[i], sa2[i], sa3[i],
 			sa4[i]);
 	}

@@ -38,7 +38,7 @@ main(int argc, char *argv[])
 	FILE *tf1, *tf2;
 	clock_t start_time, end_time;
 
-	if(argc != 3)
+	if (argc != 3)
 		errmsg_exit("Usage: %s <text file1> <text file2>\n", argv[0]);
 
 	tf1 = open_file(argv[1], "r");

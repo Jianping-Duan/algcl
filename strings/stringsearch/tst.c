@@ -47,10 +47,10 @@ main(void)
 	SET_RANDOM_SEED;
 
 	TSTRIE_INIT(&t);
-	for(i = 0; i < 8; i++)
+	for (i = 0; i < 8; i++)
 		tstrie_put(&t, sa[i], i);
 
-	if(TSTRIE_SIZE(&t) < 100) {
+	if (TSTRIE_SIZE(&t) < 100) {
 		printf("All keys:\n");
 		tstrie_keys(&t, &keys);
 		printf("%-8s %-8s\n", "Key", "Value");

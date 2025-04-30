@@ -38,11 +38,12 @@ static int *dnaind;
 static void compress(const char *, const char *);
 static void expand(const char *, const char *);
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
 	int i, n;
 
-	if(argc != 4) {
+	if (argc != 4) {
 		fprintf(stderr, "Usage: %s <ops> <infile> <outfile>\n", argv[0]);
 		fprintf(stderr, "********** OPS **********\n");
 		fprintf(stderr, "* c or C: compress the file. \n");
@@ -52,16 +53,16 @@ int main(int argc, char *argv[])
 	}
 
 	dnaind = (int *)algmalloc(CHAR_MAX * sizeof(int));
-	for(i = 0; i < CHAR_MAX; i++)
+	for (i = 0; i < CHAR_MAX; i++)
 		dnaind[i] = -1;
 	
 	n = strlen(dna);
-	for(i = 0; i < n; i++)
+	for (i = 0; i < n; i++)
 		dnaind[(int)dna[i]] = i;
 
-	if(strcmp(argv[1], "c") == 0 || strcmp(argv[1], "C") == 0)
+	if (strcmp(argv[1], "c") == 0 || strcmp(argv[1], "C") == 0)
 		compress(argv[2], argv[3]);
-	else if(strcmp(argv[1], "e") == 0 || strcmp(argv[1], "E") == 0)
+	else if (strcmp(argv[1], "e") == 0 || strcmp(argv[1], "E") == 0)
 		expand(argv[2], argv[3]);
 	else
 		printf("Unknow operation, %s\n", argv[1]);
@@ -86,7 +87,7 @@ compress(const char *infile, const char *outfile)
 	n = strlen(s);
 	boutput_write_int(&bo, n);
 
-	for(i = 0; i < n; i++) {
+	for (i = 0; i < n; i++) {
 		d = dnaind[string_char_at(s, i)];
 		boutput_write_int_r(&bo, d, 2);
 	}
@@ -107,7 +108,7 @@ expand(const char *infile, const char *outfile)
 	boutput_init(&bo, outfile);
 
 	n = binput_read_int(&bi);
-	for(i = 0; i < n; i++) {
+	for (i = 0; i < n; i++) {
 		c = binput_read_int_r(&bi, 2);
 		boutput_write_char(&bo, dna[c]);
 	}

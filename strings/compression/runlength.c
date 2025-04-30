@@ -55,14 +55,13 @@ runlen_compress(const char *infile, const char *outfile)
 	binput_init(&bi, infile);
 	boutput_init(&bo, outfile);
 
-	while(!BINPUT_ISEMPTY(&bi)) {
-		if(binput_read_bool(&bi) != old) {
+	while (!BINPUT_ISEMPTY(&bi)) {
+		if (binput_read_bool(&bi) != old) {
 			boutput_write_char_r(&bo, run, LGR);
 			run = 1;
 			old = !old;
-		}
-		else {
-			if(run == RADIX - 1) {
+		} else {
+			if (run == RADIX - 1) {
 				boutput_write_char_r(&bo, run, LGR);
 				run = 0;
 				boutput_write_char_r(&bo, run, LGR);
@@ -98,9 +97,9 @@ runlen_expand(const char *infile, const char *outfile)
 	binput_init(&bi, infile);
 	boutput_init(&bo, outfile);
 
-	while(!BINPUT_ISEMPTY(&bi)) {
+	while (!BINPUT_ISEMPTY(&bi)) {
 		run = binput_read_int_r(&bi, LGR);
-		for(i = 0; i < run; i++)
+		for (i = 0; i < run; i++)
 			boutput_write_bool(&bo, b);
 		b = !b;
 	}

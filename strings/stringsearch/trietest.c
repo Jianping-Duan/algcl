@@ -47,10 +47,10 @@ main(void)
 	SET_RANDOM_SEED;
 
 	TRIE_INIT(&t);
-	for(i = 0; i < 8; i++)
+	for (i = 0; i < 8; i++)
 		trie_put(&t, sa[i], i);
 
-	if(TRIE_SIZE(&t) < 100) {
+	if (TRIE_SIZE(&t) < 100) {
 		printf("trie_keys_prefix(\"\"):\n");
 		trie_keys_prefix(&t, "", &keys);
 		printf("%-8s %-8s\n", "Key", "Value");

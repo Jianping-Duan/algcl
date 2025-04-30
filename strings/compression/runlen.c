@@ -34,7 +34,7 @@
 int 
 main(int argc, char *argv[])
 {
-	if(argc != 4) {
+	if (argc != 4) {
 		fprintf(stderr, "Usage: %s <ops> <infile> <outfile>\n", argv[0]);
 		fprintf(stderr, "********** OPS **********\n");
 		fprintf(stderr, "* c or C: compress the file. \n");
@@ -43,9 +43,9 @@ main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	if(strcmp(argv[1], "c") == 0 || strcmp(argv[1], "C") == 0)
+	if (strcmp(argv[1], "c") == 0 || strcmp(argv[1], "C") == 0)
 		runlen_compress(argv[2], argv[3]);
-	else if(strcmp(argv[1], "e") == 0 || strcmp(argv[1], "E") == 0)
+	else if (strcmp(argv[1], "e") == 0 || strcmp(argv[1], "E") == 0)
 		runlen_expand(argv[2], argv[3]);
 	else
 		printf("Unknow operation, %s\n", argv[1]);

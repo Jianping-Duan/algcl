@@ -39,7 +39,7 @@ main(int argc, char *argv[])
 	FILE *fp;
 	struct nfa_regexp nr;
 
-	if(argc != 3)
+	if (argc != 3)
 		errmsg_exit("Usage: %s <regexp> <text file>\n", argv[0]);
 
 	fp = open_file(argv[2], "r");	
@@ -50,8 +50,8 @@ main(int argc, char *argv[])
 	strcat(regexp, s2);
 
 	nfa_regexp_init(&nr, regexp);
-	while((line = string_read_line(fp)) != NULL)
-		if(nfa_regexp_recog(&nr, line)) {
+	while ((line = string_read_line(fp)) != NULL)
+		if (nfa_regexp_recog(&nr, line)) {
 			printf("%s\n", line);
 			ALGFREE(line);
 		}

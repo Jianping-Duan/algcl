@@ -21,7 +21,7 @@ strsuffix_init(struct string_suffixes *ss, const char *txt)
 	strcpy(ss->text, txt);
 
 	ss->index = (long *)algcalloc(ss->tlen, sizeof(long));
-	for(i = 0; i < ss->tlen; i++)
+	for (i = 0; i < ss->tlen; i++)
 		ss->index[i] = i;
 	
 	sort(ss, 0, ss->tlen - 1, 0);
@@ -34,7 +34,7 @@ strsuffix_init(struct string_suffixes *ss, const char *txt)
 long 
 strsuffix_lcp(const struct string_suffixes *ss, long i)
 {
-	if(i < 1 || i >= ss->tlen)
+	if (i < 1 || i >= ss->tlen)
 		errmsg_exit("Index %ld is not between 1 and %ld.\n", i, ss->tlen - 1);
 
 	return lcp(ss, ss->index[i], ss->index[i - 1]);
@@ -51,7 +51,7 @@ strsuffix_select(const struct string_suffixes *ss, long i)
 	e = ss->tlen - ss->index[i];
 
 	str = (char *)algcalloc(e - s + 2, sizeof(char));
-	while(s <= e)
+	while (s <= e)
 		*(str + j++) = ss->text[s++];
 	*(str + j) = '\0';	
 
@@ -69,12 +69,12 @@ strsuffix_rank(const struct string_suffixes *ss, const char *query)
 	int cmp;
 
 	lo = 0, hi = ss->tlen - 1;
-	while(lo <= hi) {
+	while (lo <= hi) {
 		mid = lo + (hi - lo) / 2;
 		cmp = compare(ss, query, ss->index[mid]);
-		if(cmp < 0)
+		if (cmp < 0)
 			hi = mid - 1;
-		else if(cmp > 0)
+		else if (cmp > 0)
 			lo = mid + 1;
 		else
 			return mid;
@@ -100,16 +100,16 @@ exch(struct string_suffixes *ss, long i, long j)
 static int 
 less(const struct string_suffixes *ss, long i, long j, long d)
 {
-	if(i == j)
+	if (i == j)
 		return 0;
 	
 	i = i + d;
 	j = j + d;
 
-	while(i < ss->tlen && j < ss->tlen) {
-		if(ss->text[i] < ss->text[j])
+	while (i < ss->tlen && j < ss->tlen) {
+		if (ss->text[i] < ss->text[j])
 			return 1;
-		if(ss->text[i] > ss->text[j])
+		if (ss->text[i] > ss->text[j])
 			return 0;
 
 		i++;
@@ -125,8 +125,8 @@ insertion_sort(struct string_suffixes *ss, long lo, long hi, long d)
 {
 	long i, j;
 
-	for(i = lo; i <= hi; i++)
-		for(j = i; j > lo && less(ss, j, j - 1, d); j--)
+	for (i = lo; i <= hi; i++)
+		for (j = i; j > lo && less(ss, j, j - 1, d); j--)
 			exch(ss, j, j - 1);
 }
 
@@ -137,7 +137,7 @@ sort(struct string_suffixes *ss, long lo, long hi, long d)
 	long lt, gt, i;
 	short v, t;
 
-	if(lo + INSERTION_SORT_CUTOFF >= hi) {
+	if (lo + INSERTION_SORT_CUTOFF >= hi) {
 		insertion_sort(ss, lo, hi, d);
 		return;
 	}
@@ -146,18 +146,18 @@ sort(struct string_suffixes *ss, long lo, long hi, long d)
 	i = lo + 1;
 	v = ss->text[ss->index[lo] + d];
 
-	while(i <= gt) {
+	while (i <= gt) {
 		t = ss->text[ss->index[i] + d];
-		if(t < v)
+		if (t < v)
 			exch(ss, lt++, i++);
-		else if(t > v)
+		else if (t > v)
 			exch(ss, i, gt--);
 		else
 			i++;
 	}
 
 	sort(ss, lo, lt - 1, d);
-	if(v >= 0)
+	if (v >= 0)
 		sort(ss, lt, gt, d + 1);
 	sort(ss, gt + 1, hi, d);
 }
@@ -169,16 +169,16 @@ compare(const struct string_suffixes *ss, const char *query, long i)
 	long len, j = 0;
 
 	len = strlen(query);
-	while(j < len && i < ss->tlen) {
+	while (j < len && i < ss->tlen) {
 		if(string_char_at(query, j) != (int)ss->text[i])
 			return string_char_at(query, j) - (int)ss->text[i];
 		j++;
 		i++;
 	}
 
-	if(i < ss->tlen)
+	if (i < ss->tlen)
 		return -1;
-	if(j < len)
+	if (j < len)
 		return 1;
 	return 0;
 }
@@ -189,8 +189,8 @@ lcp(const struct string_suffixes *ss, long i, long j)
 {
 	long len = 0;
 
-	while(i < ss->tlen && j < ss->tlen) {
-		if(ss->text[i] != ss->text[j])
+	while (i < ss->tlen && j < ss->tlen) {
+		if (ss->text[i] != ss->text[j])
 			return len;
 		i++;
 		j++;

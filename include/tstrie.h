@@ -60,7 +60,7 @@ struct tstrie {
 #define	TSTRIE_INIT(tst)	do {	\
 	(tst)->root = NULL;				\
 	(tst)->size = 0;				\
-} while(0)
+} while (0)
 
 /* Returns the number of keys in this TST */
 #define TSTRIE_SIZE(tst)	((tst)->size)
@@ -92,8 +92,8 @@ void tstrie_keys_match(const struct tstrie *tst, const char *pattern,
 					struct single_list *keys);
 
 /* 
- * Returns the string in the symbol table that is the 
- * longest prefix of query, or null, if no such string. 
+ * Returns the string in the symbol table that is the longest prefix of query,
+ * or null, if no such string. 
  */
 char * tstrie_longest_prefix(const struct tstrie *tst, const char *query);
 

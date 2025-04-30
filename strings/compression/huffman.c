@@ -86,7 +86,7 @@ huffman_compress(const char *infile, const char *outfile)
 
 	/* tabulate frequency counts */
 	freq = (int *)algmalloc(RADIX * sizeof(int));
-	for(i = 0; i < len; i++)
+	for (i = 0; i < len; i++)
 		freq[string_char_at(input, i)]++;
 
 	/* build Huffman trie */
@@ -95,7 +95,7 @@ huffman_compress(const char *infile, const char *outfile)
 	/* build code table */
 	codewidth = (unsigned int)ceil(log2((double)root->size));
 	st = (char **)algmalloc(RADIX * sizeof(char *));
-	for(i = 0; i < RADIX; i++) {
+	for (i = 0; i < RADIX; i++) {
 		*(st + i) = (char *)algmalloc((codewidth + 1) * sizeof(char));
 		*(*(st + i)) = '\0';
 	}
@@ -111,11 +111,11 @@ huffman_compress(const char *infile, const char *outfile)
 	boutput_write_long(&bo, len);
 
 	/* use Huffman code to encode input */
-	for(i = 0; i < len; i++) {
+	for (i = 0; i < len; i++) {
 		strcpy(code, st[string_char_at(input, i)]);
 		clen = strlen(code);
-		for(j = 0; j < clen; j++)
-			switch(code[j]) {
+		for (j = 0; j < clen; j++)
+			switch (code[j]) {
 				case '0':
 					boutput_write_bool(&bo, false);
 					break;
@@ -133,7 +133,7 @@ huffman_compress(const char *infile, const char *outfile)
 	ALGFREE(input);
 	huffman_clear(root);
 
-	for(i = 0; i < RADIX; i++)
+	for (i = 0; i < RADIX; i++)
 		ALGFREE(st[i]);
 	ALGFREE(st);
 	ALGFREE(code);
@@ -169,11 +169,11 @@ huffman_expand(const char *infile, const char *outfile)
 	len = binput_read_long(&bi);
 
 	/* decode using the Huffman trie */
-	for(i = 0; i < len; i++) {
+	for (i = 0; i < len; i++) {
 		x = root;
-		while(!huffman_isleaf(x)) {
+		while (!huffman_isleaf(x)) {
 			bit = binput_read_bool(&bi);
-			if(bit)
+			if (bit)
 				x = x->right;
 			else
 				x = x->left;
@@ -212,9 +212,9 @@ compare(const void *k1, const void *k2)
 	node1 = (struct huffman_node *)k1;
 	node2 = (struct huffman_node *)k2;
 
-	if(node1->freq < node2->freq)
+	if (node1->freq < node2->freq)
 		return 1;
-	else if(node1->freq == node2->freq)
+	else if (node1->freq == node2->freq)
 		return 0;
 	else
 		return -1;
@@ -230,8 +230,8 @@ build_trie(const int *freqs)
 
     /* initialize priority queue with singleton trees */
 	pheap_init(&pq, 0, compare);
-	for(c = 0; c < RADIX; c++)
-		if(freqs[c] > 0) {
+	for (c = 0; c < RADIX; c++)
+		if (freqs[c] > 0) {
 			node = algmalloc(sizeof(struct huffman_node));
 			node->ch = c;
 			node->freq = freqs[c];
@@ -243,7 +243,7 @@ build_trie(const int *freqs)
 		}
 
 	/* merge two smallest trees */
-	while(PHEAP_SIZE(&pq) > 1) {
+	while (PHEAP_SIZE(&pq) > 1) {
 		left = (struct huffman_node *)pheap_delete(&pq);
 		right = (struct huffman_node *)pheap_delete(&pq);
 
@@ -267,7 +267,7 @@ build_trie(const int *freqs)
 static void 
 write_trie(struct huffman_node *node, struct binary_output *bo)
 {
-	if(huffman_isleaf(node)) {
+	if (huffman_isleaf(node)) {
 		boutput_write_bool(bo, true);
 		boutput_write_int_r(bo, node->ch, 8);
 		return;
@@ -282,14 +282,13 @@ write_trie(struct huffman_node *node, struct binary_output *bo)
 static void 
 build_code(char **st, struct huffman_node *node, char *code)
 {
-	if(!huffman_isleaf(node)) {
+	if (!huffman_isleaf(node)) {
 		build_code(st, node->left, strcat(code, "0"));
 		delete_char_at(code, strlen(code) - 1);
 		
 		build_code(st, node->right, strcat(code, "1"));
 		delete_char_at(code, strlen(code) - 1);
-	}
-	else 
+	} else 
 		strcpy(st[node->ch], code);
 }
 
@@ -302,13 +301,12 @@ read_trie(struct binary_input *bi)
 	isleaf = binput_read_bool(bi);
 
 	node = (struct huffman_node *)algmalloc(sizeof(struct huffman_node));
-	if(isleaf) {
+	if (isleaf) {
 		node->ch = binput_read_int_r(bi, 8);
 		node->freq = -1;
 		node->left = NULL;
 		node->right = NULL;
-	}
-	else {
+	} else {
 		node->ch = '\0';
 		node->freq = -1;
 		node->left = read_trie(bi);
@@ -321,7 +319,7 @@ read_trie(struct binary_input *bi)
 static void 
 huffman_clear(struct huffman_node *root)
 {
-	if(root != NULL) {
+	if (root != NULL) {
 		huffman_clear(root->left);
 		huffman_clear(root->right);
 		ALGFREE(root);

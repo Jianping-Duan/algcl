@@ -55,7 +55,7 @@ struct trie {
 #define TRIE_INIT(t)	do {	\
 	(t)->root = NULL;			\
 	(t)->size = 0;				\
-} while(0)
+} while (0)
 
 /* Returns the number of strings in the set. */
 #define TRIE_SIZE(t)	((t)->size)

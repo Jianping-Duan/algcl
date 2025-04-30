@@ -33,7 +33,6 @@
 
 #define STRING_RADIX	256
 
-
 static inline int get_prime_number(void);
 static long hash(const char *, int, int);
 static int check(const char *, int, const char *, int);
@@ -48,12 +47,12 @@ string_violence_search(const char *pat, const char *txt)
 	int i, j, tlen, plen;
 
 	tlen = (int)strlen(txt), plen = (int)strlen(pat);
-	for(i = 0; i <= tlen - plen; i++) {
-		for(j = 0; j < plen; j++)
-			if(string_char_at(txt, i + j) != string_char_at(pat, j))
+	for (i = 0; i <= tlen - plen; i++) {
+		for (j = 0; j < plen; j++)
+			if (string_char_at(txt, i + j) != string_char_at(pat, j))
 				break;
 
-		if(j == plen)	/* have found */
+		if (j == plen)	/* have found */
 			return i;
 	}
 	
@@ -68,8 +67,8 @@ violence_search_back(const char *pat, const char *txt)
 	int i, j, tlen, plen;
 
 	tlen = (int)strlen(txt), plen = (int)strlen(pat);
-	for(i = 0, j = 0; i < tlen && j < plen; i++) {
-		if(string_char_at(txt, i) == string_char_at(pat, j))
+	for (i = 0, j = 0; i < tlen && j < plen; i++) {
+		if (string_char_at(txt, i) == string_char_at(pat, j))
 			j++;	/* match next */
 		else {
 			i -= j; /* back to not matched location */
@@ -77,7 +76,7 @@ violence_search_back(const char *pat, const char *txt)
 		}
 	}
 
-	if(j == plen)	/* have found */
+	if (j == plen)	/* have found */
 		return i - plen;
 	return tlen;
 }
@@ -91,30 +90,30 @@ string_kmp_search(const char *pat, const char *txt)
 
 	plen = (int)strlen(pat), tlen = (int)strlen(txt);
 	dfa = (int **)algcalloc(STRING_RADIX, sizeof(int *));
-	for(c = 0; c < STRING_RADIX; c++)
+	for (c = 0; c < STRING_RADIX; c++)
 		dfa[c] = (int *)algcalloc(plen, sizeof(int));
 
 	/* build DFA from pattern */
-	for(c = 0; c < STRING_RADIX; c++)
-		for(j = 0; j < plen; j++)
+	for (c = 0; c < STRING_RADIX; c++)
+		for (j = 0; j < plen; j++)
 			dfa[c][j] = 0;
 	dfa[string_char_at(pat, 0)][0] = 1;
 
-	for(x = 0, j = 1; j < plen; j++) {
-		for(c = 0; c < STRING_RADIX; c++)
+	for (x = 0, j = 1; j < plen; j++) {
+		for (c = 0; c < STRING_RADIX; c++)
 			dfa[c][j] = dfa[c][x];	/* copy mismatch cases */
 		dfa[string_char_at(pat, j)][j] = j + 1;	/* set match case. */
 		x = dfa[string_char_at(pat, j)][x];	/* update restart state. */
 	}
 
-	for(i = 0, j = 0; i < tlen && j < plen; i++)
+	for (i = 0, j = 0; i < tlen && j < plen; i++)
 		j = dfa[string_char_at(txt, i)][j];
 
-	for(c = 0; c < STRING_RADIX; c++)
+	for (c = 0; c < STRING_RADIX; c++)
 		ALGFREE(dfa[c]);
 	ALGFREE(dfa);
 	
-	if(j == plen)
+	if (j == plen)
 		return i - plen;	/* found */
 	return tlen;	/* not found */
 }
@@ -130,20 +129,20 @@ boyer_moore_search(const char *pat, const char *txt)
 
 	/* position of rightmost occurrence of c in the pattern */
 	right = (int *)algcalloc(STRING_RADIX, sizeof(int));
-	for(c = 0; c < STRING_RADIX; c++)
+	for (c = 0; c < STRING_RADIX; c++)
 		right[c] = -1;
-	for(c = 0; c < plen; c++)
+	for (c = 0; c < plen; c++)
 		right[string_char_at(pat, c)] = c;
 
-	for(i = 0, skip = -1; i <= tlen - plen; i += skip) {
+	for (i = 0, skip = -1; i <= tlen - plen; i += skip) {
 		skip = 0;
-		for(j = plen - 1; j >= 0; j--)
-			if(string_char_at(pat, j) != string_char_at(txt, i + j)) {
+		for (j = plen - 1; j >= 0; j--)
+			if (string_char_at(pat, j) != string_char_at(txt, i + j)) {
 				skip = MAX(1, j - right[string_char_at(txt, i + j)]);
 				break;
 			}
 
-		if(skip == 0)
+		if (skip == 0)
 			return i;
 	}
 
@@ -162,7 +161,7 @@ rabin_karp_search(const char *pat, const char *txt)
 	plen = (int)strlen(pat);
 	tlen = (int)strlen(txt);
 
-	if(tlen < plen)
+	if (tlen < plen)
 		return tlen;
 
 	prim = get_prime_number();
@@ -170,16 +169,16 @@ rabin_karp_search(const char *pat, const char *txt)
 	phash = hash(pat, plen, prim);
 
 	/* check for match at offset 0 */
-	if(thash == phash && check(pat, 0, txt, 0))
+	if (thash == phash && check(pat, 0, txt, 0))
 		return 0;
 
 	/* precompute R^(m-1) % q for use in removing leading digit */
 	rm = 1;
-	for(i = 1; i <= plen - 1; i++)
+	for (i = 1; i <= plen - 1; i++)
 		rm = (rm * STRING_RADIX) % prim;	/* R^(M - 1)%Q */
 
 	/* check for hash match; if hash match, check for exact match */
-	for(i = plen; i < tlen; i++) {
+	for (i = plen; i < tlen; i++) {
 		/* Remove leading digit, add trailing digit, check for match. */
 		thash = (thash + prim - rm * 
 			string_char_at(txt, i - plen) % prim) % prim;
@@ -187,7 +186,7 @@ rabin_karp_search(const char *pat, const char *txt)
 
 		/* match */
 		offset = i - plen + 1;
-		if(phash == thash && check(pat, 0, txt, offset))
+		if (phash == thash && check(pat, 0, txt, offset))
 			return offset;
 	}
 
@@ -220,7 +219,7 @@ hash(const char *key, int len, int prim)
 	long h = 0; 
 	int i;
 
-	for(i = 0; i < len; i++) 
+	for (i = 0; i < len; i++) 
 		h = (STRING_RADIX * h + string_char_at(key, i)) % prim;
 	return h;
 }
@@ -231,8 +230,8 @@ check(const char *pat, int plen, const char *txt, int i)
 {
 	int j;
 	
-	for(j = 0; j < plen; j++)
-		if(string_char_at(pat, j) != string_char_at(txt, i + j))
+	for (j = 0; j < plen; j++)
+		if (string_char_at(pat, j) != string_char_at(txt, i + j))
 			return 0;
 	return 1;
 }

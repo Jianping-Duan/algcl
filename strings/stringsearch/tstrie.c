@@ -41,7 +41,8 @@ static struct tstrie_node * put(struct tstrie_node *, const char *, int, int);
 static void collect(const struct tstrie_node *, char *, struct single_list *);
 static void collect_pat(const struct tstrie_node *, char *, int, const char *,
 	struct single_list *);
-static struct tstrie_node * delete_node(struct tstrie_node *, const char *, int);
+static struct tstrie_node * delete_node(struct tstrie_node *, const char *,
+	int);
 static void release(struct tstrie_node *);
 
 /* Returns the value associated with the given key. */
@@ -50,13 +51,12 @@ tstrie_get(const struct tstrie *tst, const char *key)
 {
 	const struct tstrie_node *node;
 
-	if(key == NULL)
+	if (key == NULL)
 		errmsg_exit("Calls tstrie_get() with null argument.\n");
-
-	if(strlen(key) == 0)
+	if (strlen(key) == 0)
 		return -1;
 
-	if((node = get(tst->root, key, 0)) == NULL)
+	if ((node = get(tst->root, key, 0)) == NULL)
 		return -1;
 	return node->value;
 }
@@ -65,10 +65,10 @@ tstrie_get(const struct tstrie *tst, const char *key)
 void 
 tstrie_put(struct tstrie *tst, const char *key, int val)
 {
-	if(key == NULL)
+	if (key == NULL)
 		errmsg_exit("Calls tstrie_put() with null key.\n");
 
-	if(TSTRICE_CONTAINS(tst, key))
+	if (TSTRICE_CONTAINS(tst, key))
 		return;
 
 	tst->root = put(tst->root, key, val, 0);
@@ -97,11 +97,11 @@ tstrie_keys_prefix(const struct tstrie *tst, const char *prefix,
 	char *buf;
 
 	slist_init(keys, MAX_STRING_LEN, NULL);
-	if((node = get(tst->root, prefix, 0)) == NULL)
+	if ((node = get(tst->root, prefix, 0)) == NULL)
 		return;
 
 	buf = (char *)algmalloc(MAX_STRING_LEN * sizeof(char));
-	if(node->value != -1) {
+	if (node->value != -1) {
 		strcpy(buf, prefix);
 		slist_append(keys, buf);
 		memset(buf, 0, MAX_STRING_LEN);
@@ -130,8 +130,8 @@ tstrie_keys_match(const struct tstrie *tst, const char *pattern,
 }
 
 /* 
- * Returns the string in the symbol table that is the 
- * longest prefix of query, or null, if no such string. 
+ * Returns the string in the symbol table that is the longest prefix of query,
+ * or null, if no such string. 
  */
 char * 
 tstrie_longest_prefix(const struct tstrie *tst, const char *query)
@@ -140,23 +140,23 @@ tstrie_longest_prefix(const struct tstrie *tst, const char *query)
 	struct tstrie_node *node;
 	char *prefix;
 
-	if(query == NULL)
+	if (query == NULL)
 		errmsg_exit("calls tstrie_longest_prefix() argument query is null.\n");
 
-	if(strlen(query) == 0)
+	if (strlen(query) == 0)
 		return NULL;
 
 	node = tst->root;
 	len = 0, i = 0;
-	while(node != NULL && i < (int)strlen(query)) {
+	while (node != NULL && i < (int)strlen(query)) {
 		c = string_char_at(query, i);
-		if(c < node->ch)
+		if (c < node->ch)
 			node = node->left;
-		else if(c > node->ch)
+		else if (c > node->ch)
 			node = node->right;
 		else {
 			i++;
-			if(node->ch != -1)
+			if (node->ch != -1)
 				len = i;
 			node = node->mid;
 		}
@@ -176,18 +176,18 @@ tstrie_delete(struct tstrie *tst, const char *key)
 	char *buf;
 	struct single_list keys;
 
-	if(key == NULL)
+	if (key == NULL)
 		errmsg_exit("The argument key is null for tstrie_delete().\n");
 
 	buf = (char *)algcalloc(strlen(key) + 1, sizeof(char));
 	strcpy(buf, key);
 
-	if(TSTRICE_CONTAINS(tst, buf)) {
+	if (TSTRICE_CONTAINS(tst, buf)) {
 		tst->root = delete_node(tst->root, buf, 0); 
-		while(strlen(buf) > 1) {
+		while (strlen(buf) > 1) {
 			delete_char_at(buf, strlen(buf) - 1);
 			tstrie_keys_prefix(tst, buf, &keys);
-			if(SLIST_LENGTH(&keys) > 0)
+			if (SLIST_LENGTH(&keys) > 0)
 				break;
 			tst->root = delete_node(tst->root, buf, 0); 
 		}
@@ -201,7 +201,7 @@ tstrie_delete(struct tstrie *tst, const char *key)
 void 
 tstrie_clear(struct tstrie *tst)
 {
-	if(TSTRIE_SIZE(tst) > 0) {
+	if (TSTRIE_SIZE(tst) > 0) {
 		release(tst->root);
 		tst->size = 0;
 	}
@@ -215,15 +215,15 @@ get(const struct tstrie_node *node, const char *key, int d)
 {
 	int c;
 
-	if(node == NULL)
+	if (node == NULL)
 		return NULL;
 
 	c = string_char_at(key, d);
-	if(c < node->ch)
+	if (c < node->ch)
 		return get(node->left, key, d);
-	else if(c > node->ch)
+	else if (c > node->ch)
 		return get(node->right, key, d);
-	else if(d < (int)strlen(key) - 1)
+	else if (d < (int)strlen(key) - 1)
 		return get(node->mid, key, d + 1);
 	else
 		return node;
@@ -235,7 +235,7 @@ put(struct tstrie_node *node, const char *key, int val, int d)
 	int c = string_char_at(key, d);
 	long mh = -1;
 
-	if(node == NULL) {
+	if (node == NULL) {
 		node = algmalloc(sizeof(struct tstrie_node));
 		node->left = NULL, node->mid = NULL, node->right = NULL;
 		node->ch = c;
@@ -243,11 +243,11 @@ put(struct tstrie_node *node, const char *key, int val, int d)
 		node->height = 0;
 	}
 
-	if(c < node->ch)
+	if (c < node->ch)
 		node->left = put(node->left, key, val, d);
-	else if(c > node->ch)
+	else if (c > node->ch)
 		node->right = put(node->right, key, val, d);
-	else if(d < (int)strlen(key) - 1)
+	else if (d < (int)strlen(key) - 1)
 		node->mid = put(node->mid, key, val, d + 1);
 	else
 		node->value = val;
@@ -265,12 +265,12 @@ collect(const struct tstrie_node *node, char *prefix,
 {
 	char s[2], *rstr;
 
-	if(node == NULL)
+	if (node == NULL)
 		return;
 	
 	collect(node->left, prefix, result);
 	s[0] = (char)node->ch, s[1] = '\0';
-	if(node->value != -1) {
+	if (node->value != -1) {
 		rstr = (char *)algmalloc(MAX_STRING_LEN * sizeof(char));
 		strcpy(rstr, prefix);
 		strcat(rstr, s);
@@ -289,17 +289,17 @@ collect_pat(const struct tstrie_node *node, char *prefix, int d,
 	int c;
 	char s[2], *rstr;
 
-	if(node == NULL)
+	if (node == NULL)
 		return;
 
 	c = string_char_at(pat, d);
 
-	if(c == (int)'.' || c < node->ch)
+	if (c == (int)'.' || c < node->ch)
 		collect_pat(node->left, prefix, d, pat, result);
 
-	if(c == (int)'.' || c == node->ch) {
+	if (c == (int)'.' || c == node->ch) {
 		s[0] = (char)node->ch, s[1] = '\0';
-		if(d == (int)strlen(pat) - 1 && node->value != -1) {
+		if (d == (int)strlen(pat) - 1 && node->value != -1) {
 			rstr = (char *)algmalloc(MAX_STRING_LEN * sizeof(char));
 			strcpy(rstr, prefix);
 			strcat(rstr, s);
@@ -307,13 +307,13 @@ collect_pat(const struct tstrie_node *node, char *prefix, int d,
 			ALGFREE(rstr);
 		}
 		
-		if(d < (int)strlen(pat) - 1) {
+		if (d < (int)strlen(pat) - 1) {
 			collect_pat(node->mid, strcat(prefix, s), d + 1, pat, result);
 			delete_char_at(prefix, (int)strlen(prefix) - 1);
 		}
 	}
 
-	if(c == (int)'.' || c > node->ch)
+	if (c == (int)'.' || c > node->ch)
 		collect_pat(node->right, prefix, d, pat, result);
 }
 
@@ -324,31 +324,31 @@ delete_node(struct tstrie_node *node, const char *key, int d)
 	long mh = -1;
 	struct tstrie_node *current = NULL;
 
-	if(node == NULL)
+	if (node == NULL)
 		return NULL;
 
 	c = string_char_at(key, d);
-	if(c < node->ch)
+	if (c < node->ch)
 		node->left = delete_node(node->left, key, d);
-	else if(c > node->ch)
+	else if (c > node->ch)
 		node->right = delete_node(node->right, key, d);
 	else {
-		if(d < (int)strlen(key) - 1)
+		if (d < (int)strlen(key) - 1)
 			node->mid = delete_node(node->mid, key, d + 1);
 
-		if(d == (int)strlen(key) - 1) {
-			if(node->mid != NULL && node->value != -1) {
+		if (d == (int)strlen(key) - 1) {
+			if (node->mid != NULL && node->value != -1) {
 				node->value = -1;
 				return node;
 			}
 
-			if(node->mid == NULL && node->left == NULL && 
+			if (node->mid == NULL && node->left == NULL &&
 			   node->right == NULL) {
 				ALGFREE(node);
 				return NULL;
 			}
 			
-			if(node->left == NULL) {
+			if (node->left == NULL) {
 				current = node->right;
 				ALGFREE(node);
 				return current;
@@ -371,7 +371,7 @@ delete_node(struct tstrie_node *node, const char *key, int d)
 static void 
 release(struct tstrie_node *node)
 {
-	if(node != NULL) {
+	if (node != NULL) {
 		release(node->left);
 		release(node->right);
 		release(node->mid);

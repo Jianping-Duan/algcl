@@ -66,18 +66,18 @@ main(int argc, char *argv[])
 	extern char *optarg;
 	extern int optind;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'f':
 				fname = optarg;
 				break;
 			case 'n':
-				if(sscanf(optarg, "%d", &sz) != 1)
+				if (sscanf(optarg, "%d", &sz) != 1)
 					errmsg_exit("Illegal number. -n %s\n",	optarg);
-				if(sz <= 0) {
+				if (sz <= 0) {
 					errmsg_exit("The number of characters must be "
 						"greater than 0.\n");
 				}
@@ -88,7 +88,7 @@ main(int argc, char *argv[])
 		}
 	}
 
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 
 	txtfile = open_file(fname, "r");
@@ -100,15 +100,15 @@ main(int argc, char *argv[])
 	/* build suffix array */
 	strsuffix_init(&ss, text);
 
-	while((query = string_read_line(stdin)) != NULL && query[0] != '\0') {
+	while ((query = string_read_line(stdin)) != NULL && query[0] != '\0') {
 		qlen = strlen(query);
 		i = strsuffix_rank(&ss, query);
-		for(i = strsuffix_rank(&ss, query); i < tlen; i++) {
+		for (i = strsuffix_rank(&ss, query); i < tlen; i++) {
 			index = from = strsuffix_index(&ss, i);
 			to = MIN(tlen, from + qlen);
 
 			subtxt = substring(text, from, to);
-			if(strcmp(query, subtxt) != 0) {
+			if (strcmp(query, subtxt) != 0) {
 				ALGFREE(query);
 				ALGFREE(subtxt);
 				break;

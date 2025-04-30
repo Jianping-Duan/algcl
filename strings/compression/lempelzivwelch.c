@@ -75,7 +75,7 @@ lzw_compress(const char *infile, const char *outfile)
 
 	/* since TST is not balanced, */
 	/* it would be better to insert in a different order */
-	for(i = 1; i < RADIX; i++) {
+	for (i = 1; i < RADIX; i++) {
 		s[0] = (char)i;
 		s[1] = '\0';
 		tstrie_put(&st, s, i);
@@ -83,7 +83,7 @@ lzw_compress(const char *infile, const char *outfile)
 
 	code = RADIX + 1;	/* R is codeword for EOF */
 
-	while(slen > 1) {
+	while (slen > 1) {
 		/* find max prefix match 'prefix' */
 		prefix = tstrie_longest_prefix(&st, input);
 		plen = strlen(prefix);
@@ -93,7 +93,7 @@ lzw_compress(const char *infile, const char *outfile)
 		ALGFREE(prefix);
 
 		/* add s to symbol table. */
-		if(plen < slen && code < LENGTH) {
+		if (plen < slen && code < LENGTH) {
 			subs = substring(input, 0, plen + 1); 
 			tstrie_put(&st, subs, code++);
 			ALGFREE(subs);
@@ -134,16 +134,16 @@ lzw_expand(const char *infile, const char *outfile)
 	start_time = clock();
 
 	binput_init(&bi, infile);
-	if((codeword = binput_read_int_r(&bi, WIDTH)) == RADIX) {
+	if ((codeword = binput_read_int_r(&bi, WIDTH)) == RADIX) {
 		BINPUT_CLOSE(&bi);
 		return;	/* expanded message is empty string */
 	}
 
 	st = (char **)algmalloc(LENGTH * sizeof(char *));
-	for(i = 0; i < LENGTH; i++)
+	for (i = 0; i < LENGTH; i++)
 		*(st + i) = (char *)algmalloc(MAX_STRLEN * sizeof(char));
 
-	for(i = 1; i < RADIX; i++) {
+	for (i = 1; i < RADIX; i++) {
 		s[0] = (char)i;
 		s[1] = '\0';
 		strcpy(st[i], s);
@@ -155,20 +155,20 @@ lzw_expand(const char *infile, const char *outfile)
 	strncpy(val, st[codeword], MAX_STRLEN - 1);
 
 	boutput_init(&bo, outfile);
-	while(1) {
+	while (1) {
 		boutput_write_string(&bo, val);
-		if((codeword = binput_read_int_r(&bi, WIDTH)) == RADIX)
+		if ((codeword = binput_read_int_r(&bi, WIDTH)) == RADIX)
 			break;
 		strncpy(tmp, st[codeword], MAX_STRLEN - 1);
 
-		if(i == codeword) {	/* special case hack */
+		if (i == codeword) {	/* special case hack */
 			strcat(tmp, val);
 			s[0] = val[0];
 			s[1] = '\0';
 			strcat(tmp, s);
 		}
 
-		if(i < LENGTH) {
+		if (i < LENGTH) {
 			strcpy(st[i], val);
 			s[0] = tmp[0];
 			s[1] = '\0';
@@ -188,7 +188,7 @@ lzw_expand(const char *infile, const char *outfile)
 
 	ALGFREE(val);
 	ALGFREE(tmp);
-	for(i = 0; i < LENGTH; i++)
+	for (i = 0; i < LENGTH; i++)
 		ALGFREE(*(st + i));
 	ALGFREE(st);
 
@@ -204,13 +204,13 @@ left_trim(char *tgt, long i)
 {
 	long len, k;
 
-	if(i <= 0)
+	if (i <= 0)
 		return;
 
-	if((len = strlen(tgt)) <= i)
+	if ((len = strlen(tgt)) <= i)
 		return;
 
-	for(k = 0; i < len; i++, k++) {
+	for (k = 0; i < len; i++, k++) {
 		*(tgt + k) = *(tgt + i);
 		*(tgt + i) = '\0';
 	}

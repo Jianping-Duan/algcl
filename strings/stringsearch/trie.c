@@ -49,10 +49,10 @@ static void release(struct trie_node *node);
 bool 
 trie_contains(const struct trie *t, const char *key)
 {
-	if(key == NULL)
+	if (key == NULL)
 		return false;
 
-	if(get(t->root, key, 0) == NULL)
+	if (get(t->root, key, 0) == NULL)
 		return false;
 	return true;
 }
@@ -63,10 +63,10 @@ trie_get(const struct trie *t, const char *key)
 {
 	struct trie_node *node;
 
-	if(key == NULL)
+	if (key == NULL)
 		errmsg_exit("The argument key is null for trie_get().\n");
 
-	if((node = get(t->root, key, 0)) != NULL)
+	if ((node = get(t->root, key, 0)) != NULL)
 		return node->value;
 	return TRIE_VALUE_NULL;
 }
@@ -75,7 +75,7 @@ trie_get(const struct trie *t, const char *key)
 void 
 trie_put(struct trie *t, const char *key, long value)
 {
-	if(key == NULL)
+	if (key == NULL)
 		errmsg_exit("The argument key is null for trie_add().\n");
 
 	t->root = put(t, t->root, key, value, 0);
@@ -85,7 +85,7 @@ trie_put(struct trie *t, const char *key, long value)
 void 
 trie_delete(struct trie *t, const char *key)
 {
-	if(key == NULL)
+	if (key == NULL)
 		errmsg_exit("The argument key is null for trie_delete().\n");
 
 	t->root = delete(t, t->root, key, 0);
@@ -141,10 +141,10 @@ trie_longest_prefix(const struct trie *t, const char *query, char *tgstr)
 {
 	int len;
 
-	if(query == NULL)
+	if (query == NULL)
 		errmsg_exit("The argument query is null for trie_longest_prefix().\n");
 
-	if((len = longest_prefix(t->root, query, 0, -1)) == -1)
+	if ((len = longest_prefix(t->root, query, 0, -1)) == -1)
 		*tgstr = '\0';
 	else
 		strncpy(tgstr, query, len);
@@ -153,7 +153,7 @@ trie_longest_prefix(const struct trie *t, const char *query, char *tgstr)
 void 
 trie_clear(struct trie *t)
 {
-	if(TRIE_ISEMPTY(t))
+	if (TRIE_ISEMPTY(t))
 		return;
 	release(t->root);
 	t->size = 0;
@@ -164,10 +164,10 @@ trie_clear(struct trie *t)
 static struct trie_node * 
 get(struct trie_node *node, const char *key, int d)
 {
-	if(node == NULL)
+	if (node == NULL)
 		return NULL;
 	
-	if((int)strlen(key) == d)
+	if ((int)strlen(key) == d)
 		return node;
 	
 	return get(node->next[string_char_at(key, d)], key, d + 1);
@@ -178,19 +178,18 @@ put(struct trie *t, struct trie_node *node, const char *key, long value, int d)
 {
 	int ch; 
 
-	if(node == NULL) {
+	if (node == NULL) {
 		node = (struct trie_node *)algmalloc(sizeof(struct trie_node));
 		node->value = TRIE_VALUE_NULL;
-		for(ch = 0; ch < STRING_RADIX; ch++)
+		for (ch = 0; ch < STRING_RADIX; ch++)
 			node->next[ch] = NULL;
 	}
 
-	if(d == (int)strlen(key)) {
-		if(node->value == TRIE_VALUE_NULL)
+	if (d == (int)strlen(key)) {
+		if (node->value == TRIE_VALUE_NULL)
 			t->size++;
 		node->value = value;
-	}
-	else {
+	} else {
 		ch = string_char_at(key, d);
 		node->next[ch] = put(t, node->next[ch], key, value, d + 1);
 	}
@@ -203,26 +202,24 @@ delete(struct trie *t, struct trie_node *node, const char *key, int d)
 {
 	int ch;
 
-	if(node == NULL)
+	if (node == NULL)
 		return NULL;
 
-	if(d == (int)strlen(key)) {
-		if(node->value != TRIE_VALUE_NULL)
+	if (d == (int)strlen(key)) {
+		if (node->value != TRIE_VALUE_NULL)
 			t->size--;
 		node->value = TRIE_VALUE_NULL;
-	}
-	else {
+	} else {
 		ch = string_char_at(key, d);
 		node->next[ch] = delete(t, node->next[ch], key, d + 1);
 	}
 
 	/* remove subtrie rooted at x if it is completely empty */
-	if(node->value != TRIE_VALUE_NULL)
+	if (node->value != TRIE_VALUE_NULL)
 		return node;
-	for(ch = 0; ch < STRING_RADIX; ch++)
-		if(node->next[ch] != NULL) {
+	for (ch = 0; ch < STRING_RADIX; ch++)
+		if (node->next[ch] != NULL)
 			return node;
-		}
 
 	ALGFREE(node); /* node->next[ch] == NULL && !node->isstring */
 	return NULL;
@@ -234,13 +231,13 @@ collect(const struct trie_node *node, char *prefix, struct single_list *result)
 	int c;
 	char s[2];
 
-	if(node == NULL)
+	if (node == NULL)
 		return;
 
-	if(node->value != TRIE_VALUE_NULL)
+	if (node->value != TRIE_VALUE_NULL)
 		slist_append(result, prefix);
 
-	for(c = 1; c < STRING_RADIX; c++) { /* exclusion c = 0 ('\0') */
+	for (c = 1; c < STRING_RADIX; c++) { /* exclusion c = 0 ('\0') */
 		s[0] = (char)c,	s[1] = '\0';
 		strcat(prefix, s);
 		collect(node->next[c], prefix, result);
@@ -255,20 +252,20 @@ collect_pat(const struct trie_node *node, char *prefix, const char *pat,
 	int c, ch, len1, len2;
 	char s[2];
 
-	if(node == NULL)
+	if (node == NULL)
 		return;
 
 	len1 = strlen(prefix);
 	len2 = strlen(pat);
-	if(len1 == len2 && node->value != TRIE_VALUE_NULL)
+	if (len1 == len2 && node->value != TRIE_VALUE_NULL)
 		slist_append(result, prefix);
 
-	if(len1 == len2)
+	if (len1 == len2)
 		return;
 
 	c = string_char_at(pat, len1);
-	if(c == (int)'.')
-		for(ch = 1; ch < STRING_RADIX; ch++) {
+	if (c == (int)'.')
+		for (ch = 1; ch < STRING_RADIX; ch++) {
 			s[0] = (char)ch, s[1] = '\0';
 			strcat(prefix, s);
 			collect_pat(node->next[ch], prefix, pat, result);
@@ -291,13 +288,13 @@ collect_pat(const struct trie_node *node, char *prefix, const char *pat,
 static int 
 longest_prefix(struct trie_node *node, const char *query, int d, int len)
 {
-	if(node == NULL)
+	if (node == NULL)
 		return len;
 
-	if(node->value != TRIE_VALUE_NULL)
+	if (node->value != TRIE_VALUE_NULL)
 		len = d;
 
-	if(d == (int)strlen(query))
+	if (d == (int)strlen(query))
 		return len;
 
 	return longest_prefix(node->next[string_char_at(query, d)], query,
@@ -309,8 +306,8 @@ release(struct trie_node *node)
 {
 	int c;
 
-	if(node != NULL) {
-		for(c = 0; c < STRING_RADIX; c++)
+	if (node != NULL) {
+		for (c = 0; c < STRING_RADIX; c++)
 			release(node->next[c]);
 		ALGFREE(node);
 	}

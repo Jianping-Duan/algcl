@@ -42,13 +42,13 @@ main(void)
 	len = strlen(str);
 
 	strsuffix_init(&ss, str);
-	for(i = 0; i < len; i++) {
+	for (i = 0; i < len; i++) {
 		index = strsuffix_index(&ss, i);
 		ith = substring(str, index, len - 1);
 		rs = substring(str, 0, index);
 		rank = strsuffix_rank(&ss, rs);
 
-		if(i == 0)
+		if (i == 0)
 			printf("%3ld %3ld %3s %3ld   %s\n", i, index, "-", rank, ith);
 		else {
 			lcp = strsuffix_lcp(&ss, i);

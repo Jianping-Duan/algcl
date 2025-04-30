@@ -47,7 +47,6 @@ static inline void mstsort_aux(char **, long, long, int, char **);
 static inline void ipmstsort(char **, long, long, int);
 static inline void quick_sort(char **, long, long, int);
 
-
 /* Least-significant digit sort */
 void 
 lsdsort(char **sa, int w, long n)
@@ -57,36 +56,36 @@ lsdsort(char **sa, int w, long n)
 	char **aux;
 
 	aux = (char **)algcalloc(n, sizeof(char *));
-	for(i = 0; i < n; i++)
+	for (i = 0; i < n; i++)
 		aux[i] = (char *)algcalloc(w + 1, sizeof(char));
 
 	count = (int *)algcalloc(STRING_RADIX + 1, sizeof(int));
 
 	/* sort by key-indexed counting on dth character */
-	for(d = w - 1; d >= 0; d--) {
+	for (d = w - 1; d >= 0; d--) {
 
 		/* initialize counter array */
-		for(r = 0; r <= STRING_RADIX; r++)
+		for (r = 0; r <= STRING_RADIX; r++)
 			count[r] = 0;
 		
 		/* compute frequency counts */
-		for(i = 0; i < n; i++)
+		for (i = 0; i < n; i++)
 			count[string_char_at(sa[i], d) + 1]++;
 		
 		/* compute cumulates */
-		for(r = 0; r < STRING_RADIX; r++)
+		for (r = 0; r < STRING_RADIX; r++)
 			count[r + 1] += count[r];
 
 		/* move data */
-		for(i = 0; i < n; i++)
+		for (i = 0; i < n; i++)
 			strncpy(aux[count[string_char_at(sa[i], d)]++], sa[i], w + 1);
 
 		/* move data */
-		for(i = 0; i < n; i++)
+		for (i = 0; i < n; i++)
 			strncpy(sa[i], aux[i], w + 1);
 	}
 
-	for(i = 0; i < n; i++)
+	for (i = 0; i < n; i++)
 		ALGFREE(aux[i]);
 	ALGFREE(aux);
 	ALGFREE(count);
@@ -100,12 +99,12 @@ mstsort(char **sa, int mw, long n)
 	char **aux;
 
 	aux = (char **)algcalloc(n, sizeof(char *));
-	for(i = 0; i < n; i++)
+	for (i = 0; i < n; i++)
 		aux[i] = (char *)algcalloc(mw + 1, sizeof(char));
 
 	mstsort_aux(sa, 0, n - 1, 0, aux);
 
-	for(i = 0; i < n; i++)
+	for (i = 0; i < n; i++)
 		ALGFREE(aux[i]);
 	ALGFREE(aux);
 }
@@ -133,10 +132,10 @@ less(const char *str1, const char *str2, int d)
 	long len1, len2, i;
 
 	len1 = strlen(str1), len2 = strlen(str2);
-	for(i = d; i < MAX(len1, len2); i++) {
-		if(string_char_at(str1, i) < string_char_at(str2, i))
+	for (i = d; i < MAX(len1, len2); i++) {
+		if (string_char_at(str1, i) < string_char_at(str2, i))
 			return 1;
-		if(string_char_at(str1, i) >= string_char_at(str2, i))
+		if (string_char_at(str1, i) >= string_char_at(str2, i))
 			return 0;
 	}
 	return len1 < len2;
@@ -167,8 +166,8 @@ insertion_sort(char **sa, long lo, long hi, int d)
 {
 	long i, j;
 
-	for(i = lo; i <= hi; i++)
-		for(j = i; j > lo && less(sa[j], sa[j - 1], d); j--)
+	for (i = lo; i <= hi; i++)
+		for (j = i; j > lo && less(sa[j], sa[j - 1], d); j--)
 			exch(sa, j, j - 1);
 }
 
@@ -179,34 +178,34 @@ mstsort_aux(char **sa, long lo, long hi, int d, char **aux)
 	int *count, r;
 
 	/* cutoff to insertion sort for small subarrays */
-	if(lo + INSERTION_SORT_CUTOFF >= hi) {
+	if (lo + INSERTION_SORT_CUTOFF >= hi) {
 		insertion_sort(sa, lo, hi, d);
 		return;
 	}
 
 	/* initialize counter array */
 	count = (int *)algcalloc(STRING_RADIX + 2, sizeof(int));
-	for(r = 0; r < STRING_RADIX + 2; r++)
+	for (r = 0; r < STRING_RADIX + 2; r++)
 		count[r] = 0;
 
 	/* compute frequency counts */
-	for(i = lo; i <= hi; i++)
+	for (i = lo; i <= hi; i++)
 		count[string_char_at(sa[i], d) + 2]++;
 
 	/* transform counts to indices */
-	for(r = 0; r < STRING_RADIX + 1; r++)
+	for (r = 0; r < STRING_RADIX + 1; r++)
 		count[r + 1] += count[r];
 
 	/* distribute */
-	for(i = lo; i <= hi; i++)
+	for (i = lo; i <= hi; i++)
 		strcpy(aux[count[string_char_at(sa[i], d) + 1]++], sa[i]);
 
 	/* copy back */
-	for(i = lo; i <= hi; i++)
+	for (i = lo; i <= hi; i++)
 		strcpy(sa[i], aux[i - lo]);
 
 	/* recursively sort for each character (excludes sentinel -1) */
-	for(r = 0; r < STRING_RADIX; r++)
+	for (r = 0; r < STRING_RADIX; r++)
 		mstsort_aux(sa, lo + count[r], lo + count[r + 1] - 1, d + 1, aux);
 
 	ALGFREE(count);
@@ -219,35 +218,35 @@ ipmstsort(char **sa, long lo, long hi, int d)
 	long i;
 	int *heads, *tails, r, c;
 
-	if(lo + INSERTION_SORT_CUTOFF >= hi) {
+	if (lo + INSERTION_SORT_CUTOFF >= hi) {
 		insertion_sort(sa, lo, hi, d);
 		return;
 	}
 
 	heads = (int *)algcalloc(STRING_RADIX + 2, sizeof(int));
-	for(r = 0; r < STRING_RADIX + 2; r++)
+	for (r = 0; r < STRING_RADIX + 2; r++)
 		heads[r] = 0;
 
 	tails = (int *)algcalloc(STRING_RADIX + 1, sizeof(int));
-	for(r = 0; r < STRING_RADIX + 1; r++)
+	for (r = 0; r < STRING_RADIX + 1; r++)
 		tails[r] = 0;
 
 	/* compute frequency counts */
-	for(i = lo; i <= hi; i++)
+	for (i = lo; i <= hi; i++)
 		heads[string_char_at(sa[i], d) + 2]++;
 
 	/* transform counts to indices */
 	heads[0] = lo;
-	for(r = 0; r < STRING_RADIX + 1; r++) {
+	for (r = 0; r < STRING_RADIX + 1; r++) {
 		heads[r + 1] += heads[r];
 		tails[r] = heads[r + 1];
 	}
 
 	/* sort by d-th character in-place */
-	for(r = 0; r < STRING_RADIX + 1; r++)
-		while(heads[r] < tails[r]) {
+	for (r = 0; r < STRING_RADIX + 1; r++)
+		while (heads[r] < tails[r]) {
 			c = string_char_at(sa[heads[r]], d);
-			while(c + 1 != r) {
+			while (c + 1 != r) {
 				exch(sa, heads[r], heads[c + 1]++);
 				c = string_char_at(sa[heads[r]], d);
 			}
@@ -257,7 +256,7 @@ ipmstsort(char **sa, long lo, long hi, int d)
 	ALGFREE(heads);
 
 	/* recursively sort for each character (excludes sentinel -1) */
-	for(r = 0; r < STRING_RADIX; r++)
+	for (r = 0; r < STRING_RADIX; r++)
 		ipmstsort(sa, tails[r], tails[r + 1] - 1, d + 1);
 
 	ALGFREE(tails);
@@ -270,7 +269,7 @@ quick_sort(char **sa, long lo, long hi, int d)
 	long lt, gt, i;
 	int v, t;
 
-	if(lo + INSERTION_SORT_CUTOFF >= hi) {
+	if (lo + INSERTION_SORT_CUTOFF >= hi) {
 		insertion_sort(sa, lo, hi, d);
 		return;
 	}
@@ -279,18 +278,18 @@ quick_sort(char **sa, long lo, long hi, int d)
 	i = lo + 1;
 	v = string_char_at(sa[lo], d);
 
-	while(i <= gt) {
+	while (i <= gt) {
 		t = string_char_at(sa[i], d);
-		if(t < v)
+		if (t < v)
 			exch(sa, lt++, i++);
-		else if(t > v)
+		else if (t > v)
 			exch(sa, i, gt--);
 		else
 			i++;
 	}
 
 	quick_sort(sa, lo, lt - 1, d);
-	if(v >= 0)
+	if (v >= 0)
 		quick_sort(sa, lt, gt, d + 1);
 	quick_sort(sa, gt + 1, hi, d);
 }
