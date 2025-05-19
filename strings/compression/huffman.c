@@ -30,7 +30,7 @@
  *
  */
 #include "huffman.h"
-#include "heap.h"
+#include "fibonaccipq.h"
 #include "binaryin.h"
 #include "binaryout.h"
 #include <math.h>	/* log2(), ceil() */
@@ -212,24 +212,28 @@ compare(const void *k1, const void *k2)
 	node1 = (struct huffman_node *)k1;
 	node2 = (struct huffman_node *)k2;
 
+	return node1->freq > node2->freq;
+
+#if 0
 	if (node1->freq < node2->freq)
 		return 1;
 	else if (node1->freq == node2->freq)
 		return 0;
 	else
 		return -1;
+#endif
 }
 
 /* build the Huffman trie given frequencies */
 static struct huffman_node * 
 build_trie(const int *freqs)
 {
-	struct pairing_heap pq;
+	struct fibonaccipq pq;
 	struct huffman_node *node, *left, *right, *parent;
 	int c;
 
     /* initialize priority queue with singleton trees */
-	pheap_init(&pq, 0, compare);
+	fibpq_init(&pq, 0, compare);
 	for (c = 0; c < RADIX; c++)
 		if (freqs[c] > 0) {
 			node = algmalloc(sizeof(struct huffman_node));
@@ -239,13 +243,13 @@ build_trie(const int *freqs)
 			node->right = NULL;
 			node->size = 0;
 
-			pheap_insert(&pq, node);
+			fibpq_insert(&pq, node);
 		}
 
 	/* merge two smallest trees */
-	while (PHEAP_SIZE(&pq) > 1) {
-		left = (struct huffman_node *)pheap_delete(&pq);
-		right = (struct huffman_node *)pheap_delete(&pq);
+	while (FIBPQ_SIZE(&pq) > 1) {
+		left = (struct huffman_node *)fibpq_delete(&pq);
+		right = (struct huffman_node *)fibpq_delete(&pq);
 
 		parent = (struct huffman_node *)algmalloc(sizeof(struct huffman_node));
 		parent->ch = '\0';
@@ -254,11 +258,11 @@ build_trie(const int *freqs)
 		parent->right = right;
 		parent->size = 2 + HUFFMAN_CODE_SIZE(left) + HUFFMAN_CODE_SIZE(right);
 
-		pheap_insert(&pq, parent);
+		fibpq_insert(&pq, parent);
 	}
 
-	parent = (struct huffman_node *)pheap_delete(&pq);
-	pheap_clear(&pq);
+	parent = (struct huffman_node *)fibpq_delete(&pq);
+	fibpq_clear(&pq);
 
 	return parent;
 }
