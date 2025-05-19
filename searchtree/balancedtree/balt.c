@@ -33,6 +33,8 @@
 #include "singlelist.h"
 #include <getopt.h>
 
+#define MIN_WIDTH	5
+
 static void usage_info(const char *);
 static int kcmp(const void *, const void *);
 
@@ -67,6 +69,8 @@ main(int argc, char *argv[])
 			case 'w':
 				if (sscanf(optarg, "%d", &width) != 1)
 					errmsg_exit("Illegal number. -w %s\n", optarg);
+				if (width <= MIN_WIDTH)
+					errmsg_exit("The max width must be greater than 5.\n");
 				break;
 			default:
 				fprintf(stderr, "Parameters error.\n");
@@ -85,7 +89,7 @@ main(int argc, char *argv[])
 	printf("Begin inserts into B-Tree %d key-value pairs.\n", num);
 	start_time = clock();
 	for (i = 0, j = 0; i < num; i++) {
-		w = rand_range_integer(5, width);
+		w = rand_range_integer(MIN_WIDTH, width);
 		val = rand_string(w);
 
 		w = rand_range_integer(1, num);
@@ -112,13 +116,12 @@ main(int argc, char *argv[])
 	ALGFREE(val);
 	ALGFREE(keys);
 	end_time = clock();
-	printf("Estimated time(s): %.3f\n\n", 
+	printf("Estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 
 	printf("The size: %lu\n", BTREE_SIZE(&bt));
 	printf("The height: %d\n", BTREE_HEIGHT(&bt));
-	printf("\n");
 
 	i = *((int *)btree_first_key(&bt));
 	j = *((int *)btree_last_key(&bt));
@@ -182,6 +185,6 @@ usage_info(const char *pname)
 {
 	fprintf(stderr, "Usage: %s -n -w\n", pname);
 	fprintf(stderr, "-n: The number of items.\n");
-	fprintf(stderr, "-w: The length of key.\n");
+	fprintf(stderr, "-w: The max width of the value.\n");
 	exit(EXIT_FAILURE);
 }
