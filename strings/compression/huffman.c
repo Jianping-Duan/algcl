@@ -181,8 +181,8 @@ huffman_expand(const char *infile, const char *outfile)
 		boutput_write_int_r(&bo, x->ch, 8);
 	}
 
-	/* append enter character */
-	boutput_write_char(&bo, '\n');
+	boutput_write_char(&bo, '\n');	/* append enter character */
+	boutput_write_char(&bo, EOF);	/* append EOF */
 
 	BINPUT_CLOSE(&bi);
 	boutput_close(&bo);
