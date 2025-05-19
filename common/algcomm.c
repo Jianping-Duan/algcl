@@ -205,12 +205,11 @@ FILE *
 open_file(const char *filename, const char *mode)
 {
 	FILE *fp;
-	static char buf[BUFFER_SIZE];
 	
 	if ((fp = fopen(filename, mode)) == NULL)
 		errmsg_exit("Can't open file \"%s\", %s\n", filename, strerror(errno));
 	
-	if (setvbuf(fp, buf, _IOFBF, BUFFER_SIZE) != 0) {
+	if (setvbuf(fp, NULL, _IOFBF, BUFFER_SIZE) != 0) {
 		errmsg_exit("%s file set buffer error, %s\n",
 			filename, strerror(errno));
 	}
