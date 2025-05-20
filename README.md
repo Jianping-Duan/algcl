@@ -26,3 +26,4 @@ Source RoadMap:
 | skiplist        | Skip list. |
 | graphs          | Including Union-find, Undirected Graph, Directed Graph,  Minimum Spanning Tree, The Shortest Path, Euler Graph and Bipartite Graph. |
 | strings         | Including String sort, Trie, Ternary search trie and most String Matching algorithms. |
+| searchperf      | Comparison of search performance of Singly Linked List, Skip List, Red-Black Tree and Splay Tree. |
