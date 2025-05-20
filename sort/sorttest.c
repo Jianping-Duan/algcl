@@ -31,62 +31,56 @@
  */
 #include "sortalg.h"
 
-#define MAX_SORTS	10
-#define MAX_ITEMS	100000
+#define MAX_SORTS	8
+#define MIN_ITEMS	100
 
 static int less(const void *, const void *);
 static void (*sort_fptr)(void *, long, long, unsigned int, algcomp_ft *);
 static void sort(int *, int, int);
 
 int
-main(void)
+main(int argc, char *argv[])
 {
-	int array[MAX_SORTS][MAX_ITEMS], i;
+	int i, j, sz;
+	int (*array[MAX_SORTS]);
 
-	SET_RANDOM_SEED;
-	
-	for (i = 0; i < MAX_ITEMS; i++) {
-		array[0][i] = rand_range_integer(0, MAX_ITEMS * 2);
-		array[1][i] = rand_range_integer(0, MAX_ITEMS * 2);
-		array[2][i] = rand_range_integer(0, MAX_ITEMS * 2);
-		array[3][i] = rand_range_integer(0, MAX_ITEMS * 2);
-		array[4][i] = rand_range_integer(0, MAX_ITEMS * 2);
-		array[5][i] = rand_range_integer(0, MAX_ITEMS * 2);
-		array[6][i] = rand_range_integer(0, MAX_ITEMS * 2);
-		array[7][i] = rand_range_integer(0, MAX_ITEMS * 2);
+	const char sortmsg[MAX_SORTS][80] = {
+		"Begin tests Insertion-Sort",
+		"Begin tests Selection-Sort",
+		"Begin tests Shell-Sort",
+		"Begin tests Quick-Sort",
+		"Begin tests Quick-3way-Sort",
+		"Begin tests Merge-Sort for Top-Down",
+		"Begin tests Merge-Sort for Bottom-Up",
+		"Begin tests Binary Insertion Sort"
+	};
+
+	if (argc != 2)
+		errmsg_exit("Usage: %s <size>\n", argv[0]);
+
+	if (sscanf(argv[1], "%d", &sz) != 1)
+		errmsg_exit("Illegal integer number, %s\n", argv[1]);
+	if (sz < MIN_ITEMS) {
+		errmsg_exit("Given a integer number must be equal or greater than %d",
+			MIN_ITEMS);
 	}
 
-	printf("Begin tests Insertion-Sort.\n");
-	sort(array[0], MAX_ITEMS, 0);
-	printf("\n");
+	SET_RANDOM_SEED;
 
-	printf("Begin tests Selection-Sort.\n");
-	sort(array[1], MAX_ITEMS, 1);
-	printf("\n");
-	
-	printf("Begin tests Shell-Sort.\n");
-	sort(array[2], MAX_ITEMS, 2);
-	printf("\n");
-	
-	printf("Begin tests Quick-Sort.\n");
-	sort(array[3], MAX_ITEMS, 3);
-	printf("\n");
+	for (i = 0; i < MAX_SORTS; i++) {
+		array[i] = (int *)algmalloc(sz * sizeof(int));
+		for (j = 0; j < sz; j++)
+			array[i][j] = rand_range_integer(0, sz * 2);
+	}
 
-	printf("Begin tests Quick-3way-Sort.\n");
-	sort(array[4], MAX_ITEMS, 4);
-	printf("\n");
+	for (i = 0; i < MAX_SORTS; i++) {
+		printf("%s\n", sortmsg[i]);
+		sort(array[i], sz, i);
+		printf("\n");
+	}
 
-	printf("Begin tests Merge-Sort for Top-Down.\n");
-	sort(array[5], MAX_ITEMS, 5);
-	printf("\n");
-
-	printf("Begin tests Merge-Sort for Bottom-Up.\n");
-	sort(array[6], MAX_ITEMS, 6);
-	printf("\n");
-
-	printf("Begin tests binary insertion sort.\n");
-	sort(array[7], MAX_ITEMS, 7);
-	printf("\n");
+	for (i = 0; i < MAX_SORTS; i++)
+		ALGFREE(array[i]);
 
 	return 0;
 }
