@@ -1,6 +1,6 @@
 CC ?= cc
 AR ?= ar
-RMF = rm -f
+RMF = -rm -f
 
 CFLAGS = -std=c18 -O2 -Wall -W -Wfloat-equal -Wfloat-conversion \
 		-Wdouble-promotion -m64
