@@ -44,12 +44,12 @@ binsearch_rank(const struct binary_search *bs, const char *key)
 	
 	lo = 0, hi = bs->size - 1;
 	
-	while(lo <= hi) {
+	while (lo <= hi) {
 		mid = lo + (hi - lo) / 2;
 		cmp = strcmp(key, bs->items[mid].key);
-		if(cmp < 0)
+		if (cmp < 0)
 			hi = mid - 1;
-		else if(cmp > 0)
+		else if (cmp > 0)
 			lo = mid + 1;
 		else
 			return mid;
@@ -66,12 +66,12 @@ binsearch_get(const struct binary_search *bs, const char *key)
 {
 	unsigned long i;
 	
-	if(BINSEARCH_ISEMPTY(bs))
+	if (BINSEARCH_ISEMPTY(bs))
 		return 0;
 	
 	i = binsearch_rank(bs, key);
 	
-	if(i < bs->size && strcmp(bs->items[i].key, key) == 0)
+	if (i < bs->size && strcmp(bs->items[i].key, key) == 0)
 		return &(bs->items[i]);
 	return NULL;
 }
@@ -85,24 +85,23 @@ binsearch_delete(struct binary_search *bs,	const char *key)
 {
 	unsigned long i, j;
 	
-	if(BINSEARCH_ISEMPTY(bs))
+	if (BINSEARCH_ISEMPTY(bs))
 		return;
 	
 	/* compute rank */
 	i = binsearch_rank(bs, key);
 	
 	/* key not in array */
-	if(i == bs->size || strcmp(bs->items[i].key, key) != 0)
+	if (i == bs->size || strcmp(bs->items[i].key, key) != 0)
 		return;
 	
 	/* move items[j + 1] to items[j] deleting*/
-	for(j = i; j < bs->size - 1; j++)
+	for (j = i; j < bs->size - 1; j++)
 		bs->items[j] = bs->items[j + 1];
 	
 	bs->size--;
 	/* to avoid loiter */
-	memset(&(bs->items[bs->size]), 0, 
-		sizeof(struct element));
+	memset(&(bs->items[bs->size]), 0, sizeof(struct element));
 }
 
 /* 
@@ -119,7 +118,7 @@ binsearch_put(struct binary_search *bs, const struct element *item)
 	
 	assert(item != NULL);
 	
-	if(item->value == 0) {
+	if (item->value == 0) {
 		binsearch_delete(bs, item->key);
 		return;
 	}
@@ -127,17 +126,16 @@ binsearch_put(struct binary_search *bs, const struct element *item)
 	i = binsearch_rank(bs, item->key);
 	
 	/* key already contains array */
-	if(i < bs->size && strcmp(bs->items[i].key, item->key) == 0) {
+	if (i < bs->size && strcmp(bs->items[i].key, item->key) == 0) {
 		bs->items[i].value = item->value;
 		return;
 	}
 	
 	/* insert new key-value pair */
-	for(j = bs->size; j > i; j--)
-		/* empty location */
-		bs->items[j] = bs->items[j - 1];
+	for (j = bs->size; j > i; j--)
+		bs->items[j] = bs->items[j - 1];	/* empty location */
 	bs->items[j] = *item;
-	
+
 	bs->size++;
 }
 
@@ -145,7 +143,7 @@ binsearch_put(struct binary_search *bs, const struct element *item)
 struct element * 
 binsearch_select(const struct binary_search *bs, unsigned long k)
 {
-	if(k < bs->size)
+	if (k < bs->size)
 		return &(bs->items[k]);
 	return NULL;
 }
@@ -159,11 +157,11 @@ binsearch_floor(const struct binary_search *bs, const char *key)
 	
 	i = binsearch_rank(bs, key);
 	
-	if(i < bs->size && strcmp(bs->items[i].key, key) == 0)
+	if (i < bs->size && strcmp(bs->items[i].key, key) == 0)
 		return &(bs->items[i]);
 	
 	/* key is too small */
-	if(i == 0)
+	if (i == 0)
 		return NULL;
 	return &(bs->items[i - 1]);
 }
@@ -180,7 +178,7 @@ binsearch_ceiling(const struct binary_search *bs, const char *key)
 	i = binsearch_rank(bs, key);
 	
 	/* key is to large */
-	if(i == bs->size)
+	if (i == bs->size)
 		return NULL;
 	return &(bs->items[i]);
 }
@@ -195,13 +193,12 @@ binsearch_keys(const struct binary_search *bs, const char *lokey,
 {
 	unsigned long i;
 	
-	if(strcmp(lokey, hikey) > 0)
+	if (strcmp(lokey, hikey) > 0)
 		return;
 	
-	for(i = binsearch_rank(bs, lokey); 
-		i < binsearch_rank(bs, hikey); i++)
+	for (i = binsearch_rank(bs, lokey); i < binsearch_rank(bs, hikey); i++)
 		enqueue(qp, &(bs->items[i]));
 	
-	if(binsearch_get(bs, hikey) != NULL)
+	if (binsearch_get(bs, hikey) != NULL)
 		enqueue(qp, &(bs->items[binsearch_rank(bs, hikey)]));
 }

@@ -52,11 +52,11 @@ main(int argc, char *argv[])
 	extern char *optarg;
 	extern int optind;
 
-	if(argc != (int)strlen(optstr) + 1)
+	if (argc != (int)strlen(optstr) + 1)
 		usage_info(argv[0]);
 	
-	while((op = getopt(argc, argv, optstr)) != -1) {
-		switch(op) {
+	while ((op = getopt(argc, argv, optstr)) != -1) {
+		switch (op) {
 			case 'f':
 				fname = optarg;
 				break;
@@ -69,7 +69,7 @@ main(int argc, char *argv[])
 		}
 	}
 	
-	if(optind < argc)
+	if (optind < argc)
 		usage_info(argv[0]);
 	
 	fp = open_file(fname, "rb");
@@ -82,8 +82,8 @@ main(int argc, char *argv[])
 		"binary search array...\n", fname);
 	start_time = clock();
 	rewind(fp);
-	while(!feof(fp)) {
-		if(fread(&item, sizeof(struct element), 1, fp) > 0 &&
+	while (!feof(fp)) {
+		if (fread(&item, sizeof(struct element), 1, fp) > 0 &&
 			!BINSEARCH_ISFULL(&bs)) {
 			binsearch_put(&bs, &item);
 		}
@@ -101,21 +101,21 @@ main(int argc, char *argv[])
 	
 	printf("The largest key in this ordered array is "
 		"less than or equal to %s\n", key);
-	if((el = binsearch_floor(&bs, key)) != NULL)
+	if ((el = binsearch_floor(&bs, key)) != NULL)
 		printf("key: %s, value: %ld\n\n", el->key, el->value);
 	else
 		printf("That largest key not existed.\n\n");
 	
 	printf("The smallest key in this ordered array is "
 		"greater than or equal to %s\n", key);
-	if((el = binsearch_ceiling(&bs, key)) != NULL)
+	if ((el = binsearch_ceiling(&bs, key)) != NULL)
 		printf("key: %s, value: %ld\n\n", el->key, el->value);
 	else
 		printf("That smallest key not existed.\n\n");
 	
 	printf("Begin search key: %s\n", key);
 	start_time = clock();
-	if((el = binsearch_get(&bs, key)) != NULL)
+	if ((el = binsearch_get(&bs, key)) != NULL)
 		printf("It's value: %ld\n", el->value);
 	else
 		printf("Not found.\n");
@@ -135,7 +135,7 @@ main(int argc, char *argv[])
 	printf("Following output this ordered array:\n");
 	QUEUE_INIT(&qu, 0);
 	binsearch_keys(&bs, BINSEARCH_MIN(&bs), BINSEARCH_MAX(&bs), &qu);
-	while(!QUEUE_ISEMPTY(&qu)) {
+	while (!QUEUE_ISEMPTY(&qu)) {
 		dequeue(&qu, (void **)&el);
 		printf("key: %s, value: %ld\n", el->key, el->value);
 	}

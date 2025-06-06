@@ -47,15 +47,13 @@ struct binary_search {
 #define BINSEARCH_ISEMPTY(bs)	((bs)->size == 0)
 
 /* Returns true if this array is full. */
-#define BINSEARCH_ISFULL(bs)	\
-	((bs)->size < (bs)->capacity ? 0 : 1)
+#define BINSEARCH_ISFULL(bs)	((bs)->size < (bs)->capacity ? 0 : 1)
 
 /* Returns the smallest key in this array. */
 #define BINSEARCH_MIN(bs)	((bs)->items[0].key)
 
 /* Returns the largest key in this array. */
-#define BINSEARCH_MAX(bs)	\
-	((bs)->items[(bs)->size - 1].key)
+#define BINSEARCH_MAX(bs)	((bs)->items[(bs)->size - 1].key)
 
 /* Returns all key-value pairs for this array. */
 #define BINSEARCH_ITEMS(bs)		((bs)->items)
@@ -64,25 +62,25 @@ struct binary_search {
 	ALGFREE((bs)->items);				\
 	(bs)->capacity = 0;					\
 	(bs)->size = 0;						\
-} while(0)
+} while (0)
 
 /* 
  * Removes the smallest key and 
  * associated value from this array. 
  */
 #define BINSEARCH_DELETE_MIN(bs)	do {			\
-	if(!BINSEARCH_ISEMPTY(bs))						\
+	if (!BINSEARCH_ISEMPTY(bs))						\
 		binsearch_delete(bs, binsearch_min(bs));	\
-} while(0)
+} while (0)
 
 /* 
  * Removes the largest key and 
  * associated value from this array.
  */
 #define BINSEARCH_DELETE_MAX(bs)	do {			\
-	if(!BINSEARCH_ISEMPTY(bs))						\
+	if (!BINSEARCH_ISEMPTY(bs))						\
 		binsearch_delete(bs, binsearch_max(bs));	\
-} while(0)
+} while (0)
 
 /* 
  * Returns the number of keys in 
@@ -100,11 +98,10 @@ struct binary_search {
  * the specified maximum capacity.
  */
 #define BINSEARCH_INIT(bs, cap)		do {	\
-	(bs)->items = (struct element *)algmalloc(	\
-			sizeof(struct element) * (cap));	\
+	(bs)->items = (struct element *)algmalloc(sizeof(struct element) * (cap)); \
 	(bs)->capacity = (cap);		\
 	(bs)->size = 0;				\
-} while(0)
+} while (0)
 
 struct queue;
 
