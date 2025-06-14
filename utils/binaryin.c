@@ -142,7 +142,7 @@ binput_read_char_r(struct binary_input *bin, int r)
  * input and return as a string. 
  */
 char *
-binput_read_string(struct binary_input *bin)
+binput_read_string(struct binary_input *bin, size_t *bytes)
 {
 	size_t sz, i = 0;
 	long loc;
@@ -155,6 +155,7 @@ binput_read_string(struct binary_input *bin)
 	rewind(bin->istream);
 	fseek(bin->istream, 0, SEEK_END);
 	sz = ftell(bin->istream);
+	*bytes = sz;
 
 	str = (char *)algmalloc(sz * sizeof(char));
 	fseek(bin->istream, loc, SEEK_SET);
@@ -162,7 +163,6 @@ binput_read_string(struct binary_input *bin)
 		ch = binput_read_char(bin);
 		*(str + i++) = ch;
 	}
-	*(str + i - 2) = '\0';
 
 	return str;
 }

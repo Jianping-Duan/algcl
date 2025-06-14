@@ -79,7 +79,7 @@ char binput_read_char_r(struct binary_input *bin, int r);
  * Reads the remaining bytes of data from file 
  * input and return as a string. 
  */
-char * binput_read_string(struct binary_input *bin);
+char * binput_read_string(struct binary_input *bin, size_t *bytes);
 
 /* 
  * Reads the next 16 bits from file 
