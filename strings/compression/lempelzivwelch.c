@@ -60,8 +60,9 @@ lzw_compress(const char *infile, const char *outfile)
 	struct binary_output bo;
 	struct tstrie st;
 	char *input, s[2], *prefix, *subs;
-	int i, code, plen;
-	long slen;
+	int i, code;
+	unsigned int plen;
+	unsigned long slen;
 	clock_t start_time, end_time;
 
 	start_time = clock();
@@ -70,8 +71,7 @@ lzw_compress(const char *infile, const char *outfile)
 	boutput_init(&bo, outfile);
 	TSTRIE_INIT(&st);
 
-	input = binput_read_string(&bi);
-	slen = strlen(input);
+	input = binput_read_string(&bi, &slen);
 
 	/* since TST is not balanced, */
 	/* it would be better to insert in a different order */
@@ -179,9 +179,6 @@ lzw_expand(const char *infile, const char *outfile)
 		strcpy(val, tmp);
 		memset(tmp, 0, MAX_STRLEN);
 	}
-
-	/* append enter character */
-	boutput_write_char(&bo, '\n');
 
 	boutput_close(&bo);
 	BINPUT_CLOSE(&bi);

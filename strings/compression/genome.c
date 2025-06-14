@@ -32,7 +32,12 @@
 #include "binaryin.h"
 #include "binaryout.h"
 
-static const char dna[] = "ACGT";
+#if defined(_WIN32) || defined(_WIN64)
+static const char dns[] = "ACGT\r\n";
+#else
+static const char dna[] = "ACGT\n";
+#endif
+static const int lgr = 3;
 static int *dnaind;
 
 static void compress(const char *, const char *);
@@ -78,18 +83,18 @@ compress(const char *infile, const char *outfile)
 	struct binary_input bi;
 	struct binary_output bo;
 	char *s;
-	int n, i, d;
+	unsigned long n, i;
+	int d;
 
 	binput_init(&bi, infile);
 	boutput_init(&bo, outfile);
 
-	s = binput_read_string(&bi);
-	n = strlen(s);
-	boutput_write_int(&bo, n);
+	s = binput_read_string(&bi, &n);
+	boutput_write_long(&bo, n);
 
 	for (i = 0; i < n; i++) {
-		d = dnaind[string_char_at(s, i)];
-		boutput_write_int_r(&bo, d, 2);
+		d = dnaind[string_char_at(s, (int)i)];
+		boutput_write_int_r(&bo, d, lgr);
 	}
 
 	BINPUT_CLOSE(&bi);
@@ -102,17 +107,17 @@ expand(const char *infile, const char *outfile)
 {
 	struct binary_input bi;
 	struct binary_output bo;
-	int n, i, c;
+	unsigned long n, i;
+	int c;
 
 	binput_init(&bi, infile);
 	boutput_init(&bo, outfile);
 
-	n = binput_read_int(&bi);
+	n = binput_read_long(&bi);
 	for (i = 0; i < n; i++) {
-		c = binput_read_int_r(&bi, 2);
+		c = binput_read_int_r(&bi, lgr);
 		boutput_write_char(&bo, dna[c]);
 	}
-	boutput_write_char(&bo, '\n');
 
 	BINPUT_CLOSE(&bi);
 	boutput_close(&bo);

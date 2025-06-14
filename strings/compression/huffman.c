@@ -70,7 +70,7 @@ huffman_compress(const char *infile, const char *outfile)
 	struct binary_output bo;
 	char *input, **st, *code;
 	int *freq;
-	long len, i;
+	unsigned long len, i;
 	struct huffman_node *root;
 	unsigned int codewidth, clen, j;
 	clock_t start_time, end_time;
@@ -81,8 +81,7 @@ huffman_compress(const char *infile, const char *outfile)
 	boutput_init(&bo, outfile);
 	
 	/* read the file input */
-	input = binput_read_string(&bi);
-	len = strlen(input);
+	input = binput_read_string(&bi, &len);
 
 	/* tabulate frequency counts */
 	freq = (int *)algmalloc(RADIX * sizeof(int));
@@ -180,9 +179,6 @@ huffman_expand(const char *infile, const char *outfile)
 		}
 		boutput_write_int_r(&bo, x->ch, 8);
 	}
-
-	boutput_write_char(&bo, '\n');	/* append enter character */
-	boutput_write_char(&bo, EOF);	/* append EOF */
 
 	BINPUT_CLOSE(&bi);
 	boutput_close(&bo);
