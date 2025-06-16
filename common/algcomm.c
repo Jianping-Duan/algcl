@@ -92,7 +92,8 @@ algrealloc(void *ptr, size_t size)
 		errmsg_exit("Parameters pointer is null.\n");
 
 	if ((ret = realloc(ptr, size)) == NULL)
-		errmsg_exit("Memory reallocated failure, %s\n", strerror(errno));
+		errmsg_exit("Memory reallocated failure, %s\n",
+			strerror(errno));
 
 	return ret;
 }
@@ -136,8 +137,10 @@ bernoulli_distribution(double p)
 {
 	double x;
 	
-	if (!(p >= 0.0 && p <= 1.0)) 
-		errmsg_exit("probability p must be between 0.0 and 1.0: %f\n", p);
+	if (!(p >= 0.0 && p <= 1.0)) {
+		errmsg_exit("probability p must be between 0.0 and 1.0: %f\n",
+			p);
+	}
 	
 	x = (double)rand() / (double)RAND_MAX;
 	return x < p;
@@ -161,17 +164,17 @@ rand_string(short n)
 	str = (char *)algmalloc(sizeof(char) * (n + 1));
 	for (i = 0; i < n; i++)
 		switch (rand() % 3) {
-			case 0:
-				*(str + i) = 'A' + rand() % 26;
-				break;
-			case 1:
-				*(str + i) = 'a' + rand() % 26;
-				break;
-			case 2:
-				*(str + i) = '0' + rand() % 10;
-				break;
-			default:
-				*(str + i) = 'A' + rand() % 26;
+		case 0:
+			*(str + i) = 'A' + rand() % 26;
+			break;
+		case 1:
+			*(str + i) = 'a' + rand() % 26;
+			break;
+		case 2:
+			*(str + i) = '0' + rand() % 10;
+			break;
+		default:
+			*(str + i) = 'A' + rand() % 26;
 		}
 		
 	*(str + i) = '\0';
@@ -206,8 +209,10 @@ open_file(const char *filename, const char *mode)
 {
 	FILE *fp;
 	
-	if ((fp = fopen(filename, mode)) == NULL)
-		errmsg_exit("Can't open file \"%s\", %s\n", filename, strerror(errno));
+	if ((fp = fopen(filename, mode)) == NULL) {
+		errmsg_exit("Can't open file \"%s\", %s\n", filename,
+			strerror(errno));
+	}
 	
 	if (setvbuf(fp, NULL, _IOFBF, BUFFER_SIZE) != 0) {
 		errmsg_exit("%s file set buffer error, %s\n",
@@ -224,8 +229,10 @@ open_file(const char *filename, const char *mode)
 void
 close_file(FILE *fp)
 {
-	if (fflush(fp) != 0)
-		errmsg_exit("Flush buffer data to disk error, %s\n", strerror(errno));
+	if (fflush(fp) != 0) {
+		errmsg_exit("Flush buffer data to disk error, %s\n",
+			strerror(errno));
+	}
 	
 	if (fclose(fp) != 0)
 		errmsg_exit("Closes file error, %s\n", strerror(errno));
@@ -237,7 +244,7 @@ close_file(FILE *fp)
  */
 void
 string_tokens(const char *str, const char *seps, char **tokens,
-			unsigned short len, unsigned int *sz)
+		unsigned short len, unsigned int *sz)
 {
 	char *ptr, *lstr;
 	size_t i, n;
@@ -332,7 +339,8 @@ string_read_line(FILE *istream)
 		*(line + i++) = (char)c;
 		if (i - 1 >= sz / 2) {
 			sz += 16;
-			nline = (char *)algrealloc(line, (sz + 1) * sizeof(char));
+			nline = (char *)algrealloc(line,
+				(sz + 1) * sizeof(char));
 			line = nline;
 		}
 		c = fgetc(istream);

@@ -65,10 +65,10 @@ typedef int algcomp_ft(const void *key1, const void *key2);
 
 /* The encapsulation of free() */
 #define	ALGFREE(ptr)	do {	\
-	if (ptr != NULL) {			\
-		free(ptr);				\
-		ptr = NULL;				\
-	}							\
+	if (ptr != NULL) {	\
+		free(ptr);	\
+		ptr = NULL;	\
+	}			\
 } while (0)
 
 /* Prints error message and exit. */
@@ -84,8 +84,7 @@ void * algcalloc(size_t nmemb, size_t size);
 void * algrealloc(void *ptr, size_t size);
 
 /* 
- * Returns a random integer-number 
- * range from SI to EI - 1 
+ * Returns a random integer-number range from SI to EI - 1 
  */
 unsigned int rand_range_integer(unsigned int si, unsigned int ei);
 
@@ -95,7 +94,8 @@ unsigned int rand_range_integer(unsigned int si, unsigned int ei);
 double rand_range_float(double si, double ei);
 
 /* 
- * Returns a random string that it length is N, its value need to be free.
+ * Returns a random string that it length is N,
+ * its value need to be free.
  */
 char * rand_string(short n);
 
@@ -119,7 +119,7 @@ void close_file(FILE *fp);
 
 /* The encapsulation of strtok() */
 void string_tokens(const char *str, const char *seps, char **tokens,
-				unsigned short len, unsigned int *sz);
+		unsigned short len, unsigned int *sz);
 
 /* Erases the end of string of 'enter' */
 char * string_erase_rn(char *str);
