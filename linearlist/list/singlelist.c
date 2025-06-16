@@ -262,7 +262,7 @@ make_node(const void *key, unsigned int ksize)
 
 static struct slist_node * 
 clone_node(struct slist_node *node, struct slist_node **last,
-		unsigned int ksize)
+	unsigned int ksize)
 {
 	struct slist_node *current;
 	

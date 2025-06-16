@@ -36,7 +36,7 @@
 
 /* single linked-list node. */
 struct slist_node {
-	void *key;					/* key of the node */
+	void *key;			/* key of the node */
 	struct slist_node *next;	/* point to next node */
 };
 
@@ -44,9 +44,9 @@ struct slist_node {
 struct single_list {
 	struct slist_node *first;	/* point to the first node. */
 	struct slist_node *last;	/* point to the last node. */
-	unsigned long size;			/* number of keys. */
+	unsigned long size;		/* number of keys. */
 	unsigned int keysize;		/* bytes of key. */
-	algcomp_ft *equal;			/* equal compare for two keys */
+	algcomp_ft *equal;		/* equal compare for two keys */
 };
 
 /* 
@@ -75,10 +75,10 @@ struct single_list {
  * Before use it, you must declare 'nptr' pointer.
  */
 #define SLIST_FOREACH(slist, nptr, dtyp, key)		\
-	for ((nptr) = (slist)->first,					\
-		(key) = (dtyp *)_SLIST_NODE_KEY(nptr);		\
-		(nptr) != NULL;								\
-		(nptr) = (nptr)->next,						\
+	for ((nptr) = (slist)->first,			\
+		(key) = (dtyp *)_SLIST_NODE_KEY(nptr);	\
+		(nptr) != NULL;				\
+		(nptr) = (nptr)->next,			\
 		(key) = (dtyp *)_SLIST_NODE_KEY(nptr))
 
 /* For traverse. rewinds to first pointer. */
@@ -112,7 +112,7 @@ slist_next_key(struct slist_node **loc)
 
 /* Initializes en empty single linked-list. */
 void slist_init(struct single_list *slist, unsigned int ksize,
-				algcomp_ft *equal);
+		algcomp_ft *equal);
 
 /* Inserts a key at the first location. */
 void slist_put(struct single_list *slist, const void *key);
@@ -133,7 +133,7 @@ void slist_delete(struct single_list *slist, const void *key);
 
 /* Changes the specified key SKEY become to TKEY. */
 void slist_change(struct single_list *slist, const void *skey,
-				const void *tkey);
+		const void *tkey);
 
 /* Reverses this single linked-list. */
 void slist_reverse(struct single_list *slist);

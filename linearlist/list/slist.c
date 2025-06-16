@@ -57,21 +57,21 @@ main(int argc, char *argv[])
 	
 	while ((op = getopt(argc, argv, optstr)) != -1) {
 		switch (op) {
-			case 's':
-				if (sscanf(optarg, "%d", &si) != 1)
-					errmsg_exit("Illegal number. -s %s\n", optarg);
-				break;
-			case 'e':
-				if (sscanf(optarg, "%d", &ei) != 1)
-					errmsg_exit("Illegal number. -e %s\n", optarg);
-				break;
-			case 'n':
-				if (sscanf(optarg, "%d", &n) != 1)
-					errmsg_exit("Illegal number. -n %s\n", optarg);
-				break;
-			default: 
-				fprintf(stderr, "Parameters error.\n");
-				usage_info(argv[0]);
+		case 's':
+			if (sscanf(optarg, "%d", &si) != 1)
+				errmsg_exit("Illegal number. -s %s\n", optarg);
+			break;
+		case 'e':
+			if (sscanf(optarg, "%d", &ei) != 1)
+				errmsg_exit("Illegal number. -e %s\n", optarg);
+			break;
+		case 'n':
+			if (sscanf(optarg, "%d", &n) != 1)
+				errmsg_exit("Illegal number. -n %s\n", optarg);
+			break;
+		default: 
+			fprintf(stderr, "Parameters error.\n");
+			usage_info(argv[0]);
 		}
 	}
 
@@ -109,7 +109,8 @@ main(int argc, char *argv[])
 		keys[i] = el;
 	}
 	printf("\n");
-	printf("Appended done, total elements are %lu.\n\n", SLIST_LENGTH(&slist));
+	printf("Appended done, total elements are %lu.\n\n",
+		SLIST_LENGTH(&slist));
 
 	printf("Display all keys for the single linked list.\n");
 	display(&slist);
