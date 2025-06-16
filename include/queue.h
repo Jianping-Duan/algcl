@@ -42,7 +42,7 @@ struct queue_node {
 struct queue {
 	struct queue_node *front;	/* beginning of queue */
 	struct queue_node *rear;	/* end of queue */
-	unsigned long size;			/* number of keys on queue */
+	unsigned long size;		/* number of keys on queue */
 	unsigned short keysize;
 };
 
@@ -55,10 +55,10 @@ struct queue {
 
 /* Initializes an empty queue */
 #define QUEUE_INIT(qp, ksize)	do {	\
-	(qp)->front = NULL;					\
-	(qp)->rear = NULL;					\
-	(qp)->size = 0;						\
-	(qp)->keysize = ksize;				\
+	(qp)->front = NULL;		\
+	(qp)->rear = NULL;		\
+	(qp)->size = 0;			\
+	(qp)->keysize = ksize;		\
 } while (0)
 
 /* Adds the key to this queue. */

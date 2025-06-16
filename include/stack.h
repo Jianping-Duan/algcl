@@ -41,7 +41,7 @@ struct stack_node {
 
 struct stack {
 	struct stack_node *first;	/* top of stack */
-	unsigned long size;			/* size of the stack */
+	unsigned long size;		/* size of the stack */
 	unsigned short keysize;
 };
 
@@ -53,9 +53,9 @@ struct stack {
 
 /* Initializes an empty stack */
 #define STACK_INIT(st, ksize)	do {	\
-	(st)->first = NULL;					\
-	(st)->size = 0;						\
-	(st)->keysize = ksize;				\
+	(st)->first = NULL;		\
+	(st)->size = 0;			\
+	(st)->keysize = ksize;		\
 } while (0)
 
 /* Adds the key to this stack. */
