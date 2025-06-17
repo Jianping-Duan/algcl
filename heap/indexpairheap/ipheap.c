@@ -57,8 +57,8 @@ main(int argc, char *argv[])
 	
 	ipheap_init(&iph, sz, sizeof(int), cmp);
 	
-	printf("Following output a series of Index-Key pairs and inserts then to "
-		"the indexed pairing heap:\n");
+	printf("Following output a series of Index-Key pairs and inserts "
+		"then to the indexed pairing heap:\n");
 	for (i = 0; i < sz; i++)
 		if (!IPHEAP_ISFULL(&iph)) {
 			el = rand_range_integer(1, sz < 100 ? sz * 2 : sz);
@@ -98,11 +98,13 @@ main(int argc, char *argv[])
 		printf("\n");
 	printf("\n");
 
-	printf("Start randomly deleting the keys and associated with the index.\n");
+	printf("Start randomly deleting the keys and associated with "
+		"the index.\n");
 	for (i = 0; i < sz / 2; i++) {
 		n = rand_range_integer(0, sz);
 		if (ipheap_remove(&iph, n) == 0)
-			printf("The index %d and its key have been deleted.\n", n);
+			printf("The index %d and its key have been deleted.\n",
+				n);
 	}
 	printf("Total elements are %lu\n", IPHEAP_SIZE(&iph));
 	printf("\n");
@@ -119,8 +121,8 @@ main(int argc, char *argv[])
 	show_keys(&iph);
 	printf("\n");
 
-	printf("Deletes all keys from this indexed pairing heap and returns its "
-		"index.\n");
+	printf("Deletes all keys from this indexed pairing heap and returns "
+		"its index.\n");
 	cnt = 0;
 	while (!IPHEAP_ISEMPTY(&iph)) {
 		index = ipheap_delete(&iph);

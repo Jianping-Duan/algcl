@@ -46,7 +46,7 @@ static inline void detach_node(struct index_pheap_node *);
 /* Initializes an empty indexed pairing heap. */
 void 
 ipheap_init(struct index_pheap *iph, unsigned long sz, unsigned int ksize,
-			algcomp_ft *cmp)
+	algcomp_ft *cmp)
 {
 	unsigned long i;
 
@@ -106,7 +106,7 @@ ipheap_delete(struct index_pheap *iph)
 /* Traverses this indexed pairing heap. */
 void 
 ipheap_traverse(const struct index_pheap *iph, struct single_list *keys,
-				struct single_list *indexes)
+		struct single_list *indexes)
 {
 	if (IPHEAP_ISEMPTY(iph))
 		return;
@@ -283,15 +283,17 @@ make_node(unsigned long ind, const void *key, unsigned int ksize)
  */
 static struct index_pheap_node * 
 compare_link(const struct index_pheap *ph, struct index_pheap_node *first,
-			struct index_pheap_node *second)
+	struct index_pheap_node *second)
 {
+	int kcmp;
+
 	assert(first != NULL);
 
 	if (second == NULL || first == second)
 		return first;
 	else {
-		if (ph->cmp(first->key, second->key) == 1 || 
-		   ph->cmp(first->key, second->key) == 0) {
+		kcmp = ph->cmp(first->key, second->key);
+		if (kcmp == 1 || kcmp == 0) {
 			/* 
 			 * attach second as the leftmost child of first.
 			 */
@@ -327,7 +329,7 @@ compare_link(const struct index_pheap *ph, struct index_pheap_node *first,
  */
 static struct index_pheap_node * 
 combine_siblings(const struct index_pheap *ph, struct index_pheap_node *fsib,
-				unsigned long maxdeg)
+		unsigned long maxdeg)
 {
 	unsigned long i, j, num = 0;
 	struct index_pheap_node **forest, *curr;
@@ -382,7 +384,7 @@ combine_siblings(const struct index_pheap *ph, struct index_pheap_node *fsib,
 /* Traverses the sub-heap rooted at Node */
 static void 
 traverse(const struct index_pheap_node *node, struct single_list *keys,
-		struct single_list *indexes)
+	struct single_list *indexes)
 {
 	if (node != NULL) {
 		slist_append(keys, node->key);

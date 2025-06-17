@@ -35,7 +35,7 @@
 #include "algcomm.h"
 
 struct index_pheap_node {
-	void *key;				/* key contained by the node */
+	void *key;		/* key contained by the node */
 	unsigned long index;	/* index associated with the key */
 	unsigned int degree;	/* the degree of the tree rooted by this node */
 	struct index_pheap_node *child;		/* child of this node */
@@ -46,24 +46,23 @@ struct index_pheap_node {
 struct index_pheap {
 	struct index_pheap_node *root;		/* root of this tree */
 	struct index_pheap_node **nodes;	/* Array of Nodes in the heap */
-	unsigned long capacity;				/* Maximum number of keys in the heap */
-	unsigned long size;					/* number of keys in this heap */
-	unsigned int keysize;				/* the bytes of the key */
-	algcomp_ft *cmp;					/* comparator over the keys */
+	unsigned long capacity;		/* Maximum number of keys in the heap */
+	unsigned long size;		/* number of keys in this heap */
+	unsigned int keysize;		/* the bytes of the key */
+	algcomp_ft *cmp;		/* comparator over the keys */
 };
 
 /* 
  * Whether the indexed pairing heap is empty,
  * worst case is O(1). 
  */
-#define IPHEAP_ISEMPTY(iph)		((iph)->size == 0)
+#define IPHEAP_ISEMPTY(iph)	((iph)->size == 0)
 
 /* 
  * Whether the indexed pairing heap is full,
  * worst case is O(1). 
  */
-#define IPHEAP_ISFULL(iph)	\
-	((iph)->size == (iph)->capacity ? 1 : 0)
+#define IPHEAP_ISFULL(iph)	((iph)->size == (iph)->capacity ? 1 : 0)
 
 /* 
  * Number of elements currently on the indexed pairing heap,
@@ -88,8 +87,7 @@ struct index_pheap {
  * Get the minimum key currently in the queue, 
  * worst case is O(1). 
  */
-#define IPHEAP_GETKEY(iph)	\
-	((iph)->size != 0 ? (iph)->root->key : NULL)
+#define IPHEAP_GETKEY(iph)	((iph)->size != 0 ? (iph)->root->key : NULL)
 
 /* 
  * Get the key associated with index i, 
@@ -102,7 +100,7 @@ struct single_list;
 
 /* Initializes an empty indexed pairing heap. */
 void ipheap_init(struct index_pheap *iph, unsigned long sz, unsigned int ksize,
-				algcomp_ft *cmp);
+		algcomp_ft *cmp);
 
 /* Associates a key with an index. */
 void ipheap_insert(struct index_pheap *iph, unsigned long ind, const void *key);
@@ -112,7 +110,7 @@ unsigned long ipheap_delete(struct index_pheap *iph);
 
 /* Traverses this indexed pairing heap. */
 void ipheap_traverse(const struct index_pheap *iph, struct single_list *keys,
-					struct single_list *indexes);
+		struct single_list *indexes);
 
 /* Clears this indexed pairing heap. */
 void ipheap_clear(struct index_pheap *iph);
