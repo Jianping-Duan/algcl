@@ -35,18 +35,18 @@
 #include "algcomm.h"
 
 struct pairing_node {
-	void *key;				/* key contained by the node */
+	void *key;		/* key contained by the node */
 	unsigned long degree;	/* the degree of the tree rooted by this node */
-	struct pairing_node *child;		/* child of this node */
+	struct pairing_node *child;	/* child of this node */
 	struct pairing_node *sibling;	/* next sibling node */
-	struct pairing_node *prev;		/* previous sibling node */
+	struct pairing_node *prev;	/* previous sibling node */
 };
 
 struct pairing_heap {
 	struct pairing_node *root;	/* root of this tree */
-	unsigned long size;			/* number of keys in this heap */
+	unsigned long size;		/* number of keys in this heap */
 	unsigned int keysize;		/* the bytes of the key */
-	algcomp_ft *cmp;			/* comparator over the keys */
+	algcomp_ft *cmp;		/* comparator over the keys */
 };
 
 /* Whether the priority queue is empty. */
@@ -56,11 +56,10 @@ struct pairing_heap {
  * Gets the minimum or maximum key currently 
  * in the queue. 
  */
-#define PHEAP_GETKEY(ph)	\
-	((ph)->root != NULL ? (ph)->root->key : NULL)
+#define PHEAP_GETKEY(ph)	((ph)->root != NULL ? (ph)->root->key : NULL)
 
 /* Number of keys currently on the priority queue. */
-#define PHEAP_SIZE(ph)	((ph)->size)
+#define PHEAP_SIZE(ph)		((ph)->size)
 
 struct single_list;
 

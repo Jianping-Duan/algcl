@@ -88,7 +88,8 @@ pheap_delete(struct pairing_heap *ph)
 	key = current->key;
 
 	if (current->child != NULL)
-		ph->root = combine_siblings(ph, current->child,	current->degree);
+		ph->root = combine_siblings(ph, current->child,
+			current->degree);
 	ph->size--;
 	ALGFREE(current);
 
@@ -133,8 +134,9 @@ make_node(const void *key, unsigned int ksize)
 	if (ksize != 0) {
 		current->key = algmalloc(ksize);
 		memcpy(current->key, key, ksize);
-	} else
+	} else {
 		current->key = (void *)key;
+	}
 
 	current->degree = 0;
 	current->child = NULL;
@@ -152,15 +154,17 @@ make_node(const void *key, unsigned int ksize)
  */
 static struct pairing_node * 
 compare_link(const struct pairing_heap *ph, struct pairing_node *first,
-		  struct pairing_node *second)
+	  struct pairing_node *second)
 {
+	int kcmp;
+
 	assert(first != NULL);
 
 	if (second == NULL || first == second)
 		return first;
 	else {
-		if (ph->cmp(first->key, second->key) == 1 || 
-		   ph->cmp(first->key, second->key) == 0) {
+		kcmp = ph->cmp(first->key, second->key);
+		if (kcmp == 1 || kcmp == 0) {
 			/* 
 			 * attach second as the leftmost child of first.
 			 */
@@ -196,7 +200,7 @@ compare_link(const struct pairing_heap *ph, struct pairing_node *first,
  */
 static struct pairing_node * 
 combine_siblings(const struct pairing_heap *ph, struct pairing_node *fsib,
-				unsigned long deg)
+		unsigned long deg)
 {
 	unsigned long i, j;
 	struct pairing_node **forest, *current;
