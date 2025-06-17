@@ -59,15 +59,15 @@ main(int argc, char *argv[])
 	
 	while ((op = getopt(argc, argv, optstr)) != -1) {
 		switch (op) {
-			case 'f':
-				fname = optarg;
-				break;
-			case 'k':
-				key = optarg;
-				break;
-			default:
-				fprintf(stderr, "Parameters error.\n");
-				usage_info(argv[0]);
+		case 'f':
+			fname = optarg;
+			break;
+		case 'k':
+			key = optarg;
+			break;
+		default:
+			fprintf(stderr, "Parameters error.\n");
+			usage_info(argv[0]);
 		}
 	}
 	
@@ -80,11 +80,12 @@ main(int argc, char *argv[])
 	
 	rbbst_init(&bst, sizeof(struct element), less);
 	
-	printf("Start read data from \"%s\" file to the Red-Black BST...\n", fname);
+	printf("Start read data from \"%s\" file to the Red-Black BST...\n",
+		fname);
 	start_time = clock();
 	rewind(fp);
-	while(!feof(fp)) {
-		if(fread(&item, sizeof(struct element), 1, fp) > 0)
+	while (!feof(fp)) {
+		if (fread(&item, sizeof(struct element), 1, fp) > 0)
 			rbbst_put(&bst, &item);
 	}
 	close_file(fp);
@@ -102,9 +103,9 @@ main(int argc, char *argv[])
 	
 	start_time = clock();
 	minel = (struct element *)rbbst_min(&bst);
-	printf("The red-black BST of minimum key is: %s\n",	minel->key);
+	printf("The red-black BST of minimum key is: %s\n", minel->key);
 	maxel = (struct element *)rbbst_max(&bst);
-	printf("The red-black BST of maximum key is: %s\n",	maxel->key);
+	printf("The red-black BST of maximum key is: %s\n", maxel->key);
 	end_time = clock();
 	printf("Estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
@@ -132,11 +133,13 @@ main(int argc, char *argv[])
 	strncpy(item.key, key, MAX_KEY_LEN);
 	item.value = -1;
 	start_time = clock();
-	if((el = (struct element *)rbbst_get(&bst, &item)) != NULL) {
+	if ((el = (struct element *)rbbst_get(&bst, &item)) != NULL) {
 		printf("It's value: %ld\n", el->value);
-		printf("The rank of key '%s' is %ld\n", key, rbbst_rank(&bst, el));
-	} else
+		printf("The rank of key '%s' is %ld\n", key,
+			rbbst_rank(&bst, el));
+	} else {
 		printf("Not found.\n");
+	}
 	end_time = clock();
 	printf("Search completed, estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
@@ -175,7 +178,7 @@ main(int argc, char *argv[])
 	strncpy(item.key, rand_key, MAX_KEY_LEN);
 	item.value = -1;
 	start_time = clock();
-	if((el = (struct element *)rbbst_ceiling(&bst, &item)) != NULL)
+	if ((el = (struct element *)rbbst_ceiling(&bst, &item)) != NULL)
 		printf("It's key %s, value is %ld\n", el->key, el->value);
 	else
 		printf("The given key '%s' is too large.\n", rand_key);
@@ -211,7 +214,7 @@ check(const struct rbtree *bst)
 {
 	clock_t start_time, end_time;
 	
-	printf("Begin checks the integrity of Red-Black BST data structure...\n");
+	printf("Begin checks the integrity of Red-Black BST data structure.\n");
 	start_time = clock();
 	rbbst_check(bst);
 	end_time = clock();
@@ -224,7 +227,7 @@ static void
 usage_info(const char *pname)
 {
 	fprintf(stderr, "Usage: %s -f -k\n", pname);
-	fprintf(stderr, "-f: The data file will be read in memory...\n");
+	fprintf(stderr, "-f: The data file will be read in memory.\n");
 	fprintf(stderr, "-k: The key will be searched.\n");
 	exit(EXIT_FAILURE);
 }

@@ -37,14 +37,14 @@
 #define RBBST_HEIGHT_NODE(node)	((node) == NULL ? (-1) : (node)->height)
 
 /* Flips the colors of node and its two children */
-#define FLIP_COLORS(node)		do {					\
-	if (node != NULL) {									\
-		node->color = !node->color;						\
-		if (node->left != NULL)							\
+#define FLIP_COLORS(node)	do {					\
+	if (node != NULL) {						\
+		node->color = !node->color;				\
+		if (node->left != NULL)					\
 			node->left->color = !node->left->color;		\
-		if (node->right != NULL)						\
+		if (node->right != NULL)				\
 			node->right->color = !node->right->color;	\
-	}													\
+	}								\
 } while (0)
 
 static void * get_node(struct rbtree_node *, const void *, algcomp_ft *);
@@ -354,7 +354,7 @@ rotate_right(struct rbtree_node *hnode)
 	lnode->right = hnode;
 	lnode->color = hnode->color;	/* update color */
 	hnode->color = RED;
-	lnode->size = hnode->size;		/* update size */
+	lnode->size = hnode->size;	/* update size */
 	
 	/* update the size of high node. */
 	hnode->size = RBBST_SIZE_NODE(hnode->left) +
@@ -382,7 +382,7 @@ rotate_left(struct rbtree_node *hnode)
 	lnode->left = hnode;
 	lnode->color = hnode->color;	/* update color */
 	hnode->color = RED;
-	lnode->size = hnode->size;		/* update size */
+	lnode->size = hnode->size;	/* update size */
 	
 	/* update the size of high node. */
 	hnode->size = RBBST_SIZE_NODE(hnode->left) +
@@ -539,7 +539,7 @@ delete_min_node(struct rbtree_node *node, unsigned int ksize)
 static struct rbtree_node * 
 delete_max_node(struct rbtree_node *node, unsigned int ksize)
 {
-	if (RBBST_ISRED(node->left))		/* node is 3-node */
+	if (RBBST_ISRED(node->left))	/* node is 3-node */
 		node = rotate_right(node);
 		
 	if (node->right == NULL) {
@@ -585,8 +585,10 @@ delete_node(const struct rbtree *bst, struct rbtree_node *node, const void *key)
 			return NULL;
 		}
 		
-		if (!RBBST_ISRED(node->right) && !RBBST_ISRED(node->right->left))
+		if (!RBBST_ISRED(node->right) &&
+			!RBBST_ISRED(node->right->left)) {
 			node = move_red_right(node);
+		}
 		
 		if (bst->cmp(key, node->key) == 0) {
 			minnode = min_node(node->right);
@@ -595,7 +597,8 @@ delete_node(const struct rbtree *bst, struct rbtree_node *node, const void *key)
 				node->key = minnode->key;
 			else
 				memcpy(node->key, minnode->key, bst->keysize);
-			node->right = delete_min_node(node->right, bst->keysize);
+			node->right = delete_min_node(node->right,
+				bst->keysize);
 		} else
 			node->right = delete_node(bst, node->right, key);
 	}
@@ -650,7 +653,8 @@ isbal_node(const struct rbtree_node *node, int blacks)
 		return blacks == 0;
 	if (!RBBST_ISRED(node))
 		blacks--;
-	return isbal_node(node->left, blacks) && isbal_node(node->right, blacks);
+	return isbal_node(node->left, blacks) &&
+		isbal_node(node->right, blacks);
 }
 
 /* Do all paths from root to leaf have same number of black links? */
@@ -680,7 +684,8 @@ is_size_consistent(const struct rbtree_node *node)
 		RBBST_SIZE_NODE(node->right) + 1) {
 		return 0;
 	}
-	return is_size_consistent(node->left) && is_size_consistent(node->right);
+	return is_size_consistent(node->left) &&
+		is_size_consistent(node->right);
 }
 
 /* check that ranks are consistent */
@@ -769,10 +774,12 @@ rank_node(const struct rbtree_node *node, const void *key, algcomp_ft *kcmp)
 	
 	if ((cr = kcmp(key, node->key)) == 1)
 		return rank_node(node->left, key, kcmp);
-	if (cr == -1)
-		return 1 + RBBST_SIZE_NODE(node->left) + rank_node(node->right, key, kcmp);
-	else
+	if (cr == -1) {
+		return 1 + RBBST_SIZE_NODE(node->left) +
+			rank_node(node->right, key, kcmp);
+	} else {
 		return RBBST_SIZE_NODE(node->left);
+	}
 }
 
 /* 
@@ -802,7 +809,7 @@ select_node(struct rbtree_node *node, unsigned long rank)
  */
 static void 
 keys_range(const struct rbtree_node *node, const void *lokey, const void *hikey,
-		algcomp_ft *kcmp, struct single_list *keys)
+	algcomp_ft *kcmp, struct single_list *keys)
 {
 	int cmplo, cmphi;
 	

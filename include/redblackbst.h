@@ -37,18 +37,18 @@
 enum bst_redblack {RED, BLACK};
 
 struct rbtree_node {
-	void *key;					/* key contained by the Node */
+	void *key;			/* key contained by the Node */
 	struct rbtree_node *left;	/* link to left subtrees */
 	struct rbtree_node *right;	/* link to right subtrees */
 	enum bst_redblack color;	/* color for parent link */
-	unsigned long size;			/* subtrees count */
-	long height;				/* height of the subtree */
+	unsigned long size;		/* subtrees count */
+	long height;			/* height of the subtree */
 };
 
 struct rbtree {
 	struct rbtree_node *root;	/* root node */
 	unsigned int keysize;		/* the bytes of the key */
-	algcomp_ft *cmp;			/* comparator over the keys */
+	algcomp_ft *cmp;		/* comparator over the keys */
 };
 
 /* Returns the number of keys in this Red-Black BST. */
@@ -124,6 +124,6 @@ void * rbbst_select(const struct rbtree *bst, unsigned long rank);
  * given range in ascending order.
  */
 void rbbst_keys(const struct rbtree *bst, const void *lokey, const void *hikey,
-				struct single_list *keys);
+		struct single_list *keys);
 
 #endif /* _REDBLACKBST_H_ */
