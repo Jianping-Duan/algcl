@@ -33,7 +33,7 @@
 #include "singlelist.h"
 
 /* returns a random value in [0...1] */
-#define SL_FRACTION		((double)rand() / (double)RAND_MAX)
+#define SL_FRACTION	((double)rand() / (double)RAND_MAX)
 
 #define SL_PROBABILITY	0.5
 
@@ -56,7 +56,7 @@ static int random_level(double, int);
  */
 void 
 skipl_init(struct skip_list *sl, int maxlvl, unsigned int ksize,
-		algcomp_ft *cmp)
+	algcomp_ft *cmp)
 {
 	sl->maxlevel = maxlvl;
 	sl->level = 0;
@@ -131,8 +131,8 @@ skipl_put(struct skip_list *sl, const void *key)
 	if (key == NULL)
 		errmsg_exit("calls skipl_put() with null argument.\n");
 
-	update = (struct skipl_node **)algcalloc(sl->maxlevel + 1, 
-		sizeof(struct skipl_node *));
+	update = (struct skipl_node **)
+		algcalloc(sl->maxlevel + 1, sizeof(struct skipl_node *));
 	pointers_init(update, sl->maxlevel);
 
 	current = sl->head;	
@@ -153,7 +153,8 @@ skipl_put(struct skip_list *sl, const void *key)
 			sl->level = lvl;
 		}
 
-		newnode = (struct skipl_node *)algmalloc(sizeof(struct skipl_node));
+		newnode = (struct skipl_node *)
+			algmalloc(sizeof(struct skipl_node));
 		if (sl->keysize != 0) {
 			newnode->key = algmalloc(sl->keysize);
 			memcpy(newnode->key, key, sl->keysize);
@@ -187,7 +188,7 @@ skipl_delete(struct skip_list *sl, const void *key)
 		errmsg_exit("calls skipl_delete() with null argument.\n");
 
 	update = (struct skipl_node **)
-		algcalloc(sl->maxlevel + 1,	sizeof(struct skipl_node *));
+		algcalloc(sl->maxlevel + 1, sizeof(struct skipl_node *));
 	pointers_init(update, sl->maxlevel);
 
 	current = sl->head;	
@@ -307,7 +308,7 @@ skipl_floor(const struct skip_list *sl, const void *key)
 	current = sl->head;
 	for (i = sl->level; i >= 0; i--)
 		while (current->forward[i] != NULL && 
-			  sl->cmp(current->forward[i]->key, key) == 1) {
+			sl->cmp(current->forward[i]->key, key) == 1) {
 			current = current->forward[i];
 		}
 
@@ -341,7 +342,7 @@ skipl_ceiling(const struct skip_list *sl, const void *key)
 	current = sl->head;
 	for (i = sl->level; i >= 0; i--)
 		while (current->forward[i] != NULL && 
-			  sl->cmp(current->forward[i]->key,	key) == 1) {
+			sl->cmp(current->forward[i]->key, key) == 1) {
 			current = current->forward[i];
 		}
 	

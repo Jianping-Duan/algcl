@@ -35,25 +35,25 @@
 #include "algcomm.h"
 
 struct skipl_node {
-	void *key;						/* key contained by the Node */
+	void *key;			/* key contained by the Node */
 	struct skipl_node **forward;	/* array to hold references to different
-									   levels */
+					   levels */
 };
 
 struct skip_list {
 	struct skipl_node *head;	/* head node of skip-list */
-	int maxlevel;				/* maximum number of levels */
-	int level;					/* current level of skip-list */
-	unsigned long size;			/* number of elements */
+	int maxlevel;			/* maximum number of levels */
+	int level;			/* current level of skip-list */
+	unsigned long size;		/* number of elements */
 	unsigned int keysize;		/* the bytes of the key */
-	algcomp_ft *cmp;			/* comparator over the keys */
+	algcomp_ft *cmp;		/* comparator over the keys */
 };
 
 /* 
  * Returns the number of key-value pairs 
  * in this skip list.
  */
-#define SKIPL_SIZE(sl)	((sl)->size)
+#define SKIPL_SIZE(sl)		((sl)->size)
 
 /* Is this skip list empty? */
 #define SKIPL_ISEMPTY(sl)	((sl)->head->forward[0] == NULL)
@@ -66,16 +66,17 @@ struct skip_list {
  * Traverses this Skip List.
  * Before use it, you must declare 'nptr' pointer.
  */
-#define SKIPL_FOREACH(sl, nptr, dtyp, key)	\
-	for ((nptr) = (sl)->head->forward[0],	\
+#define SKIPL_FOREACH(sl, nptr, dtyp, key)				\
+	for ((nptr) = (sl)->head->forward[0],				\
 		(key) = (dtyp *)_SKIPL_NODE_KEY(nptr); (nptr) != NULL;	\
-		(nptr) = (nptr)->forward[0], (key) = (dtyp *)_SKIPL_NODE_KEY(nptr))
+		(nptr) = (nptr)->forward[0],				\
+		(key) = (dtyp *)_SKIPL_NODE_KEY(nptr))
 
 struct single_list;
 
 /* Initializes an empty skip list */
 void skipl_init(struct skip_list *sl, int maxlvl, unsigned int ksize,
-				algcomp_ft *cmp);
+		algcomp_ft *cmp);
 
 /* Returns the value associated with the given key. */ 
 void * skipl_get(const struct skip_list *sl, const void *key);

@@ -57,21 +57,22 @@ main(int argc, char *argv[])
 	
 	while ((op = getopt(argc, argv, optstr)) != -1) {
 		switch (op) {
-			case 'f':
-				fname = optarg;
-				break;
-			case 'k':
-				key = optarg;
-				break;
-			case 'n':
-				if (sscanf(optarg, "%d", &sz) != 1)
-					errmsg_exit("Illegal number. -n %s\n",	optarg);
-				if (sz <= 0)
-					errmsg_exit("Given a size must be greater than 0.\n");
-				break;
-			default:
-				fprintf(stderr, "Parameters error.\n");
-				usage_info(argv[0]);
+		case 'f':
+			fname = optarg;
+			break;
+		case 'k':
+			key = optarg;
+			break;
+		case 'n':
+			if (sscanf(optarg, "%d", &sz) != 1)
+				errmsg_exit("Illegal number. -n %s\n", optarg);
+			if (sz <= 0)
+				errmsg_exit("Given a size must be "
+					"greater than 0.\n");
+			break;
+		default:
+			fprintf(stderr, "Parameters error.\n");
+			usage_info(argv[0]);
 		}
 	}
 	
@@ -80,7 +81,7 @@ main(int argc, char *argv[])
 	
 	skipl_init(&sl, sz, sizeof(struct element), less);
 	
-	printf("Start read data from \"%s\" file to the skip list...\n", fname);
+	printf("Start read data from \"%s\" file to the skip list.\n", fname);
 	start_time = clock();
 	fp = open_file(fname, "rb");
 	rewind(fp);
