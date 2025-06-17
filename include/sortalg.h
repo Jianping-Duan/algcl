@@ -72,21 +72,21 @@
 
 /* Is the array base[lo..hi) sorted? */
 int check_ordered_range(const void *base, long lo, long hi,
-		unsigned int size, algcomp_ft *cmp);
+			unsigned int size, algcomp_ft *cmp);
 
 /* 
  * Rearranges the subarray base[lo..hi) in ascending order,
  * using the insertion sort. 
  */
 void insertion_sort_range(void *base, long lo, long hi, 
-		unsigned int size, algcomp_ft *cmp);
+			unsigned int size, algcomp_ft *cmp);
 
 /* 
  * Rearranges the subarray base[lo..hi) in ascending order,
  * using the selection sort. 
  */
 void selection_sort_range(void *base, long lo, long hi, 
-		unsigned int size, algcomp_ft *cmp);
+			unsigned int size, algcomp_ft *cmp);
 
 /* 
  * Rearranges the subarray base[lo..hi) in ascending order,
@@ -107,34 +107,34 @@ void quick_sort_range(void *base, long lo, long hi,
  * using the quick 3 way sort.
  */
 void quick_3way_sort_range(void *base, long lo, long hi,
-		unsigned int size, algcomp_ft *cmp);
+			unsigned int size, algcomp_ft *cmp);
 
 /* 
  * stably merge ordered base[lo .. mid] with 
  * base[mid+1 ..hi] using aux[lo .. hi].
  */
 void ordered_merge(void *base, void *aux, long lo, 
-	long mid, long hi, unsigned int size, algcomp_ft *cmp);
+		long mid, long hi, unsigned int size, algcomp_ft *cmp);
 
 /* 
  * Rearranges the subarray base[lo..hi) in ascending order,
  * using the merge sort.
  */
 void merge_sort_topdown(void *base, long lo, long hi, 
-		unsigned int size, algcomp_ft *cmp);
+			unsigned int size, algcomp_ft *cmp);
 
 /* 
  * Rearranges the subarray base[lo..hi) in ascending order,
  * using the merge sort.
  */
 void merge_sort_bottomup(void *base, long lo, long hi, 
-		unsigned int size, algcomp_ft *cmp);
+			unsigned int size, algcomp_ft *cmp);
 
 /* 
  * Rearranges the subarray base[lo..hi) in ascending order,
  * using the binary insertion sort. 
  */
 void binary_isort_range(void *base, long lo, long hi, 
-		unsigned int size, algcomp_ft *cmp);
+			unsigned int size, algcomp_ft *cmp);
 
 #endif	/* _SORTALG_H_ */

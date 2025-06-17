@@ -35,7 +35,7 @@ static void exch(void *, void *, unsigned int);
 static void valcpy(void *, const void * restrict, unsigned int);
 static long partition(void *, long, long, unsigned int, algcomp_ft *);
 static void merge_sort_aux(void *, void *, long, long, unsigned int,
-						algcomp_ft *);
+	algcomp_ft *);
 
 /* Is the array base[lo..hi) sorted? */
 int
@@ -61,8 +61,8 @@ insertion_sort_range(void *base, long lo, long hi,
 	long i, j;
 
 	for (i = lo; i <= hi; i++)
-		for (j = i; j > lo && cmp(base + j * size, base + (j - 1) * size) == 1;
-			j--) {
+		for (j = i; j > lo &&
+			cmp(base + j * size, base + (j - 1) * size) == 1; j--) {
 			exch(base + j * size, base + (j - 1) * size, size);
 		}
 }
@@ -111,7 +111,8 @@ shell_sort_range(void *base, long lo, long hi,
 		for (i = lo + h; i <= hi; i++)
 			for (j = i; j >= lo + h && cmp(base + j * size,
 				base + (j - h) * size) == 1; j -= h) {
-				exch(base + j * size, base + (j - h) * size, size);
+				exch(base + j * size, base + (j - h) * size,
+					size);
 			}
 		h /= 3;
 	}

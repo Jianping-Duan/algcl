@@ -61,8 +61,8 @@ main(int argc, char *argv[])
 	if (sscanf(argv[1], "%d", &sz) != 1)
 		errmsg_exit("Illegal integer number, %s\n", argv[1]);
 	if (sz < MIN_ITEMS) {
-		errmsg_exit("Given a integer number must be equal or greater than %d",
-			MIN_ITEMS);
+		errmsg_exit("Given a integer number must be equal or "
+			"greater than %d", MIN_ITEMS);
 	}
 
 	SET_RANDOM_SEED;
@@ -104,34 +104,33 @@ sort(int *array, int sz, int flag)
 	clock_t start_time, end_time;
 	
 	switch (flag) {
-		case 0:
-			sort_fptr = selection_sort_range;
-			break;
-		case 1:
-			sort_fptr = insertion_sort_range;
-			break;
-		case 2:
-			sort_fptr = shell_sort_range;
-			break;
-		case 3:
-			sort_fptr = quick_sort_range;
-			break;
-		case 4:
-			sort_fptr = quick_3way_sort_range;
-			break;
-		case 5:
-			sort_fptr = merge_sort_topdown;
-			break;
-		case 6:
-			sort_fptr = merge_sort_bottomup;
-			break;
-		case 7:
-			sort_fptr = binary_isort_range;
-			break;
-		default: {
-			fprintf(stderr, "None of sort algorithm.\n");
-			return;
-		}
+	case 0:
+		sort_fptr = selection_sort_range;
+		break;
+	case 1:
+		sort_fptr = insertion_sort_range;
+		break;
+	case 2:
+		sort_fptr = shell_sort_range;
+		break;
+	case 3:
+		sort_fptr = quick_sort_range;
+		break;
+	case 4:
+		sort_fptr = quick_3way_sort_range;
+		break;
+	case 5:
+		sort_fptr = merge_sort_topdown;
+		break;
+	case 6:
+		sort_fptr = merge_sort_bottomup;
+		break;
+	case 7:
+		sort_fptr = binary_isort_range;
+		break;
+	default:
+		fprintf(stderr, "None of sort algorithm.\n");
+		return;
 	}
 
 	start_time = clock();
