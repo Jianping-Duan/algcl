@@ -46,7 +46,8 @@ graph_bfsp_init(struct graph_bfsp *bfs, unsigned int s, const struct graph *g)
 	unsigned int i;
 	
 	if (s >= g->vertices)
-		errmsg_exit("vertex %u is not between 0 and %u\n", s, g->vertices - 1);
+		errmsg_exit("vertex %u is not between 0 and %u\n", s,
+			g->vertices - 1);
 	
 	bfs->vertices = g->vertices;
 	
@@ -68,7 +69,7 @@ graph_bfsp_init(struct graph_bfsp *bfs, unsigned int s, const struct graph *g)
  */
 void 
 graph_bfsp_paths(const struct graph_bfsp *bfs, unsigned int v,
-				struct stack *paths)
+		struct stack *paths)
 {
 	long w;
 	

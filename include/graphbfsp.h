@@ -55,10 +55,10 @@ struct graph_bfsp {
 
 /* Clears this breadth-first search paths. */
 #define GRAPH_BFSP_CLEAR(bfs)	do {	\
-	ALGFREE((bfs)->marked);				\
-	ALGFREE((bfs)->edgeto);				\
-	ALGFREE((bfs)->distto);				\
-	(bfs)->vertices = 0;				\
+	ALGFREE((bfs)->marked);		\
+	ALGFREE((bfs)->edgeto);		\
+	ALGFREE((bfs)->distto);		\
+	(bfs)->vertices = 0;		\
 } while (0)
 
 struct stack;
@@ -68,13 +68,13 @@ struct stack;
  * vertex in the graph g. 
  */
 void graph_bfsp_init(struct graph_bfsp *bfs, unsigned int s,
-					const struct graph *g);
+		const struct graph *g);
 
 /* 
  * Gets a shortest path between the source vertex s and v, 
  * or if no such path. 
  */
 void graph_bfsp_paths(const struct graph_bfsp *bfs, unsigned int v,
-					struct stack *paths);
+		struct stack *paths);
 
 #endif	/* _GRAPHBFSP_H_ */
