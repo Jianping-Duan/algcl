@@ -61,7 +61,7 @@ enum lost_mark {UNMARK, MARK};
  */
 void 
 ifibpq_init(struct index_fibpq *fpq, unsigned long n, unsigned int ksize,
-			algcomp_ft *cmp)
+	algcomp_ft *cmp)
 {
 	unsigned long i;
 
@@ -100,7 +100,8 @@ ifibpq_insert(struct index_fibpq *fpq, unsigned long i, const void *key)
 	if (fpq->result == NULL)
 		fpq->result = current;
 	else
-		fpq->result = fpq->cmp(fpq->result->key, key) ? current : fpq->result;
+		fpq->result = fpq->cmp(fpq->result->key, key) ?
+			current : fpq->result;
 
 	return 0;
 }
@@ -134,10 +135,10 @@ ifibpq_delete(struct index_fibpq *fpq)
 
 void 
 ifibpq_traverse(const struct index_fibpq *fpq, struct queue *keys,
-				struct queue *indexes)
+		struct queue *indexes)
 {
 	if (!IFIBPQ_ISEMPTY(fpq))
-		traverse(fpq->head,	keys, indexes);
+		traverse(fpq->head, keys, indexes);
 }
 
 void 
@@ -159,7 +160,7 @@ ifibpq_clear(struct index_fibpq *fpq)
 int
 ifibpq_remove(struct index_fibpq *fpq, unsigned long i)
 {
-	struct index_fibpq_node *current;// *childp, *nextp, *chead;
+	struct index_fibpq_node *current;
 	
 	if (i >= fpq->capacity)
 		return -1;
@@ -468,7 +469,7 @@ consolidate(struct index_fibpq *fpq)
 
 static void 
 traverse(const struct index_fibpq_node *node, struct queue *keys,
-		struct queue *indexes)
+	struct queue *indexes)
 {
 	const struct index_fibpq_node *current;
 
@@ -518,7 +519,8 @@ write_child_root(struct index_fibpq *fpq, struct index_fibpq_node *ptr)
 		chead = childp;
 		do {
 			nextp = childp->next;
-			childp->parent = NULL;	/* detach child's parent pointer */
+			/* detach child's parent pointer */
+			childp->parent = NULL;
 			fpq->head = insert_node(childp, fpq->head);
 			childp = nextp;
 		} while (nextp != NULL && nextp != chead);

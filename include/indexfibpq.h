@@ -35,13 +35,13 @@
 #include "algcomm.h"
 
 struct index_fibpq_node {
-	void *key;				/* key contained by the Node */
+	void *key;		/* key contained by the Node */
 	unsigned long index;	/* index associated with the key */
 	unsigned int degree;	/* degree of the tree rooted by this Node */
 	struct index_fibpq_node *prev;	/* previous sibling of the Node */
 	struct index_fibpq_node *next;	/* next sibling of the Node */
-	struct index_fibpq_node *parent; /* parent of his Node */
-	struct index_fibpq_node *child;	/* child of this Node */
+	struct index_fibpq_node *parent;	/* parent of his Node */
+	struct index_fibpq_node *child;		/* child of this Node */
 	int mark;	/* indicates if this Node already lost a child */
 };
 
@@ -50,23 +50,22 @@ struct index_fibpq {
 	struct index_fibpq_node *result; /* min or max Node of the root list */
 	struct index_fibpq_node **nodes; /* Array of Nodes in the heap */
 	unsigned long capacity;	/* Maximum number of keys in the heap */
-	unsigned long size;		/* Number of keys in the heap */
+	unsigned long size;	/* Number of keys in the heap */
 	unsigned int keysize;	/* the bytes of the key */
-	algcomp_ft *cmp;		/* comparator over the keys */
+	algcomp_ft *cmp;	/* comparator over the keys */
 };
 
 /* 
  * Whether the indexed fibonacci priority queue is empty, 
  * worst case is O(1). 
  */
-#define IFIBPQ_ISEMPTY(fpq)		((fpq)->size == 0)
+#define IFIBPQ_ISEMPTY(fpq)	((fpq)->size == 0)
 
 /* 
  * Whether the indexed fibonacci priority queue is full, 
  * worst case is O(1). 
  */
-#define IFIBPQ_ISFULL(fpq)	\
-	((fpq)->size >= (fpq)->capacity ? 1 : 0)
+#define IFIBPQ_ISFULL(fpq)	((fpq)->size >= (fpq)->capacity ? 1 : 0)
 
 /* 
  * Number of elements currently on the priority queue, 
@@ -109,7 +108,7 @@ struct queue;
  * priority queue. 
  */
 void ifibpq_init(struct index_fibpq *fpq, unsigned long n, unsigned int ksize,
-				algcomp_ft *cmp);
+		algcomp_ft *cmp);
 
 /* Associates a key with an index. */
 int ifibpq_insert(struct index_fibpq *fpq, unsigned long i, const void *key);
@@ -119,7 +118,7 @@ unsigned long ifibpq_delete(struct index_fibpq *fpq);
 
 /* Traverses this indexed fibonacci heap. */
 void ifibpq_traverse(const struct index_fibpq *fpq, struct queue *keys, 
-					struct queue *indexes);
+		struct queue *indexes);
 
 /* Clears this heap. */
 void ifibpq_clear(struct index_fibpq *fpq);

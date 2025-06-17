@@ -84,11 +84,13 @@ main(int argc, char *argv[])
 	printf("The Index-Key pair is %lu-%d\n", index, *key);
 	printf("\n");
 	
-	printf("Start randomly deleting the keys and associated with the index.\n");
+	printf("Start randomly deleting the keys and associated with "
+		"the index.\n");
 	for (i = 0; i < sz / 2; i++) {
 		n = rand_range_integer(1, sz);
 		if (ifibpq_remove(&fpq, n) == 0)
-			printf("The index %d and its key have been deleted.\n", n);
+			printf("The index %d and its key have been deleted.\n",
+				n);
 	}
 	printf("Total elements are %lu\n", IFIBPQ_SIZE(&fpq));
 	printf("\n");
