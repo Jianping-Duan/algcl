@@ -36,10 +36,10 @@
  * Assuming root1 holds a greater or less key than root2, 
  * root2 becomes the new root. 
  */
-#define BINOMPQ_LINK(root1, root2)		do {	\
-	root1->sibling = root2->child;				\
-	root2->child = root1;						\
-	root2->degree++;							\
+#define BINOMPQ_LINK(root1, root2)	do {	\
+	root1->sibling = root2->child;		\
+	root2->child = root1;			\
+	root2->degree++;			\
 } while (0)
 	
 static struct binomial_node * make_node(const void *, unsigned int);
@@ -102,19 +102,20 @@ binompq_union(struct binomialpq *spq, const struct binomialpq *tpq)
 	next = current->sibling;
 	while (next != NULL) {
 		if (current->degree < next->degree || (next->sibling != NULL &&
-		    next->sibling->degree == current->degree)) { /* Nothing do it. */
+			next->sibling->degree == current->degree)) {
+			/* Nothing do it. */
 			prev = current;
 			current = next;
 		} else if (spq->cmp(next->key, current->key)) {
 			current->sibling = next->sibling;
-			BINOMPQ_LINK(next, current);	/* links next to current */
+			BINOMPQ_LINK(next, current); /* links next to current */
 		} else {	/* !spq->com */
 			if (prev == NULL)
-				spq->head = next;	/* moves head pointer */
+				spq->head = next; /* moves head pointer */
 			else
 				prev->sibling = next;
-			BINOMPQ_LINK(current, next);	/* links current to next */
-			current = next;		/* current becomes next pointer */
+			BINOMPQ_LINK(current, next); /* links current to next */
+			current = next; /* current becomes next pointer */
 		}
 		next = current->sibling;
 	}
@@ -225,7 +226,8 @@ make_node(const void *key, unsigned int ksize)
 {
 	struct binomial_node *current;
 
-	current = (struct binomial_node *)algmalloc(sizeof(struct binomial_node));
+	current = (struct binomial_node *)
+		algmalloc(sizeof(struct binomial_node));
 	
 	if (ksize != 0) {
 		current->key = algmalloc(ksize);
@@ -281,8 +283,8 @@ get_node(struct binomialpq *pq)
 		current = current->sibling;
 	}
 	
-	if (pq->head == result)	
-		pq->head = result->sibling;	/* head is minimum or maximum key */
+	if (pq->head == result)	/* head is minimum or maximum key */
+		pq->head = result->sibling;
 	/* the last node is minimum or maximum key */
 	else if (result->sibling == NULL)
 		prev->sibling = NULL;

@@ -35,9 +35,9 @@
 #include "algcomm.h"
 
 struct binomial_node {
-	void *key;				/* key contained by the node */
+	void *key;		/* key contained by the node */
 	unsigned int degree;	/* the degree of the Binomial Tree rooted by
-							   this	node */
+				   this	node */
 	struct binomial_node *child;	/* child of this node */
 	struct binomial_node *sibling;	/* sibling of this node */
 };
@@ -45,7 +45,7 @@ struct binomial_node {
 struct binomialpq {
 	struct binomial_node *head;	/* head of the list of roots */
 	unsigned int keysize;		/* the bytes of the key */
-	algcomp_ft *cmp;			/* comparator over the keys */
+	algcomp_ft *cmp;		/* comparator over the keys */
 };
 
 /* Whether the priority queue is empty. */
@@ -67,7 +67,7 @@ unsigned long binompq_size(const struct binomialpq *pq);
  * this operation is destructive. 
  */
 struct binomialpq * binompq_union(struct binomialpq *spq,
-								const struct binomialpq *tpq);
+				const struct binomialpq *tpq);
 
 /* Puts a Key in the heap. */
 void binompq_insert(struct binomialpq *pq, const void *key);
