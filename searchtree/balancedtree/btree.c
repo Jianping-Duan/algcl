@@ -82,7 +82,7 @@ static void remove_entry(struct btree *, struct btree_node *, const void *,
 /* Initializes an empty B-tree. */
 void
 btree_init(struct btree *bt, unsigned int ksz, unsigned int vsz,
-			algcomp_ft *cmp)
+	algcomp_ft *cmp)
 {
 	assert(ksz != 0 && vsz != 0);
 
@@ -103,7 +103,7 @@ btree_init(struct btree *bt, unsigned int ksz, unsigned int vsz,
 
 /* 
  * Inserts the key-value pair into the B-Tree, 
- * overwriting the old value with the new value 
+ * overwriting the old value with the new value
  * if the key is already in the B-Tree. 
  */
 void 
@@ -121,7 +121,7 @@ btree_put(struct btree *bt, const void *key, const void *val)
 		return;
 
 	/* when overflowing a root, need to split root */
-	t = (struct btree_node *)algmalloc(sizeof(struct btree_node));	
+	t = (struct btree_node *)algmalloc(sizeof(struct btree_node));
 	t->sz = 2;
 	t->prev = NULL;
 	t->sibling = NULL;
@@ -182,7 +182,7 @@ btree_clear(struct btree *bt)
 /* Output query result that set between lokey and hikey */
 void 
 btree_range_query(const struct btree *bt, const void *lokey, const void *hikey,
-				struct single_list *rec)
+		struct single_list *rec)
 {
 	if (lokey == NULL || hikey == NULL)
 		errmsg_exit("Argumment key to btree_range_query is null.\n");
@@ -316,15 +316,22 @@ insert(struct btree *bt, struct btree_node *h, const void *key,
 		for (i = 0; i < h->sz; i++)
 			if (i + 1 == h->sz || (i + 1 < h->sz && 
 				bt->kcmp(key, h->children[i + 1]->key) == 1)) {
-				if ((u = insert(bt, h->children[i++]->next, key, val, ht - 1))
-					== NULL) {
+				if ((u = insert(bt, h->children[i++]->next, key,
+					val, ht - 1)) == NULL) {
 					return NULL;
 				}
 
-				/* if a node had splited, attach the new node to its parent. */
-				t = (struct btree_entry *)algmalloc(sizeof(struct btree_entry));
+				/* 
+				 * if a node had splited,
+				 * attach the new node to its parent.
+				 */
+				t = (struct btree_entry *)
+					algmalloc(sizeof(struct btree_entry));
 
-				/* move the smallest key to parent in sorted order. */
+				/*
+				 * move the smallest key to parent in
+				 * sorted order.
+				 */
 				t->key = u->children[0]->key;
 				t->value = NULL;
 				t->next = u;
@@ -345,7 +352,10 @@ insert(struct btree *bt, struct btree_node *h, const void *key,
 		bt->size--;
 		return NULL;
 	} else { 
-		/* move the elements of children array and inserts a new entry. */
+		/* 
+		 * move the elements of children array
+		 * and inserts a new entry.
+		 */
 		for (j = h->sz; j > i; j--)
 			h->children[j] = h->children[j - 1];
 		h->children[i] = t;
@@ -374,14 +384,16 @@ search(const struct btree *bt, struct btree_node *x, const void *key, int ht,
 	if (ht == 0) {
 		for (i = 0; i < x->sz; i++)
 			if (bt->kcmp(key, x->children[i]->key) == 0) {
-				memmove(*val, x->children[i]->value, bt->valsize);
+				memmove(*val, x->children[i]->value,
+					bt->valsize);
 				return; 
 			}
 	} else {
 		for (i = 0; i < x->sz; i++)
 			if (i + 1 == x->sz || (i + 1 < x->sz && 
 			   bt->kcmp(key, x->children[i + 1]->key) == 1)) {
-				search(bt, x->children[i]->next, key, ht - 1, val);
+				search(bt, x->children[i]->next, key, ht - 1,
+					val);
 			}
 	}
 }
@@ -407,12 +419,14 @@ get_start_leaf(const struct btree *bt, struct btree_node *x, const void *key,
 			return NULL;
 		else 
 			return get_start_leaf(bt, x->sibling, key, 0);
-	} else 
+	} else {
 		for (i = 0; i < x->sz; i++)
 			if (i + 1 == x->sz || (i + 1 < x->sz &&
 			   bt->kcmp(key, x->children[i + 1]->key) == 1)) {
-				return get_start_leaf(bt, x->children[i]->next, key, ht - 1);
+				return get_start_leaf(bt, x->children[i]->next,
+					key, ht - 1);
 			}
+	}
 
 	return NULL;
 }
@@ -420,7 +434,7 @@ get_start_leaf(const struct btree *bt, struct btree_node *x, const void *key,
 /* returns the leaf node in this B-Tree. */
 static struct btree_node * 
 get_leaf_node(const struct btree *bt, struct btree_node *x, const void *key,
-			int ht)
+		int ht)
 {
 	unsigned int i;
 
@@ -438,12 +452,14 @@ get_leaf_node(const struct btree *bt, struct btree_node *x, const void *key,
 		for (i = 0; i < x->sz; i++)
 			if (bt->kcmp(key, x->children[i]->key) == 0) 
 				return x;
-	} else 
+	} else  {
 		for (i = 0; i < x->sz; i++)
 			if (i + 1 == x->sz || ( i + 1 < x->sz &&
 			   bt->kcmp(key, x->children[i + 1]->key) == 1)) {
-				return get_leaf_node(bt, x->children[i]->next, key, ht - 1);
+				return get_leaf_node(bt, x->children[i]->next,
+					key, ht - 1);
 			}
+	}
 
 	return NULL;
 }
@@ -452,7 +468,7 @@ get_leaf_node(const struct btree *bt, struct btree_node *x, const void *key,
 /* returns the internal node in this B-Tree. */
 static struct btree_node * 
 get_internal_node(const struct btree *bt, struct btree_node *x,
-				const void *key, int ht)
+		const void *key, int ht)
 {
 	unsigned int i;
 
@@ -463,14 +479,17 @@ get_internal_node(const struct btree *bt, struct btree_node *x,
 		for (i = 0; i < x->sz; i++)
 			if (bt->kcmp(key, x->children[i]->key) == 0)
 				return x;
-	} else 
+	} else {
 		for (i = 0; i < x->sz; i++)
 			if (i + 1 == x->sz || (i + 1 < x->sz &&
 			   bt->kcmp(key, x->children[i + 1]->key) == 1)) {
-				if (i < x->sz && bt->kcmp(key, x->children[i]->key) == 0)
+				if (i < x->sz &&
+					bt->kcmp(key, x->children[i]->key) == 0)
 					return x;
-				return get_internal_node(bt, x->children[i]->next, key, ht - 1);
+				return get_internal_node(bt,
+					x->children[i]->next, key, ht - 1);
 			}
+	}
 
 	return NULL;
 }
@@ -496,14 +515,15 @@ query(const struct btree *bt, const void *lokey, const void *hikey,
 	unsigned int i;
 	struct btree_node *leaf;
 	bool ended = false;
+	int lcmp, hcmp;
 	
 	leaf = get_start_leaf(bt, bt->root, lokey, bt->height);
 	while (leaf != NULL) {
 		for (i = 0; i < leaf->sz; i++) {
-			if (bt->kcmp(lokey, leaf->children[i]->key) == 1 || 
-			   bt->kcmp(lokey, leaf->children[i]->key) == 0) {
-				if (bt->kcmp(hikey, leaf->children[i]->key) == -1 || 
-				   bt->kcmp(hikey, leaf->children[i]->key) == 0) {
+			lcmp = bt->kcmp(lokey, leaf->children[i]->key);
+			if (lcmp == 1 || lcmp == 0) {
+				hcmp = bt->kcmp(hikey, leaf->children[i]->key);
+				if (hcmp == -1 || hcmp == 0) {
 					slist_append(rec, leaf->children[i]);
 				} else {
 					ended = true;
@@ -576,7 +596,7 @@ remove_leaf_entry(const struct btree *bt, struct btree_node *x, const void *key)
 /* remmove a key from the internal node */
 static void 
 remove_internal_key(const struct btree *bt, struct btree_node *x,
-					const void *key)
+		const void *key)
 {
 	unsigned int i;
 	struct btree_node *ml;
@@ -594,7 +614,7 @@ remove_internal_key(const struct btree *bt, struct btree_node *x,
 	if ((i = get_entry_index(bt, x, key)) != MAX_CHILDREN) {
 		ml = x->children[i]->next;
 		while (ml != NULL && ml->children[0] != NULL &&
-			  ml->children[0]->next != NULL) {
+			ml->children[0]->next != NULL) {
 			ml = ml->children[0]->next;
 		}
 
@@ -685,7 +705,8 @@ borrow_right_leaf(struct btree_node *h)
 	move_left_entries(h);
 	for (i = 0; i < h->parent->sz; i++)
 		if (h->parent->children[i]->next == h->sibling) {
-			h->parent->children[i]->key = h->sibling->children[0]->key;
+			h->parent->children[i]->key =
+			h->sibling->children[0]->key;
 			break;
 		}
 }
@@ -759,8 +780,10 @@ merge_left_leaf(struct btree_node *current, struct btree_node *left)
 		if (left->parent->children[i]->next == current) {
 			flag = true;
 			ALGFREE(left->parent->children[i]);
-			for (j = i; j < left->parent->sz; j++)
-				left->parent->children[j] = left->parent->children[j + 1];
+			for (j = i; j < left->parent->sz; j++) {
+				left->parent->children[j] =
+				left->parent->children[j + 1];
+			}
 			left->parent->sz--;
 			break;
 		}
@@ -774,7 +797,7 @@ merge_left_leaf(struct btree_node *current, struct btree_node *left)
 /* merge left internal node to the current node. */
 static struct btree_node * 
 merge_left_internal(unsigned int pos, struct btree_node *current,
-					struct btree_node *left)
+		struct btree_node *left)
 {
 	unsigned int i;
 
@@ -819,8 +842,10 @@ merge_right_leaf(struct btree_node *current, struct btree_node *right)
 		if (right->parent->children[i]->next == right) {
 			flag = 1;
 			ALGFREE(right->parent->children[i]);
-			for (j = i; j < right->parent->sz; j++)
-				right->parent->children[j] = right->parent->children[j + 1];
+			for (j = i; j < right->parent->sz; j++) {
+				right->parent->children[j] =
+				right->parent->children[j + 1];
+			}
 			right->parent->sz--;
 			break;
 		}
@@ -834,7 +859,7 @@ merge_right_leaf(struct btree_node *current, struct btree_node *right)
 /* merge right internal node to the current node. */
 static struct btree_node * 
 merge_right_internal(unsigned int pos, struct btree_node *current,
-					struct btree_node *right)
+		struct btree_node *right)
 {
 	unsigned int i;
 
@@ -861,7 +886,7 @@ merge_right_internal(unsigned int pos, struct btree_node *current,
 
 static void 
 remove_entry(struct btree *bt, struct btree_node *x, const void *key,
-			bool isleaf)
+	bool isleaf)
 {
 	const unsigned int minsz = MAX_CHILDREN / 2;
 	struct btree_node *left, *right, *oldroot;
@@ -884,7 +909,8 @@ remove_entry(struct btree *bt, struct btree_node *x, const void *key,
 
 	if (x->sz < minsz) {
 		if (x == bt->root && !isleaf) {
-			if (bt->root->sz == 1 && bt->root->children[0]->next != NULL) {
+			if (bt->root->sz == 1 &&
+				bt->root->children[0]->next != NULL) {
 				bt->root->children[0]->next->parent = NULL;
 				oldroot = bt->root;
 				bt->root = bt->root->children[0]->next;
@@ -898,26 +924,29 @@ remove_entry(struct btree *bt, struct btree_node *x, const void *key,
 			left = x->prev;
 			right = x->sibling;
 
-			if(left != NULL && left->parent == x->parent && left->sz > minsz)
+			if (left != NULL && left->parent == x->parent
+				&& left->sz > minsz) {
 				borrow_left_leaf(x);
-			else if (right != NULL && right->parent == x->parent &&
-				right->sz > minsz) {
+			} else if (right != NULL && right->parent == x->parent
+				&& right->sz > minsz) {
 				borrow_right_leaf(x);
-			} else if (left != NULL && left->parent == x->parent && 
-				left->sz <= minsz) {
+			} else if (left != NULL && left->parent == x->parent
+				&& left->sz <= minsz) {
 				x = merge_left_leaf(x, left);
-			} else if (right != NULL && right->parent == x->parent && 
-				right->sz <= minsz) {
+			} else if (right != NULL && right->parent == x->parent
+				&& right->sz <= minsz) {
 				x = merge_right_leaf(x, right);
-			} else	/* Nothing do it. */
+			} else {	/* Nothing do it. */
 				while(0);
+			}
 		} else {
 			if (x->parent == NULL)
 				return;
 
 #if BT_FREE_NDOE == 1
 			if (x->parent->sz >= MAX_CHILDREN) {
-				printf("--------!!! Warning 2#: This is a bug.\n");
+				printf("--------!!! Warning 2#: "
+					"This is a bug.\n");
 				return;
 			}
 #endif
@@ -942,19 +971,21 @@ remove_entry(struct btree *bt, struct btree_node *x, const void *key,
 			else
 				left = NULL;
 
-			if (left != NULL && left->parent == x->parent && left->sz > minsz)
+			if (left != NULL && left->parent == x->parent
+				&& left->sz > minsz) {
 				borrow_left_key(pos, x);
-			else if (right != NULL && right->parent == x->parent && 
-				right->sz > minsz) {
+			} else if (right != NULL && right->parent == x->parent
+				&& right->sz > minsz) {
 				borrow_right_key(pos, x);
-			} else if (left != NULL && left->parent == x->parent && 
-				left->sz <= minsz) {
+			} else if (left != NULL && left->parent == x->parent
+				&& left->sz <= minsz) {
 				x = merge_left_internal(pos, x, left);
-			} else if (right != NULL && right->parent == x->parent && 
-				right->sz <= minsz) {
+			} else if (right != NULL && right->parent == x->parent
+				&& right->sz <= minsz) {
 				x = merge_right_internal(pos, x, right);
-			} else	/* Nothing do it. */
+			} else {	/* Nothing do it. */
 				while(0);
+			}
 		}
 	}
 

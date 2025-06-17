@@ -45,8 +45,9 @@ struct btree_entry;
 
 /* B-tree node data type */
 struct btree_node {
-	unsigned int sz;	/* number of children */
-	struct btree_entry *children[MAX_CHILDREN];	/* the ordered of children */
+	unsigned int sz;		/* number of children */
+	struct btree_entry *children[MAX_CHILDREN];	/* the ordered of
+							children */
 	struct btree_node *prev;	/* points to previous node */
 	struct btree_node *sibling;	/* points to next node */
 	struct btree_node *parent;	/* points to parent node */
@@ -57,19 +58,19 @@ struct btree_node {
  * external nodes: only use key and value.
  */
 struct btree_entry {
-	void *key;
-	void *value;
+	void *key;			/* key contained by the entry */
+	void *value;			/* key associate with value */
 	struct btree_node *next;	/* points to lower level nodes */
 };
 
 /* B-Tree */
 struct btree {
 	struct btree_node *root;	/* root of the B-tree */
-	int height;					/* height of the B-tree */
-	unsigned long size;			/* number of key-value pairs in the B-tree */
-	unsigned int keysize;		/* max size of the key */
-	unsigned int valsize;		/* max size of the value */
-	algcomp_ft *kcmp;			/* compare function for keys */
+	int height;		/* height of the B-tree */
+	unsigned long size;	/* number of key-value pairs in the B-tree */
+	unsigned int keysize;	/* max size of the key */
+	unsigned int valsize;	/* max size of the value */
+	algcomp_ft *kcmp;	/* compare function for keys */
 };
 
 /* Returns true if this symbol table is empty. */
@@ -78,7 +79,7 @@ struct btree {
 /* 
  * Returns the number of key-value pairs in this B-Tree. 
  */
-#define BTREE_SIZE(bt)	((bt)->size)
+#define BTREE_SIZE(bt)		((bt)->size)
 
 /* Returns the height of this B-tree */
 #define BTREE_HEIGHT(bt)	((bt)->height)
@@ -87,7 +88,7 @@ struct single_list;
 
 /* Initializes an empty B-tree. */
 void btree_init(struct btree *bt, unsigned int ksz, unsigned int vsz, 
-				algcomp_ft *cmp);
+		algcomp_ft *cmp);
 
 /* Inserts the key-value pair into the B-Tree. */
 void btree_put(struct btree *bt, const void *key, const void *val);
@@ -100,7 +101,7 @@ void btree_clear(struct btree *bt);
 
 /* Output query result that set between lokey and hikey. */
 void btree_range_query(const struct btree *bt, const void *lokey,
-					const void *hikey, struct single_list *keys);
+			const void *hikey, struct single_list *keys);
 
 /* Deletes a key-value pair from this B-Tree */
 int btree_delete(struct btree *bt, const void *key);
