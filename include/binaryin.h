@@ -40,15 +40,15 @@
 
 struct binary_input {
 	FILE *istream;	/* input stream */
-	int buffer;		/* one character buffer */
-	int size;		/* number of bits left in buffer */
+	int buffer;	/* one character buffer */
+	int size;	/* number of bits left in buffer */
 };
 
 /* Close this file input stream. */
 #define BINPUT_CLOSE(bin)	do {	\
-	close_file((bin)->istream);		\
-	(bin)->buffer = EOF;			\
-	(bin)->size = -1;				\
+	close_file((bin)->istream);	\
+	(bin)->buffer = EOF;		\
+	(bin)->size = -1;		\
 } while (0)
 
 /* Returns true if file input stream is empty */

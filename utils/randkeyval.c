@@ -58,20 +58,20 @@ main(int argc, char *argv[])
 	
 	while ((op = getopt(argc, argv, optstr)) != -1) {
 		switch (op) {
-			case 'f':
-				fname = optarg;
-				break;
-			case 'l':
-				if (sscanf(optarg, "%d", &keylen) != 1)
-					errmsg_exit("Illegal number. -l %s\n", optarg);
-				break;
-			case 'n':
-				if (sscanf(optarg, "%d", &num) != 1)
-					errmsg_exit("Illegal number. -n %s\n", optarg);
-				break;
-			default: 
-				fprintf(stderr, "Parameters error.\n");
-				usage_info(argv[0]);
+		case 'f':
+			fname = optarg;
+			break;
+		case 'l':
+			if (sscanf(optarg, "%d", &keylen) != 1)
+				errmsg_exit("Illegal number. -l %s\n", optarg);
+			break;
+		case 'n':
+			if (sscanf(optarg, "%d", &num) != 1)
+				errmsg_exit("Illegal number. -n %s\n", optarg);
+			break;
+		default: 
+			fprintf(stderr, "Parameters error.\n");
+			usage_info(argv[0]);
 		}
 	}
 

@@ -48,15 +48,15 @@ main(int argc, char *argv[])
 	char c;
 
 	switch (argc) {
-		case 3:
-			sscanf(argv[1], "%d", &width);
-			binput_init(&bi, argv[2]);
-			break;
-		case 2:
-			binput_init(&bi, argv[1]);
-			break;
-		default:
-			errmsg_exit("Usage: %s [bits per lines] <infile>\n", argv[0]);
+	case 3:
+		sscanf(argv[1], "%d", &width);
+		binput_init(&bi, argv[2]);
+		break;
+	case 2:
+		binput_init(&bi, argv[1]);
+		break;
+	default:
+		errmsg_exit("Usage: %s [bits-per-lines] <infile>\n", argv[0]);
 	}
 
 	while (!BINPUT_ISEMPTY(&bi)) {

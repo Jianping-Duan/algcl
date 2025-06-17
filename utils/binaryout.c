@@ -120,7 +120,7 @@ boutput_write_char_r(struct binary_output *bo, char x, int r)
 void
 boutput_write_string(struct binary_output *bo, const char *s)
 {
-	int i, n;
+	size_t i, n;
 
 	n = strlen(s);
 	for (i = 0; i < n; i++)
@@ -131,7 +131,7 @@ boutput_write_string(struct binary_output *bo, const char *s)
 void
 boutput_write_string_r(struct binary_output *bo, const char *s, int r)
 {
-	int i, n;
+	size_t i, n;
 
 	n = strlen(s);
 	for (i = 0; i < n; i++)
@@ -207,8 +207,10 @@ clear_buffer(struct binary_output *bo)
 	if (bo->size > 0)
 		bo->buffer <<= (8 - bo->size);
 	
-	if (fputc(bo->buffer, bo->ostream) == -1)
-		errmsg_exit("Write buffer to file error, %s\n", strerror(errno));
+	if (fputc(bo->buffer, bo->ostream) == -1) {
+		errmsg_exit("Write buffer to file error, %s\n",
+			strerror(errno));
+	}
 
 	bo->buffer = 0;
 	bo->size = 0;

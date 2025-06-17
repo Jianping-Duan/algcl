@@ -36,8 +36,8 @@
 
 struct binary_output {
 	FILE *ostream;	/* output stream (file output) */
-	int buffer;		/* 8-bit buffer of bits to write */
-	int size;		/* number of bits remaining in buffer */
+	int buffer;	/* 8-bit buffer of bits to write */
+	int size;	/* number of bits remaining in buffer */
 };
 
 /* Initialize the binary file output stream. */
