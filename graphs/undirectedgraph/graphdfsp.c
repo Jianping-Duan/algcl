@@ -36,8 +36,7 @@
 static void gdfs(struct graph_dfsp *, unsigned int, const struct graph *);
 
 /* 
- * Computes a path between s and every 
- * other vertex in graph g. 
+ * Computes a path between s and every other vertex in graph g. 
  */
 void 
 graph_dfsp_init(struct graph_dfsp *dfs, unsigned int s, const struct graph *g)
@@ -45,7 +44,8 @@ graph_dfsp_init(struct graph_dfsp *dfs, unsigned int s, const struct graph *g)
 	unsigned int i;
 	
 	if (s > g->vertices)
-		errmsg_exit("vertex %u is not between 0 and %u\n", s, g->vertices - 1);
+		errmsg_exit("vertex %u is not between 0 and %u\n", s,
+			g->vertices - 1);
 	
 	dfs->sv = s;
 	dfs->vertices = g->vertices;
@@ -67,7 +67,7 @@ graph_dfsp_init(struct graph_dfsp *dfs, unsigned int s, const struct graph *g)
  */
 void 
 graph_dfsp_paths(const struct graph_dfsp *dfs, unsigned int v,
-				struct stack *paths)
+		struct stack *paths)
 {
 	long x, s;
 	

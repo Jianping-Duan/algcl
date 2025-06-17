@@ -37,8 +37,8 @@
 struct graph_dfsp {
 	bool *marked;	/* marked[v] = is there an sv-v path? */
 	long *edgeto;	/* edgeto[v] = last edge on sv-v path,
-					   default edgeto[v] = -1 */
-	unsigned int sv;		/* source vertex */
+			   default edgeto[v] = -1 */
+	unsigned int sv;	/* source vertex */
 	unsigned int vertices;	/* graph of vertices */
 };
 
@@ -48,22 +48,22 @@ struct graph_dfsp {
 
 /* Clears this depth-first search paths. */
 #define GRAPH_DFSP_CLEAR(dfs)	do {	\
-	ALGFREE((dfs)->marked);				\
-	ALGFREE((dfs)->edgeto);				\
-	(dfs)->vertices = 0;				\
+	ALGFREE((dfs)->marked);		\
+	ALGFREE((dfs)->edgeto);		\
+	(dfs)->vertices = 0;		\
 } while (0)
 
 struct stack;
 
 /* Computes a path between s and every other vertex in graph g. */
 void graph_dfsp_init(struct graph_dfsp *dfs, unsigned int s,
-					const struct graph *g);
+		const struct graph *g);
 
 /* 
  * Returns a path between the source vertex sv and vertex v,
  * or if no such path. 
  */
 void graph_dfsp_paths(const struct graph_dfsp *dfs, unsigned int v,
-					struct stack *paths);
+		struct stack *paths);
 
 #endif	/* _GRAPHDFSP_H_ */
