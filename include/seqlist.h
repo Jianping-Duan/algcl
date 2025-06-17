@@ -35,13 +35,13 @@
 #include "algcomm.h"
 
 struct seqlist_node {
-	struct element item;	/* key-value pair */
+	struct element item;		/* key-value pair */
 	struct seqlist_node *next;
 };
 
 struct seqlist {
-	struct seqlist_node *first; /* pointer of the first node. */
-	unsigned long len;			/* number of key-value pairs */
+	struct seqlist_node *first;	/* pointer of the first node. */
+	unsigned long len;		/* number of key-value pairs */
 };
 
 /* Returns the number of items in this sequentail list. */
@@ -51,9 +51,9 @@ struct seqlist {
 #define SEQLIST_ISEMPTY(sl)		((sl)->first == NULL)
 
 /* Initializes an empty sequentail list. */	
-#define SEQLIST_INIT(slist)		do {	\
-	(slist)->first = NULL;				\
-	(slist)->len = 0;					\
+#define SEQLIST_INIT(slist)	do {	\
+	(slist)->first = NULL;		\
+	(slist)->len = 0;		\
 } while (0)
 
 /* Avoid includs the "queue.h" header file. */
@@ -81,7 +81,7 @@ void seqlist_delete(struct seqlist *slist, const char *key);
  * this sequentail list.
  */
 void seqlist_change(struct seqlist *slist, const char *key, 
-					const struct element *item);
+		const struct element *item);
 
 /* Returns all keys in the sequentail list. */
 void seqlist_keys(const struct seqlist *slist, struct queue *keys);
