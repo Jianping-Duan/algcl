@@ -36,18 +36,18 @@
  * Assuming root1 holds a greater or less key than root2, 
  * root2 becomes the new root. 
  */
-#define IBINOMPQ_LINK(root1, root2)		do {	\
-	root1->sibling = root2->child;				\
-	root1->parent = root2;						\
-	root2->child = root1;						\
-	root2->degree++;							\
+#define IBINOMPQ_LINK(root1, root2)	do {	\
+	root1->sibling = root2->child;		\
+	root1->parent = root2;			\
+	root2->child = root1;			\
+	root2->degree++;			\
 } while (0)
 
 static struct index_binom_node * merge_node(struct index_binom_node *,
 	struct index_binom_node *, struct index_binom_node *);
 static struct index_binom_node * make_node(unsigned long, const void *,
 	unsigned int);
-static struct index_binompq * ibinompq_union(struct index_binompq *, 
+static struct index_binompq * ibinompq_union(struct index_binompq *,
 	const struct index_binompq *);
 static void traverse(const struct index_binom_node *, struct queue *,
 	struct queue *);
@@ -55,7 +55,7 @@ static void release_node(struct index_binom_node *, unsigned int);
 static struct index_binom_node * get_node1(struct index_binompq *);
 static struct index_binom_node * get_node2(struct index_binompq *,
 	unsigned long);
-static void exchange_node(struct index_binompq *, struct index_binom_node *, 
+static void exchange_node(struct index_binompq *, struct index_binom_node *,
 	struct index_binom_node *);
 static void swim(struct index_binompq *, unsigned long);
 static void toroot(struct index_binompq *, unsigned long);
@@ -66,7 +66,7 @@ static void toroot(struct index_binompq *, unsigned long);
  */
 void 
 ibinompq_init(struct index_binompq *pq,	unsigned long n, unsigned int ksize,
-			algcomp_ft *cmp)
+	algcomp_ft *cmp)
 {
 	unsigned long i;
 
@@ -174,7 +174,7 @@ ibinompq_get_index(const struct index_binompq *pq)
 
 void 
 ibinompq_traverse(const struct index_binompq *pq, struct queue *keys,
-				struct queue *indexes)
+		struct queue *indexes)
 {
 	if (!IBINOMPQ_ISEMPTY(pq))
 		traverse(pq->head, keys, indexes);
@@ -430,21 +430,22 @@ ibinompq_union(struct index_binompq *spq, const struct index_binompq *tpq)
 	prev = NULL;
 	next = current->sibling;
 	while (next != NULL) {
-		/* Nothing do it*/
 		if (current->degree < next->degree || (next->sibling != NULL &&
-		    next->sibling->degree == current->degree)) {
+			next->sibling->degree == current->degree)) {
+			/* Nothing do it */
 			prev = current;
 			current = next;
 		} else if (spq->cmp(next->key, current->key)) {
 			current->sibling = next->sibling;
-			IBINOMPQ_LINK(next, current);	/* links next to current */
+			/* links next to current */
+			IBINOMPQ_LINK(next, current);
 		} else {	/* !spq->cmp */
 			if (prev == NULL)
-				spq->head = next;	/* moves head pointer */
+				spq->head = next; /* moves head pointer */
 			else
 				prev->sibling = next;
 			IBINOMPQ_LINK(current, next);	
-			current = next;		/* current becomes next pointer */
+			current = next;	/* current becomes next pointer */
 		}
 		next = current->sibling;
 	}
@@ -454,7 +455,7 @@ ibinompq_union(struct index_binompq *spq, const struct index_binompq *tpq)
 
 static void 
 traverse(const struct index_binom_node *node, struct queue *keys,
-		struct queue *indexes)
+	struct queue *indexes)
 {
 	const struct index_binom_node *current;
 	
@@ -537,7 +538,7 @@ get_node2(struct index_binompq *pq, unsigned long i)
 		current = current->sibling;
 	}
 	
-	if (pq->head == ref)		/* equal to the head node */
+	if (pq->head == ref)	/* equal to the head node */
 		pq->head = pq->head->sibling;
 	else
 		prev->sibling = current->sibling;
@@ -548,7 +549,7 @@ get_node2(struct index_binompq *pq, unsigned long i)
 /* Exchanges the positions of two nodes */
 static void 
 exchange_node(struct index_binompq *pq, struct index_binom_node *node1, 
-			struct index_binom_node *node2)
+		struct index_binom_node *node2)
 {
 	void *bytes;
 	unsigned long tmpidx;

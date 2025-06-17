@@ -35,21 +35,22 @@
 #include "algcomm.h"
 
 struct index_binom_node {
-	void *key;	/* key contained by the node */
+	void *key;		/* key contained by the node */
 	unsigned long index;	/* Index associated  with the Key */
-	unsigned int degree;	/* the degree of the Binomial Tree rooted by this
-							   node */
+	unsigned int degree;	/* the degree of the Binomial Tree rooted by
+				this node */
 	struct index_binom_node *parent;	/* parent of this node */
 	struct index_binom_node *child;		/* child of this node */
 	struct index_binom_node *sibling;	/* sibling of this node */
 };
 
 struct index_binompq {
-	struct index_binom_node *head;	/* head of the list of roots */
+	struct index_binom_node *head;		/* head of the list of roots */
 	unsigned int keysize;			/* the bytes of the key */
-	algcomp_ft *cmp;				/* comparator over the keys */
+	algcomp_ft *cmp;			/* comparator over the keys */
 	unsigned long capacity;			/* maximum size of the tree */
-	struct index_binom_node **nodes; /* array of indexed Nodes of the heap */
+	struct index_binom_node **nodes;	/* array of indexed Nodes of
+						the heap */
 };
 
 /* Whether the indexed binomial priority queue is empty. */
@@ -77,7 +78,7 @@ struct queue;
  * with indicates between 0 and n - 1. 
  */
 void ibinompq_init(struct index_binompq *pq, unsigned long n,
-				unsigned int ksize,	algcomp_ft *cmp);
+		unsigned int ksize, algcomp_ft *cmp);
 
 /* 
  * Number of elements currently on 
@@ -102,7 +103,7 @@ unsigned long ibinompq_get_index(const struct index_binompq *pq);
 
 /* Traverses this indexed binomial heap. */
 void ibinompq_traverse(const struct index_binompq *pq, struct queue *keys,
-						struct queue *indexes);
+			struct queue *indexes);
 
 /* Clears this indexed binomial heap. */
 void ibinompq_clear(struct index_binompq *pq);
@@ -121,14 +122,14 @@ int ibinompq_remove(struct index_binompq *pq, unsigned long i);
  * index i to the given key. 
  */
 int ibinompq_decrkey(struct index_binompq *pq, unsigned long i,
-					const void *key);
+		const void *key);
 
 /* 
  * Increases the key associated with 
  * index i to the given key. 
  */
 int ibinompq_incrkey(struct index_binompq *pq, unsigned long i,
-					const void *key);
+		const void *key);
 
 /* 
  * Changes the key associated with 

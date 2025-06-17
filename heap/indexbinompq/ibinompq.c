@@ -95,11 +95,13 @@ main(int argc, char *argv[])
 	printf("Total elements are %lu\n", ibinompq_size(&pq));
 	printf("\n");
 	
-	printf("Start randomly deleting the keys and associated with the index.\n");
+	printf("Start randomly deleting the keys and associated with "
+		"the index.\n");
 	for (i = 0; i < sz / 2; i++) {
 		n = rand_range_integer(0, sz);
 		if (ibinompq_remove(&pq, n) == 0)
-			printf("The index %d and its key have been deleted.\n", n);
+			printf("The index %d and its key have been deleted.\n",
+				n);
 	}
 	printf("Total elements are %lu\n", ibinompq_size(&pq));
 	printf("\n");
@@ -116,8 +118,8 @@ main(int argc, char *argv[])
 	show_keys(&pq);
 	printf("\n");
 
-	printf("Deletes all keys from this indexed pairing heap and returns its "
-		"index.\n");
+	printf("Deletes all keys from this indexed pairing heap and returns "
+		"its index.\n");
 	cnt = 0;
 	while (!IBINOMPQ_ISEMPTY(&pq)) {
 		index = ibinompq_delete(&pq);
