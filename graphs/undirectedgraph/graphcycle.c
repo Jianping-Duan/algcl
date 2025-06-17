@@ -154,7 +154,10 @@ dfs(struct graph_cycle *gc, const struct graph *g, long u, unsigned int v)
 			gc->edgeto[*w] = v;
 			dfs(gc, g, v, *w);
 		}
-		/* check for cycle (but disregard reverse of edge leading to v) */
+		/* 
+		 * check for cycle
+		 * (but disregard reverse of edge leading to v)
+		 */
 		else if (*w != u) {
 			for (x = v; x != -1 && x != *w; x = gc->edgeto[x])
 				stack_push(&gc->cycle, &x);

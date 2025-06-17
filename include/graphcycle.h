@@ -38,20 +38,19 @@
 struct graph_cycle {
 	bool *marked;	/* marked[v] = has vertex v been marked? */
 	long *edgeto;	/* edgeto[v] = last edge on graph cycle path,
-					   default edgeto[v] = -1 */
+			   default edgeto[v] = -1 */
 	struct stack cycle;	/* graph of cycle */	
 };
 
 /* Returns true if the graph g has a cycle */
-#define GRAPH_HASCYCLE(gc)	\
-	(!STACK_ISEMPTY(&(gc)->cycle))
+#define GRAPH_HASCYCLE(gc)	(!STACK_ISEMPTY(&(gc)->cycle))
 
 /* Returns a cycle in the graph g. */
-#define GRAPH_CYCLE(gc)	((gc)->cycle)
+#define GRAPH_CYCLE(gc)		((gc)->cycle)
 
 #define GRAPH_CYCLE_CLEAR(gc)	do {	\
-	ALGFREE((gc)->marked);				\
-	ALGFREE((gc)->edgeto);				\
+	ALGFREE((gc)->marked);		\
+	ALGFREE((gc)->edgeto);		\
 } while (0)
 
 /* Initialize an empty cycle. */
