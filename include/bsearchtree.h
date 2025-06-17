@@ -35,17 +35,17 @@
 #include "algcomm.h"
 
 struct bstree_node {
-	void *key;					/* key contained by the Node */
+	void *key;			/* key contained by the Node */
 	struct bstree_node *left;	/* left subtrees */
 	struct bstree_node *right;	/* right subtrees */
-	unsigned long size;			/* number of nodes in subtree */
-	long height;				/* height of the subtree */
+	unsigned long size;		/* number of nodes in subtree */
+	long height;			/* height of the subtree */
 };
 
 struct bstree {
 	struct bstree_node *root;	/* root node */
 	unsigned int keysize;		/* the bytes of the key */
-	algcomp_ft *cmp;			/* comparator over the keys */
+	algcomp_ft *cmp;		/* comparator over the keys */
 };
 
 /* Returns the number of key-value pairs in this BST */
@@ -127,7 +127,7 @@ void bst_breadth_first(const struct bstree *bst, struct single_list *keys);
 
 /* Gets all keys in the BST in the given range in ascending order. */
 void bst_keys(const struct bstree *bst, const void *lokey, const void *hikey,
-			struct single_list *keys);
+		struct single_list *keys);
 
 /* Check integrity of BST data structure. */
 int bst_check(const struct bstree *bst);

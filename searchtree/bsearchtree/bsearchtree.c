@@ -32,7 +32,7 @@
 #include "bsearchtree.h"
 #include "linearlist.h"
 
-#define BST_NODE_SIZE(node)		((node) == NULL ? 0 : (node)->size)
+#define BST_NODE_SIZE(node)	((node) == NULL ? 0 : (node)->size)
 #define BST_HEIGHT_NODE(node)	((node) == NULL ? (-1) : (node)->height)
 
 static struct bstree_node * make_node(const void *, unsigned int);
@@ -240,7 +240,7 @@ bst_breadth_first(const struct bstree *bst, struct single_list *keys)
 /* Gets all keys in the BST in the given range in ascending order. */
 void 
 bst_keys(const struct bstree *bst, const void *lokey, const void *hikey,
-		struct single_list *keys)
+	struct single_list *keys)
 {
 	slist_init(keys, 0, bst->cmp);
 	keys_node(bst->root, lokey, hikey, bst->cmp, keys);
@@ -524,7 +524,7 @@ floor_node(struct bstree_node *node, const void *key, algcomp_ft *kcmp)
 	int cr;
 	struct bstree_node *rnode;
 	
-	if (node == NULL) /* not found to the specified key */
+	if (node == NULL)	/* not found to the specified key */
 		return NULL;
 	
 	cr = kcmp(key, node->key);
@@ -577,7 +577,7 @@ leaf_nodes(const struct bstree_node *node)
 
 static void
 keys_node(const struct bstree_node *node, const void *lokey, const void *hikey,
-		algcomp_ft *kcmp, struct single_list *keys)
+	algcomp_ft *kcmp, struct single_list *keys)
 {
 	int cmplo, cmphi;
 	
@@ -600,12 +600,13 @@ static int
 is_size_consistent(const struct bstree_node *node)
 {
 	if (node == NULL)
-		return 1;		/* treat as empty constraint */
+		return 1;	/* treat as empty constraint */
 	if (node->size != BST_NODE_SIZE(node->left) +
 	   BST_NODE_SIZE(node->right) + 1) {
 		return 0;
 	}
-	return is_size_consistent(node->left) && is_size_consistent(node->right);
+	return is_size_consistent(node->left) &&
+		is_size_consistent(node->right);
 }
 
 /* check that ranks are consistent */
@@ -650,7 +651,7 @@ is_bst(const struct bstree_node *node, const void *minkey, const void *maxkey,
 	
 	if (minkey != NULL && kcmp(node->key, minkey) == 1) 
 		return 0;
-	if(maxkey != NULL && kcmp(node->key, maxkey) == -1)
+	if (maxkey != NULL && kcmp(node->key, maxkey) == -1)
 		return 0;
 	return is_bst(node->left, minkey, node->key, kcmp) &&
 		is_bst(node->right, node->key, maxkey, kcmp);

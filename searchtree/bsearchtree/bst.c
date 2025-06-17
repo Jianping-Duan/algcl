@@ -57,15 +57,15 @@ main(int argc, char *argv[])
 	
 	while ((op = getopt(argc, argv, optstr)) != -1) {
 		switch (op) {
-			case 'f':
-				fname = optarg;
-				break;
-			case 'k':
-				key = optarg;
-				break;
-			default:
-				fprintf(stderr, "Parameters error.\n");
-				usage_info(argv[0]);
+		case 'f':
+			fname = optarg;
+			break;
+		case 'k':
+			key = optarg;
+			break;
+		default:
+			fprintf(stderr, "Parameters error.\n");
+			usage_info(argv[0]);
 		}
 	}
 	
@@ -77,8 +77,8 @@ main(int argc, char *argv[])
 	start_time = clock();
 	fp = open_file(fname, "rb");
 	rewind(fp);
-	while(!feof(fp)) {
-		if(fread(&item, sizeof(struct element), 1, fp) > 0)
+	while (!feof(fp)) {
+		if (fread(&item, sizeof(struct element), 1, fp) > 0)
 			bst_put(&bst, &item);
 	}
 	close_file(fp);
@@ -88,7 +88,7 @@ main(int argc, char *argv[])
 	printf("\n");
 	
 	printf("The height of the BST is: %ld\n", BST_HEIGHT(&bst));
-	printf("The number of nodes in this BST is: %ld\n",	BST_SIZE(&bst));
+	printf("The number of nodes in this BST is: %ld\n", BST_SIZE(&bst));
 	printf("\n");
 	
 	check(&bst);
@@ -103,7 +103,8 @@ main(int argc, char *argv[])
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 	
-	printf("Begin delete the minimum key and the maximum key from the BST.\n");
+	printf("Begin delete the minimum key and the maximum key from "
+		"the BST.\n");
 	start_time = clock();
 	bst_delete_min(&bst);
 	bst_delete_max(&bst);
@@ -118,11 +119,13 @@ main(int argc, char *argv[])
 	strncpy(item.key, key, MAX_KEY_LEN);
 	item.value = -1;
 	start_time = clock();
-	if((el = (struct element *)bst_get(&bst, &item)) != NULL) {
+	if ((el = (struct element *)bst_get(&bst, &item)) != NULL) {
 		printf("It's value: %ld\n", el->value);
-		printf("The rank of key '%s' is %ld\n", key, bst_rank(&bst, &item));
-	} else
+		printf("The rank of key '%s' is %ld\n", key,
+			bst_rank(&bst, &item));
+	} else {
 		printf("Not found.\n");
+	}
 	end_time = clock();
 	printf("Search completed, estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
@@ -145,7 +148,7 @@ main(int argc, char *argv[])
 	printf("The largest key in this BST less than or equal to '%s'\n",
 		rand_key);
 	start_time = clock();
-	if((el = (struct element *)bst_floor(&bst, &item)) != NULL)
+	if ((el = (struct element *)bst_floor(&bst, &item)) != NULL)
 		printf("It's key %s, value is %ld\n", el->key, el->value);
 	else
 		printf("The given key '%s' is too small.\n", rand_key);
@@ -161,7 +164,7 @@ main(int argc, char *argv[])
 	printf("The smallest key in this BST greater than or equal to '%s'\n",
 		rand_key);
 	start_time = clock();
-	if((el = (struct element *)bst_ceiling(&bst, &item)) != NULL)
+	if ((el = (struct element *)bst_ceiling(&bst, &item)) != NULL)
 		printf("It's key %s, value is %ld\n", el->key, el->value);
 	else
 		printf("The given key '%s' is too large.\n", rand_key);
@@ -183,7 +186,7 @@ main(int argc, char *argv[])
 	
 	check(&bst);
 	
-	printf("The number of nodes in this BST is: %ld\n",	BST_SIZE(&bst));
+	printf("The number of nodes in this BST is: %ld\n", BST_SIZE(&bst));
 	printf("\n");
 	
 	bst_clear(&bst);
