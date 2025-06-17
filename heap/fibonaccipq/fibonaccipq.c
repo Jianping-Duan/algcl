@@ -173,7 +173,8 @@ make_node(const void *key, unsigned int ksize)
 {
 	struct fibonacci_node *current;
 
-	current = (struct fibonacci_node *)algmalloc(sizeof(struct fibonacci_node));
+	current = (struct fibonacci_node *)
+		algmalloc(sizeof(struct fibonacci_node));
 	
 	if (ksize != 0) {
 		current->key = algmalloc(ksize);

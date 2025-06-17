@@ -50,7 +50,7 @@ main(int argc, char *argv[])
 		errmsg_exit("Not a integer number, %s.\n", argv[1]);
 
 	if (sz <= 0)
-		errmsg_exit("Given a integer number must be greater than 0.\n");	
+		errmsg_exit("Given a integer number must be greater than 0.\n");
 
 	SET_RANDOM_SEED;
 	

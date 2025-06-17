@@ -35,7 +35,7 @@
 #include "algcomm.h"
 
 struct fibonacci_node {
-	void *key;				/* key contained by the Node */
+	void *key;		/* key contained by the Node */
 	unsigned int degree;	/* degree of the tree rooted by this Node */
 	struct fibonacci_node *prev;	/* previous node */ 
 	struct fibonacci_node *next;	/* next node */
@@ -45,9 +45,9 @@ struct fibonacci_node {
 struct fibonaccipq {
 	struct fibonacci_node *head;	/* head of the circular root list */
 	struct fibonacci_node *result;	/* min or max Node of the root list */
-	unsigned long size;				/* number of keys in the heap */
-	unsigned int keysize;			/* the bytes of the key */
-	algcomp_ft *cmp;				/* comparator over the keys */
+	unsigned long size;		/* number of keys in the heap */
+	unsigned int keysize;		/* the bytes of the key */
+	algcomp_ft *cmp;		/* comparator over the keys */
 };
 
 /* Whether the priority queue is empty. */
