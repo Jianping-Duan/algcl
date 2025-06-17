@@ -35,17 +35,17 @@
 #include "algcomm.h"
 
 struct avl_node {
-	void *key;				/* key contained by the Node */
+	void *key;		/* key contained by the Node */
 	struct avl_node *left;	/* left subtree */
 	struct avl_node *right;	/* right subtree */
-	long height;			/* height of the subtree */
-	unsigned long size;		/* number of nodes in subtree */
+	long height;		/* height of the subtree */
+	unsigned long size;	/* number of nodes in subtree */
 };
 
 struct avl_tree {
 	struct avl_node *root;	/* AVL tree root node */
 	unsigned int keysize;	/* the bytes of the key */
-	algcomp_ft *cmp;		/* comparator over the keys */
+	algcomp_ft *cmp;	/* comparator over the keys */
 };
 
 /* Returns the number of key-value pairs in this AVL tree. */
@@ -109,7 +109,7 @@ void * avlbst_select(const struct avl_tree *avl, unsigned long rank);
 
 /* Returns all keys in the AVL tree in the given range. */
 void avlbst_keys(const struct avl_tree *avl, const void *lokey,
-				const void *hikey, struct single_list *keys);
+		const void *hikey, struct single_list *keys);
 
 /* Breadth first search traverse for this avl tree. */
 void avlbst_breadth_first(const struct avl_tree *avl, struct single_list *keys);

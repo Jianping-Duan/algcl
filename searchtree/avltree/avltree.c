@@ -34,7 +34,7 @@
 #include "queue.h"
 
 /* Returns the number of nodes in the subtree. */
-#define AVLBST_SIZE_NODE(node)	((node) == NULL ? 0 : (node)->size)
+#define AVLBST_SIZE_NODE(node)		((node) == NULL ? 0 : (node)->size)
 
 /* Returns the height of the subtree */
 #define AVLBST_HEIGHT_NODE(node)	((node) == NULL ? (-1) : (node)->height)
@@ -703,7 +703,7 @@ isbst(const struct avl_node *node, const void *minkey, const void *maxkey,
 	algcomp_ft *kcmp)
 {
 	if (node == NULL)
-		return 1;		/* empty constraint */
+		return 1;	/* empty constraint */
 	
 	if (minkey != NULL && kcmp(node->key, minkey) == 1)
 		return 0;
@@ -711,7 +711,7 @@ isbst(const struct avl_node *node, const void *minkey, const void *maxkey,
 		return 0;
 	
 	return isbst(node->left, minkey, node->key, kcmp) &&
-	   isbst(node->right, node->key, maxkey, kcmp);
+		isbst(node->right, node->key, maxkey, kcmp);
 }
 
 /* Checks if AVL property is consistent in the subtree. */
@@ -735,12 +735,13 @@ static int
 is_size_consistent(const struct avl_node *node)
 {
 	if (node == NULL)
-		return 1;		/* treat as empty constraint */
+		return 1;	/* treat as empty constraint */
 	if (node->size != AVLBST_SIZE_NODE(node->left) +
 		AVLBST_SIZE_NODE(node->right) + 1) {
 		return 0;
 	}
-	return is_size_consistent(node->left) && is_size_consistent(node->right);
+	return is_size_consistent(node->left) &&
+		is_size_consistent(node->right);
 }
 
 /* check that ranks are consistent */

@@ -60,15 +60,15 @@ main(int argc, char *argv[])
 	
 	while ((op = getopt(argc, argv, optstr)) != -1) {
 		switch (op) {
-			case 'f':
-				fname = optarg;
-				break;
-			case 'k':
-				key = optarg;
-				break;
-			default:
-				fprintf(stderr, "Parameters error.\n");
-				usage_info(argv[0]);
+		case 'f':
+			fname = optarg;
+			break;
+		case 'k':
+			key = optarg;
+			break;
+		default:
+			fprintf(stderr, "Parameters error.\n");
+			usage_info(argv[0]);
 		}
 	}
 	
@@ -84,8 +84,8 @@ main(int argc, char *argv[])
 	printf("Start read data from \"%s\" file to the AVL BST...\n", fname);
 	start_time = clock();
 	rewind(fp);
-	while(!feof(fp)) {
-		if(fread(&item, sizeof(struct element), 1, fp) > 0)
+	while (!feof(fp)) {
+		if (fread(&item, sizeof(struct element), 1, fp) > 0)
 			avlbst_put(&bst, &item);
 	}
 	close_file(fp);
@@ -94,7 +94,8 @@ main(int argc, char *argv[])
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	
 	printf("The height of the AVL BST is: %ld\n", AVLBST_HEIGHT(&bst));
-	printf("The number of nodes in this AVL BST is: %ld\n", AVLBST_SIZE(&bst));
+	printf("The number of nodes in this AVL BST is: %ld\n",
+		AVLBST_SIZE(&bst));
 	printf("\n");
 	
 	check(&bst);
@@ -115,8 +116,8 @@ main(int argc, char *argv[])
 	slist_clear(&els);
 	printf("\n");
 	
-	printf("Begin delete the minimum key and the maximum key from the AVL "
-		"BST...\n");
+	printf("Begin delete the minimum key and the maximum key from "
+		"the AVL BST...\n");
 	start_time = clock();
 	avlbst_delete_min(&bst);
 	avlbst_delete_max(&bst);
@@ -131,7 +132,7 @@ main(int argc, char *argv[])
 	strncpy(item.key, key, MAX_KEY_LEN);
 	item.value = -1;
 	start_time = clock();
-	if((el = (struct element *)avlbst_get(&bst, &item)) != NULL)
+	if ((el = (struct element *)avlbst_get(&bst, &item)) != NULL)
 		printf("It's value: %ld\n", el->value);
 	else
 		printf("Not found.\n");
@@ -163,7 +164,7 @@ main(int argc, char *argv[])
 	printf("The largest key in this AVL BST less than or equal to '%s'\n",
 		rand_key);
 	start_time = clock();
-	if((el = avlbst_floor(&bst, rand_key)) != NULL)
+	if ((el = avlbst_floor(&bst, rand_key)) != NULL)
 		printf("It's key %s, value is %ld\n", el->key, el->value);
 	else
 		printf("The given key '%s' is too small.\n", rand_key);
@@ -178,7 +179,7 @@ main(int argc, char *argv[])
 	strncpy(item.key, rand_key, MAX_KEY_LEN);
 	item.value = -1;
 	start_time = clock();
-	if((el = (struct element *)avlbst_ceiling(&bst, &item)) != NULL)
+	if ((el = (struct element *)avlbst_ceiling(&bst, &item)) != NULL)
 		printf("It's key %s, value is %ld\n", el->key, el->value);
 	else
 		printf("The given key '%s' is too large.\n", rand_key);
@@ -200,7 +201,8 @@ main(int argc, char *argv[])
 	
 	check(&bst);
 	
-	printf("The number of nodes in this AVL BST is: %ld\n", AVLBST_SIZE(&bst));
+	printf("The number of nodes in this AVL BST is: %ld\n",
+		AVLBST_SIZE(&bst));
 	
 	avlbst_clear(&bst);
 	
@@ -212,7 +214,7 @@ check(const struct avl_tree *bst)
 {
 	clock_t start_time, end_time;
 	
-	printf("Begin checks the integrity of AVL BST data structure......\n");
+	printf("Begin checks the integrity of AVL BST data structure.\n");
 	start_time = clock();
 	avlbst_check(bst);
 	end_time = clock();
@@ -225,7 +227,7 @@ static void
 usage_info(const char *pname)
 {
 	fprintf(stderr, "Usage: %s -f -k\n", pname);
-	fprintf(stderr, "-f: The data file will be read in memory..\n");
+	fprintf(stderr, "-f: The data file will be read in memory.\n");
 	fprintf(stderr, "-k: The key will be searched.\n");
 	exit(EXIT_FAILURE);
 }
