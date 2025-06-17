@@ -35,12 +35,12 @@
 #include "algcomm.h"
 
 struct index_pqueue {
-	void **keys;			/* keys[i] = priority of i */
+	void **keys;		/* keys[i] = priority of i */
 	unsigned short keysize;	/* the bytes of the key */
 	unsigned long capacity;	/* maximum number of keys on priority queue */
-	unsigned long size;		/* number of keys on priority queue */
-	long *pq;	/* binary heap using 0-based indexing */
-	long *qp;	/* inverse of pq, qp[pq[i]] = pq[qp[i]]] = i */
+	unsigned long size;	/* number of keys on priority queue */
+	long *pq;		/* binary heap using 0-based indexing */
+	long *qp;		/* inverse of pq, qp[pq[i]] = pq[qp[i]]] = i */
 	algcomp_ft *cmp;	/* key compare function */	
 };
 
@@ -51,8 +51,7 @@ struct index_pqueue {
 #define IPQUEUE_SIZE(pq)	((pq)->size)
 
 /* Returns true if this priority queue is full */
-#define IPQUEUE_ISFULL(pq)	\
-	((pq)->size < (pq)->capacity ? 0 : 1)
+#define IPQUEUE_ISFULL(pq)	((pq)->size < (pq)->capacity ? 0 : 1)
 
 /* Is I an index on this priority queue? */
 #define IPQUEUE_CONTAINS(ipq, i)	\
@@ -65,7 +64,7 @@ struct index_pqueue {
 #define IPQUEUE_FIRST_INDEX(ipq)	((ipq)->pq[0])
 
 /* Returns a minimum or maximum key. */
-#define IPQUEUE_FIRST_KEY(ipq)	((ipq)->keys[0])
+#define IPQUEUE_FIRST_KEY(ipq)		((ipq)->keys[0])
 
 /* Returns the key associated with index. */
 #define IPQUEUE_KEYOF(ipq, i)	\
@@ -78,12 +77,11 @@ struct index_pqueue {
 #define IPQUEUE_KEYS(ipq)	((ipq)->keys)
 
 /* 
- * Initializes an empty indexed priority queue with
- * the given capacity and key-size, using the given
- * compare function. 
+ * Initializes an empty indexed priority queue with the given capacity and
+ * key-size, using the given compare function. 
  */
 void ipqueue_init(struct index_pqueue *ipq, unsigned long cap,
-				unsigned short ksize, algcomp_ft *cmp);
+		unsigned short ksize, algcomp_ft *cmp);
 
 /* 
  * Associates key with index i, i an index, 
@@ -92,9 +90,8 @@ void ipqueue_init(struct index_pqueue *ipq, unsigned long cap,
 void ipqueue_insert(struct index_pqueue *ipq, unsigned long i, const void *key);
 
 /* 
- * Removes a minimum or maximum key and returns its 
- * associated index, return an index associated with 
- * a minimum or maximum key. 
+ * Removes a minimum or maximum key and returns its associated index,
+ * return an index associated with a minimum or maximum key. 
  */
 unsigned long ipqueue_delete(struct index_pqueue *ipq);
 
@@ -113,14 +110,14 @@ void ipqueue_change(struct index_pqueue *ipq, unsigned long i, const void *key);
  * Decrease the key associated with index i to the specified value. 
  */
 void ipqueue_decrkey(struct index_pqueue *ipq, unsigned long i,
-					const void *key);
+		const void *key);
 
 /* 
  * Increase the key associated with index i to 
  * the specified value. 
  */
 void ipqueue_incrkey(struct index_pqueue *ipq, unsigned long i,
-					const void *key);
+		const void *key);
 
 /* Clears this indexed priority queue. */
 void ipqueue_clear(struct index_pqueue *ipq);

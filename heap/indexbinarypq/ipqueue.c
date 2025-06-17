@@ -38,7 +38,7 @@ main(void)
 {
 	int i, j;
 	long *pq;
-	const char * const strs[10] = {"it", "was", "the", "best", "of", 
+	const char * const strs[10] = {"it", "was", "the", "best", "of",
 		  "times", "it", "was", "the", "worst" };
 	char **keys;
 	struct index_pqueue ipq;
@@ -48,7 +48,7 @@ main(void)
 		printf("%-2d %-6s\n", i, strs[i]);
 	printf("\n");
 	
-	printf("Begin inserts this strings to the index priority queue...\n");
+	printf("Begin inserts this strings to the index priority queue.\n");
 	ipqueue_init(&ipq, 20, 10, compare);
 	for (i = 0; i < 10; i++)
 		if (!IPQUEUE_ISFULL(&ipq))
@@ -62,7 +62,8 @@ main(void)
 	}
 	printf("\n");
 	
-	printf("Begin inserts this strings to the index priority queue again...\n");
+	printf("Begin inserts this strings to the index priority queue "
+		"again.\n");
 	for (i = 0; i < 10; i++)
 		if (!IPQUEUE_ISFULL(&ipq))
 			ipqueue_insert(&ipq, i, strs[i]);

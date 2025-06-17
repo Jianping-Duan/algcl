@@ -43,7 +43,7 @@ static inline void sink(struct index_pqueue *, unsigned int);
  */
 void 
 ipqueue_init(struct index_pqueue *ipq, unsigned long cap, unsigned short ksize,
-			algcomp_ft *cmp)
+	algcomp_ft *cmp)
 {
 	unsigned long i;
 
@@ -57,7 +57,7 @@ ipqueue_init(struct index_pqueue *ipq, unsigned long cap, unsigned short ksize,
 	ipq->keysize = ksize;
 	ipq->cmp = cmp;
 	
-    ipq->pq = (long *)algmalloc(cap * sizeof(long));	
+	ipq->pq = (long *)algmalloc(cap * sizeof(long));	
 	ipq->qp = (long *)algmalloc(cap * sizeof(long));
 	ipq->keys = algmalloc(cap * ksize);
 
@@ -86,9 +86,8 @@ ipqueue_insert(struct index_pqueue *ipq, unsigned long i, const void *key)
 }
 
 /* 
- * Removes a minimum or maximum key and returns its 
- * associated index, return an index associated with 
- * a minimum or maximum key.
+ * Removes a minimum or maximum key and returns its associated index,
+ * return an index associated with a minimum or maximum key.
  */
 unsigned long 
 ipqueue_delete(struct index_pqueue *ipq)
@@ -148,8 +147,7 @@ ipqueue_change(struct index_pqueue *ipq, unsigned long i, const void *key)
 }
 
 /* 
- * Decrease the key associated with index i to 
- * the specified value. 
+ * Decrease the key associated with index i to the specified value. 
  */
 void
 ipqueue_decrkey(struct index_pqueue *ipq, unsigned long i, const void *key)
@@ -165,8 +163,7 @@ ipqueue_decrkey(struct index_pqueue *ipq, unsigned long i, const void *key)
 }
 
 /* 
- * Increase the key associated with index i to 
- * the specified value. 
+ * Increase the key associated with index i to the specified value. 
  */
 void
 ipqueue_incrkey(struct index_pqueue *ipq, unsigned long i, const void *key)
@@ -246,7 +243,8 @@ sink(struct index_pqueue *ipq, unsigned int k)
 			j++;
 		
 		/* 
-		 * occurs break if parent node not less or greater children node.
+		 * occurs break if parent node not less or greater
+		 * children node.
 		 */
 		if (!ipqcmp(ipq, k, j))
 			break;
