@@ -37,8 +37,8 @@
 struct single_list;
 
 struct graph {
-	unsigned int vertices;			/* graph of vertices */
-	unsigned int edges;				/* graph of edges */
+	unsigned int vertices;		/* graph of vertices */
+	unsigned int edges;		/* graph of edges */
 	struct single_list **adjlist;	/* graph of adjacent list */
 };
 
@@ -46,11 +46,10 @@ struct graph {
 #define GRAPH_VERTICES(g)	((g)->vertices)
 
 /* Returns the number of edges in this graph. */
-#define GRAPH_EDGES(g)	((g)->edges)
+#define GRAPH_EDGES(g)		((g)->edges)
 
 /* Returns the vertices adjacent to vertex v. */
-#define GRAPH_ADJLIST(g, v)	\
-	((v) >= (g)->vertices ? NULL : (g)->adjlist[v])
+#define GRAPH_ADJLIST(g, v)	((v) >= (g)->vertices ? NULL : (g)->adjlist[v])
 
 /* Returns the degree of vertex v. */
 #define GRAPH_DEGREE(g, v)	\

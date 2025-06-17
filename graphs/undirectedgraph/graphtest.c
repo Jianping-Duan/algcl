@@ -68,7 +68,7 @@ main(int argc, char *argv[])
 	printf("\n");
 	
 	printf("Generates a random simple bipartite graph "
-			"using probability p.\n");
+		"using probability p.\n");
 	bipartite_graph2(9, 10, 0.6, &g[4]);
 	graph_print(&g[4]);
 	printf("\n");

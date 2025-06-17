@@ -65,7 +65,7 @@ void simple_graph2(unsigned int vs, double p, struct graph *g);
  * Parameter es the number of edges. 
  */
 void bipartite_graph1(unsigned int vs1, unsigned int vs2, unsigned int es,
-					struct graph *g);
+		struct graph *g);
 
 
 /* 
@@ -77,7 +77,7 @@ void bipartite_graph1(unsigned int vs1, unsigned int vs2, unsigned int es,
  * endpoint in either side.
  */
 void bipartite_graph2(unsigned int vs1, unsigned int vs2, double p,
-					struct graph *g);
+		struct graph *g);
 
 
 /* 
@@ -106,7 +106,7 @@ void cycle_graph(unsigned int vs, struct graph *g);
  * vs the number of vertices in the cycle,
  * es the number of edges in the cycle.
  */
-void eulerian_cycle_graph(unsigned int vs, unsigned int es,	struct graph *g);
+void eulerian_cycle_graph(unsigned int vs, unsigned int es, struct graph *g);
 
 
 /* 

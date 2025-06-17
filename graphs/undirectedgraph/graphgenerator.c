@@ -105,7 +105,7 @@ simple_graph2(unsigned int vs, double p, struct graph *g)
  */
 void 
 bipartite_graph1(unsigned int vs1, unsigned int vs2, unsigned int es,
-				struct graph *g)
+		struct graph *g)
 {
 	unsigned int *vertices, i, j;
 	struct avl_tree bst;
@@ -113,7 +113,8 @@ bipartite_graph1(unsigned int vs1, unsigned int vs2, unsigned int es,
 	char strkey[21];
 	
 	if (es > vs1 * vs2)
-		errmsg_exit("The simple bipartite graph have too many edges.\n");
+		errmsg_exit("The simple bipartite graph have too "
+			"many edges.\n");
 	
 	vertices = (unsigned int *)algmalloc(vs1 * vs2 * sizeof(int));
 	
@@ -384,7 +385,8 @@ tree_graph(unsigned int vs, struct graph *g)
 		prufer[i] = rand_range_integer(0, vs);
 	
 	/* 
-	 * degree of vertex i = 1 + number of times it appears in Prufer sequence.
+	 * degree of vertex i = 1 + number of times it appears in
+	 * Prufer sequence.
 	 */
 	for (i = 0; i < vs; i++)
 		degree[i] = 1;	/* default degree for every vertex */

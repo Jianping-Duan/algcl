@@ -162,7 +162,7 @@ adjlist_init(struct graph *g)
 
 	n = g->vertices;
 	g->adjlist = (struct single_list **)
-			algmalloc(n * sizeof(struct single_list *));
+		algmalloc(n * sizeof(struct single_list *));
 	
 	for (v = 0; v < n; v++) {
 		g->adjlist[v] = (struct single_list *)
