@@ -340,7 +340,8 @@ splay(struct splay_tree *st, struct splayt_node *x)
 			else
 				rotate_left(st, x->parent);
 		} else {
-			if (x->parent->left == x && x->parent->parent->left == x->parent) {
+			if (x->parent->left == x &&
+				x->parent->parent->left == x->parent) {
 				rotate_right(st, x->parent->parent);
 				rotate_right(st, x->parent);
 			} else if (x->parent->right == x && 

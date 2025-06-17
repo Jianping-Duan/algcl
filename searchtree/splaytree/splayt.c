@@ -57,15 +57,15 @@ main(int argc, char *argv[])
 	
 	while ((op = getopt(argc, argv, optstr)) != -1) {
 		switch (op) {
-			case 'f':
-				fname = optarg;
-				break;
-			case 'k':
-				key = optarg;
-				break;
-			default:
-				fprintf(stderr, "Parameters error.\n");
-				usage_info(argv[0]);
+		case 'f':
+			fname = optarg;
+			break;
+		case 'k':
+			key = optarg;
+			break;
+		default:
+			fprintf(stderr, "Parameters error.\n");
+			usage_info(argv[0]);
 		}
 	}
 	
@@ -74,7 +74,8 @@ main(int argc, char *argv[])
 	
 	splayt_init(&bst, sizeof(struct element), less);
 	
-	printf("Starting read data from \"%s\" file to the splay tree...\n", fname);
+	printf("Starting read data from \"%s\" file to the splay tree.\n",
+		fname);
 	start_time = clock();
 	fp = open_file(fname, "rb");
 	rewind(fp);
@@ -86,7 +87,8 @@ main(int argc, char *argv[])
 	end_time = clock();
 	printf("Read completed, estimated time(s): %.3f\n", 
 		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
-	printf("The number of nodes in this splay tree is: %lu\n", SPLAYT_SIZE(&bst));
+	printf("The number of nodes in this splay tree is: %lu\n",
+		SPLAYT_SIZE(&bst));
 	printf("\n");
 	
 	printf("Prints this splay tree:\n");
@@ -157,7 +159,7 @@ static void
 usage_info(const char *pname)
 {
 	fprintf(stderr, "Usage: %s -f -k\n", pname);
-	fprintf(stderr, "-f: The data file will be read in memory..\n");
+	fprintf(stderr, "-f: The data file will be read in memory.\n");
 	fprintf(stderr, "-k: The key will be searched.\n");
 	exit(EXIT_FAILURE);
 }

@@ -36,7 +36,7 @@
 
 /* splay tree node */
 struct splayt_node {
-	void *key;					/* key contained by the Node */
+	void *key;			/* key contained by the Node */
 	struct splayt_node *left;	/* link to left subtrees */
 	struct splayt_node *right;	/* link to right subtrees */
 	struct splayt_node *parent;	/* link to parent node */
@@ -45,9 +45,9 @@ struct splayt_node {
 /* structure of splay tree */
 struct splay_tree {
 	struct splayt_node *root;	/* root node */
-	unsigned long size;			/* size of splay tree */
+	unsigned long size;		/* size of splay tree */
 	unsigned int keysize;		/* the bytes of the key */
-	algcomp_ft *cmp;			/* comparator over the keys */
+	algcomp_ft *cmp;		/* comparator over the keys */
 };
 
 /* Returns the number of keys in this splay tree. */
