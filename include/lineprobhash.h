@@ -36,7 +36,7 @@
 
 struct line_prob_hash {
 	unsigned long pairs;	/* number of key-value pairs */
-	unsigned long size;		/* hash table size */
+	unsigned long size;	/* hash table size */
 	struct element *items;	/* key-value pair */
 };
 
@@ -58,18 +58,18 @@ struct line_prob_hash {
 
 /* Initializes an empty linear-probing hash table */
 #define LPHASH_INIT(lph, htsize)	do {		\
-	(lph)->pairs = 0;							\
-	(lph)->size = htsize;						\
+	(lph)->pairs = 0;				\
+	(lph)->size = htsize;				\
 	(lph)->items = (struct element *)algmalloc(	\
-			htsize * sizeof(struct element));	\
-} while(0)
+		htsize * sizeof(struct element));	\
+} while (0)
 	
 /* Clears this linear-probing hash table */
-#define LPHASH_CLEAR(lph)		do {	\
-	ALGFREE((lph)->items);				\
-	(lph)->pairs = 0;					\
-	(lph)->size = 0;					\
-} while(0)
+#define LPHASH_CLEAR(lph)	do {	\
+	ALGFREE((lph)->items);		\
+	(lph)->pairs = 0;		\
+	(lph)->size = 0;		\
+} while (0)
 
 struct queue;
 

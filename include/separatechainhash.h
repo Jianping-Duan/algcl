@@ -39,7 +39,7 @@ struct queue;
 
 struct schain_hash {
 	unsigned long pairs;	/* number of key-value pairs */
-	unsigned long size;		/* hash table size */
+	unsigned long size;	/* hash table size */
 	struct seqlist *lists;	/* array of linked-list */
 };
 

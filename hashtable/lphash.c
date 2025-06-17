@@ -56,15 +56,15 @@ main(int argc, char *argv[])
 	
 	while ((op = getopt(argc, argv, optstr)) != -1) {
 		switch (op) {
-			case 'f':
-				fname = optarg;
-				break;
-			case 'k':
-				key = optarg;
-				break;
-			default:
-				fprintf(stderr, "Parameters error.\n");
-				usage_info(argv[0]);
+		case 'f':
+			fname = optarg;
+			break;
+		case 'k':
+			key = optarg;
+			break;
+		default:
+			fprintf(stderr, "Parameters error.\n");
+			usage_info(argv[0]);
 		}
 	}
 	
@@ -78,7 +78,7 @@ main(int argc, char *argv[])
 	LPHASH_INIT(&lph, MAX_SIZE);
 	
 	printf("Start read data from \"%s\" file to "
-		"the linear-probing hash table...\n", fname);
+		"the linear-probing hash table.\n", fname);
 	start_time = clock();
 	rewind(fp);
 	while (!feof(fp)) {

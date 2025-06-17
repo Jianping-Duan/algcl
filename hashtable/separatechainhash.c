@@ -49,7 +49,8 @@ schash_init(struct schain_hash *sch, unsigned long htsize)
 	
 	sch->pairs = 0;
 	sch->size = htsize;
-	sch->lists = (struct seqlist *)algmalloc(htsize * sizeof(struct seqlist));
+	sch->lists = (struct seqlist *)
+		algmalloc(htsize * sizeof(struct seqlist));
 	
 	/* initializes every linked-list */
 	for (i = 0; i < htsize; i++)
@@ -87,7 +88,7 @@ schash_put(struct schain_hash *sch, const struct element *item)
 		sch->pairs++;
 	else {
 		hash = hash_code(item->key, sch->size);
-		seqlist_change(&(sch->lists[hash]),	item->key, item);
+		seqlist_change(&(sch->lists[hash]), item->key, item);
 		return;
 	}
 	
