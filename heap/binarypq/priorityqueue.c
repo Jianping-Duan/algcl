@@ -42,12 +42,14 @@ static inline void sink(struct priority_queue *, unsigned int);
  */
 void 
 pqueue_init(struct priority_queue *pq, unsigned long cap, unsigned int ksize,
-			algcomp_ft *cmp)
+	algcomp_ft *cmp)
 {
 	unsigned long i;
 
-	if (ksize == 0)
-		errmsg_exit("The key size of the binary priority queue not equal 0.\n");
+	if (ksize == 0) {
+		errmsg_exit("The key size of the binary priority queue "
+			"not equal 0.\n");
+	}
 
 	pq->keys = algmalloc(cap * ksize);
 	for (i = 0; i < cap; i++)
@@ -137,7 +139,8 @@ sink(struct priority_queue *pq, unsigned int k)
 			j++;
 		
 		/* 
-		 * occurs break if parent node not less or greater children node.
+		 * occurs break if parent node not less or greater
+		 * children node.
 		 */
 		if (!pq->cmp(pq->keys[k], pq->keys[j]))
 			break;

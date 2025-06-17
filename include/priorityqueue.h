@@ -35,11 +35,11 @@
 #include "algcomm.h"
 
 struct priority_queue {
-	void **keys;			/* store keys at indicates 0 to size - 1 */
+	void **keys;		/* store keys at indicates 0 to size - 1 */
 	unsigned int keysize;	/* the bytes of the key */
 	unsigned long capacity;	/* priority queue capacity */
-	unsigned long size;		/* number of key on priority queue */
-	algcomp_ft *cmp;		/* compare function for keys */
+	unsigned long size;	/* number of key on priority queue */
+	algcomp_ft *cmp;	/* compare function for keys */
 };
 
 /* Returns true if this priority queue is empty. */
@@ -49,8 +49,7 @@ struct priority_queue {
 #define PQUEUE_SIZE(pq)		((pq)->size)
 
 /* Returns true if this priority queue is full */
-#define PQUEUE_ISFULL(pq)	\
-	((pq)->size < (pq)->capacity ? 0 : 1)
+#define PQUEUE_ISFULL(pq)	((pq)->size < (pq)->capacity ? 0 : 1)
 
 /* Returns the array of keys from this priority queue. */
 #define PQUEUE_KEYS(pq)		((pq)->keys)
@@ -61,7 +60,7 @@ struct priority_queue {
  * function. 
  */
 void pqueue_init(struct priority_queue *pq, unsigned long cap,
-				unsigned int ksize, algcomp_ft *cmp);
+		unsigned int ksize, algcomp_ft *cmp);
 
 /* Adds a new key to this priority queue. */
 void pqueue_insert(struct priority_queue *pq, const void *key);
