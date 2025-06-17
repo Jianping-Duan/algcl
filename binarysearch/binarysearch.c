@@ -81,7 +81,7 @@ binsearch_get(const struct binary_search *bs, const char *key)
  * with value from this array.
  */
 void
-binsearch_delete(struct binary_search *bs,	const char *key)
+binsearch_delete(struct binary_search *bs, const char *key)
 {
 	unsigned long i, j;
 	

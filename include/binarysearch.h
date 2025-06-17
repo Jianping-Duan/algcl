@@ -37,7 +37,7 @@
 struct binary_search {
 	struct element *items;	/* key-value pairs */
 	unsigned long capacity;	/* array maximum capacity */
-	unsigned long size;		/* array current size */
+	unsigned long size;	/* array current size */
 };
 
 /* Returns the number of key-value pairs in this array. */
@@ -56,12 +56,12 @@ struct binary_search {
 #define BINSEARCH_MAX(bs)	((bs)->items[(bs)->size - 1].key)
 
 /* Returns all key-value pairs for this array. */
-#define BINSEARCH_ITEMS(bs)		((bs)->items)
+#define BINSEARCH_ITEMS(bs)	((bs)->items)
 
-#define BINSEARCH_CLEAR(bs)		do {	\
-	ALGFREE((bs)->items);				\
-	(bs)->capacity = 0;					\
-	(bs)->size = 0;						\
+#define BINSEARCH_CLEAR(bs)	do {	\
+	ALGFREE((bs)->items);		\
+	(bs)->capacity = 0;		\
+	(bs)->size = 0;			\
 } while (0)
 
 /* 
@@ -69,7 +69,7 @@ struct binary_search {
  * associated value from this array. 
  */
 #define BINSEARCH_DELETE_MIN(bs)	do {			\
-	if (!BINSEARCH_ISEMPTY(bs))						\
+	if (!BINSEARCH_ISEMPTY(bs))				\
 		binsearch_delete(bs, binsearch_min(bs));	\
 } while (0)
 
@@ -78,7 +78,7 @@ struct binary_search {
  * associated value from this array.
  */
 #define BINSEARCH_DELETE_MAX(bs)	do {			\
-	if (!BINSEARCH_ISEMPTY(bs))						\
+	if (!BINSEARCH_ISEMPTY(bs))				\
 		binsearch_delete(bs, binsearch_max(bs));	\
 } while (0)
 
@@ -87,20 +87,21 @@ struct binary_search {
  * this array in the specified range.
  */
 #define BINSEARCH_RANGE_SIZE(bs, lo, hi)	\
-	(strcmp((hi), (lo)) < 0 ? 0 :			\
-	binsearch_get((bs), (hi)) != NULL ?		\
-	binsearch_rank((bs), (hi)) -			\
-	binsearch_rank((bs), (lo)) + 1 :		\
+	(strcmp((hi), (lo)) < 0 ? 0 :		\
+	binsearch_get((bs), (hi)) != NULL ?	\
+	binsearch_rank((bs), (hi)) -		\
+	binsearch_rank((bs), (lo)) + 1 :	\
 	binsearch_rank((bs), (hi)) - binsearch_rank((bs), (lo)))
 	
 /* 
  * Initializes an empty array with 
  * the specified maximum capacity.
  */
-#define BINSEARCH_INIT(bs, cap)		do {	\
-	(bs)->items = (struct element *)algmalloc(sizeof(struct element) * (cap)); \
-	(bs)->capacity = (cap);		\
-	(bs)->size = 0;				\
+#define BINSEARCH_INIT(bs, cap)		do {			\
+	(bs)->items = (struct element *)			\
+		algmalloc(sizeof(struct element) * (cap));	\
+	(bs)->capacity = (cap);					\
+	(bs)->size = 0;						\
 } while (0)
 
 struct queue;
@@ -126,25 +127,25 @@ void binsearch_put(struct binary_search *bs, const struct element *item);
 
 /* Return kth item in this ordered array */
 struct element * binsearch_select(const struct binary_search *bs,
-								unsigned long k);
+				unsigned long k);
 
 /* 
  * Returns the largest key in this array less than or equal to argument key.
  */
 struct element * binsearch_floor(const struct binary_search *bs,
-								const char *key);
+				const char *key);
 
 /* 
  * Returns the smallest key in this symbol table greater than or equal
  * to argument key.
  */
 struct element * binsearch_ceiling(const struct binary_search *bs, 
-								const char *key);
+				const char *key);
 
 /* 
  * Gets all keys from the array in the given range in ascending order.
  */
 void binsearch_keys(const struct binary_search *bs, const char *lokey, 
-					const char *hikey, struct queue *qp);
+		const char *hikey, struct queue *qp);
 
 #endif /* _BINARYSEARCH_H_ */
