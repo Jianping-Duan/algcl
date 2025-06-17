@@ -59,8 +59,8 @@ main(int argc, char *argv[])
 	if (sscanf(argv[1], "%d", &sz) != 1)
 		errmsg_exit("Illegal integer number, %s\n", argv[1]);
 	if (sz < LOWER_SIZE) {
-		errmsg_exit("Given a integer number must be equal or greater than %d",
-			LOWER_SIZE);
+		errmsg_exit("Given a integer number must be equal or "
+			"greater than %d", LOWER_SIZE);
 	}
 
 	printf("Start generating test data...\n");
