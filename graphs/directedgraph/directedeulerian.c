@@ -74,7 +74,8 @@ dieuler_cycle_get(struct stack *cycle, const struct digraph *g)
 	 * Create local view of adjacency lists,
 	 * to iterate one vertex at a time.
 	 */
-	adj = (struct queue *)algcalloc(DIGRAPH_VERTICES(g), sizeof(struct queue));
+	adj = (struct queue *)
+		algcalloc(DIGRAPH_VERTICES(g), sizeof(struct queue));
 	for (v = 0; v < DIGRAPH_VERTICES(g); v++) {
 		QUEUE_INIT(&adj[v], sizeof(int));
 		slist = DIGRAPH_ADJLIST(g, v);
@@ -132,7 +133,8 @@ dieuler_path_get(struct stack *path, const struct digraph *g)
 	ns = nonisolated_vertex(g);
 	for (v = 0, deficit = 0; v < DIGRAPH_VERTICES(g); v++)
 		if (DIGRAPH_OUTDEGREE(g, v) > DIGRAPH_INDEGREE(g, v)) {
-			deficit += (DIGRAPH_OUTDEGREE(g, v) - DIGRAPH_INDEGREE(g, v));
+			deficit += (DIGRAPH_OUTDEGREE(g, v) -
+				DIGRAPH_INDEGREE(g, v));
 			ns = v;
 		}
 
@@ -151,7 +153,8 @@ dieuler_path_get(struct stack *path, const struct digraph *g)
 	 * Create local view of adjacency lists,
 	 * to iterate one vertex at a time.
 	 */
-	adj = (struct queue *)algcalloc(DIGRAPH_VERTICES(g), sizeof(struct queue));
+	adj = (struct queue *)
+		algcalloc(DIGRAPH_VERTICES(g), sizeof(struct queue));
 	for (v = 0; v < DIGRAPH_VERTICES(g); v++) {
 		QUEUE_INIT(&adj[v], sizeof(int));
 		slist = DIGRAPH_ADJLIST(g, v);
