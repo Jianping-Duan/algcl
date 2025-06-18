@@ -78,7 +78,8 @@ lsdsort(char **sa, int w, long n)
 
 		/* move data */
 		for (i = 0; i < n; i++)
-			strncpy(aux[count[string_char_at(sa[i], d)]++], sa[i], w + 1);
+			strncpy(aux[count[string_char_at(sa[i], d)]++],
+				sa[i], w + 1);
 
 		/* move data */
 		for (i = 0; i < n; i++)
@@ -206,7 +207,8 @@ mstsort_aux(char **sa, long lo, long hi, int d, char **aux)
 
 	/* recursively sort for each character (excludes sentinel -1) */
 	for (r = 0; r < STRING_RADIX; r++)
-		mstsort_aux(sa, lo + count[r], lo + count[r + 1] - 1, d + 1, aux);
+		mstsort_aux(sa, lo + count[r], lo + count[r + 1] - 1, d + 1,
+			aux);
 
 	ALGFREE(count);
 }

@@ -52,21 +52,23 @@ main(int argc, char *argv[])
 	
 	while ((op = getopt(argc, argv, optstr)) != -1) {
 		switch (op) {
-			case 's':
-				if (sscanf(optarg, "%d", &sz) != 1)
-					errmsg_exit("Illegal number. -n %s\n",	optarg);
-				if (sz <= 0)
-					errmsg_exit("Given the size must be greater than 0.\n");
-				break;
-			case 'w':
-				if (sscanf(optarg, "%d", &width) != 1)
-					errmsg_exit("Illegal number. -n %s\n",	optarg);
-				if (sz <= 0)
-					errmsg_exit("Given the width must be greater than 0.\n");
-				break;
-			default:
-				fprintf(stderr, "Parameters error.\n");
-				usage_info(argv[0]);
+		case 's':
+			if (sscanf(optarg, "%d", &sz) != 1)
+				errmsg_exit("Illegal number. -n %s\n",	optarg);
+			if (sz <= 0)
+				errmsg_exit("Given the size must be "
+					"greater than 0.\n");
+			break;
+		case 'w':
+			if (sscanf(optarg, "%d", &width) != 1)
+				errmsg_exit("Illegal number. -n %s\n",	optarg);
+			if (sz <= 0)
+				errmsg_exit("Given the width must be "
+					"greater than 0.\n");
+			break;
+		default:
+			fprintf(stderr, "Parameters error.\n");
+			usage_info(argv[0]);
 		}
 	}
 
@@ -124,13 +126,13 @@ show_strings(char **sa1, char **sa2, char **sa3, char **sa4, int n)
 {
 	int i;
 	
-	printf("%-10s | %-10s | %-10s | %-10s\n", "LSDSORT", "MSTSORT", "QUICKSORT",
-		"INPLACE_MSTSORT");
-	printf("%-10s | %-10s | %-10s | %-10s\n", "--------", "--------", 
+	printf("%-10s | %-10s | %-10s | %-10s\n", "LSDSORT", "MSTSORT",
+		"QUICKSORT", "INPLACE_MSTSORT");
+	printf("%-10s | %-10s | %-10s | %-10s\n", "--------", "--------",
 		"--------", "--------");
 	for (i = 0; i < n; i++) {
-		printf("%-10s | %-10s | %-10s | %-10s\n", sa1[i], sa2[i], sa3[i],
-			sa4[i]);
+		printf("%-10s | %-10s | %-10s | %-10s\n", sa1[i], sa2[i],
+			sa3[i], sa4[i]);
 	}
 	printf("\n");
 }
