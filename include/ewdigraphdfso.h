@@ -63,21 +63,21 @@ struct ewdigraph_dfso {
 
 /* Returns the vertices in reverse postorder */
 #define EWDIGRAPH_DFSO_REVERSEPOST(dfs, order)	do {	\
-	slist_clone((dfs)->postorder, order);				\
-	slist_reverse(order);								\
-} while(0)
+	slist_clone((dfs)->postorder, order);		\
+	slist_reverse(order);				\
+} while (0)
 
 #define EWDIGRAPH_DFSO_CLEAR(dfs)	do {	\
-	ALGFREE((dfs)->marked);					\
-	ALGFREE((dfs)->pre);					\
-	ALGFREE((dfs)->post);					\
-	slist_clear((dfs)->preorder);			\
-	ALGFREE((dfs)->preorder);				\
-	slist_clear((dfs)->postorder);			\
-	ALGFREE((dfs)->postorder);				\
-	(dfs)->precounter = 0;					\
-	(dfs)->postcounter = 0;					\
-	(dfs)->vertices = 0;					\
+	ALGFREE((dfs)->marked);			\
+	ALGFREE((dfs)->pre);			\
+	ALGFREE((dfs)->post);			\
+	slist_clear((dfs)->preorder);		\
+	ALGFREE((dfs)->preorder);		\
+	slist_clear((dfs)->postorder);		\
+	ALGFREE((dfs)->postorder);		\
+	(dfs)->precounter = 0;			\
+	(dfs)->postcounter = 0;			\
+	(dfs)->vertices = 0;			\
 } while (0)
 
 

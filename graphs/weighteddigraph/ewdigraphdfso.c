@@ -43,8 +43,10 @@ ewdigraph_dfso_init(struct ewdigraph_dfso *dfs, const struct ewdigraph *g)
 	unsigned int v;
 
 	dfs->marked = (bool *)algcalloc(EWDIGRAPH_VERTICES(g), sizeof(bool));
-	dfs->pre = (unsigned int *)algcalloc(EWDIGRAPH_VERTICES(g), sizeof(int));
-	dfs->post = (unsigned int *)algcalloc(EWDIGRAPH_VERTICES(g), sizeof(int));
+	dfs->pre = (unsigned int *)
+		algcalloc(EWDIGRAPH_VERTICES(g), sizeof(int));
+	dfs->post = (unsigned int *)
+		algcalloc(EWDIGRAPH_VERTICES(g), sizeof(int));
 
 	dfs->preorder = (struct single_list *)
 		algmalloc(sizeof(struct single_list));
