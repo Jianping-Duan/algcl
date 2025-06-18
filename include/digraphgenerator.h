@@ -59,7 +59,7 @@ void complete_digraph(unsigned int vs, struct digraph *g);
 
 /* Generates a random simple DAG containing vs vertices and es edges. */
 void simple_acyclic_digraph(unsigned int vs, unsigned int es,
-							struct digraph *g);
+			struct digraph *g);
 
 /* 
  * Generates a random tournament digraph on vs vertices.
@@ -135,7 +135,7 @@ void cycle_digraph(unsigned int vs, struct digraph *g);
  * es the number of edges in the cycle.
  */
 void eulerian_cycle_digraph(unsigned int vs, unsigned int es,
-						struct digraph *g);
+			struct digraph *g);
 
 /* 
  * Generates an Eulerian path digraph on vs vertices.
@@ -143,7 +143,7 @@ void eulerian_cycle_digraph(unsigned int vs, unsigned int es,
  * es the number of edges in the path.
  */
 void eulerian_path_digraph(unsigned int vs, unsigned int es,
-						struct digraph *g);
+			struct digraph *g);
 
 /* 
  * Generates a random simple digraph on vs vertices, es edges and (at least)
@@ -157,6 +157,6 @@ void eulerian_path_digraph(unsigned int vs, unsigned int es,
  * are assigned to vertices.
  */
 void strong_component_digraph(unsigned int vs, 	unsigned int es,
-							unsigned int cs, struct digraph *g);
+			unsigned int cs, struct digraph *g);
 
 #endif	/* _DIGRAPHGENERATOR_H_ */

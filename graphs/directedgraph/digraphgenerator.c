@@ -458,7 +458,7 @@ eulerian_path_digraph(unsigned int vs, unsigned int es, struct digraph *g)
  */
 void 
 strong_component_digraph(unsigned int vs, unsigned int es, unsigned int cs,
-						struct digraph *g)
+			struct digraph *g)
 {
 	unsigned int *label, *vertices, v, w, i, j;
 	long cnt = 0;
@@ -527,7 +527,8 @@ strong_component_digraph(unsigned int vs, unsigned int es, unsigned int cs,
 		sprintf(skey, "%u%u", v, w);
 		sscanf(skey, "%ld", &key);
 	
-		if (avlbst_get(&bst, &key) == NULL && v != w && label[v] <= label[w]) {
+		if (avlbst_get(&bst, &key) == NULL && v != w &&
+			label[v] <= label[w]) {
 			avlbst_put(&bst, &key);
 			digraph_add_edge(g, v, w);
 		}

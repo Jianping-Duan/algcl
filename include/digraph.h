@@ -37,14 +37,15 @@
 struct single_list;
 
 struct digraph {
-	unsigned int vertices;			/* number of vertices in this digraph */
-	unsigned int edges;				/* number of edges in this digraph */
-	struct single_list **adjlist;	/* adj[v] = adjacency list for vertex v */
-	int *indegree;					/* indegree[v] = indegree of vertex v */
+	unsigned int vertices;		/* number of vertices in this digraph */
+	unsigned int edges;		/* number of edges in this digraph */
+	struct single_list **adjlist;	/* adj[v] = adjacency list for
+					vertex v */
+	int *indegree;			/* indegree[v] = indegree of vertex v */
 };
 
 /* Returns the number of vertices in this digraph. */
-#define DIGRAPH_VERTICES(g)		((g)->vertices)
+#define DIGRAPH_VERTICES(g)	((g)->vertices)
 
 /* Returns the number of edges in this digraph. */
 #define DIGRAPH_EDGES(g)	((g)->edges)

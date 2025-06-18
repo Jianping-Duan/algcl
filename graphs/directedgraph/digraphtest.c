@@ -131,7 +131,8 @@ main(int argc, char *argv[])
 	digraph_print(&g[16]);
 	printf("\n");
 	
-	printf("Generates a random simple digraph that have strong components.\n");
+	printf("Generates a random simple digraph that have strong "
+		"components.\n");
 	strong_component_digraph(15, 25, 5, &g[17]);
 	digraph_print(&g[17]);
 	printf("\n");
