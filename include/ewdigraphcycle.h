@@ -37,9 +37,9 @@
 struct stack;
 
 struct ewdigraph_cycle {
-	bool *marked;			/* marked[v] = has vertex v  been marked? */
+	bool *marked;		/* marked[v] = has vertex v  been marked? */
 	struct diedge **edgeto;	/* edgeTo[v] = previous edge on path to v */
-	bool *onstack;			/* onStack[v] = is vertex on the stack? */
+	bool *onstack;		/* onStack[v] = is vertex on the stack? */
 	struct stack *cycle;	/* directed cycle (or null if no such cycle) */
 };
 
@@ -53,15 +53,15 @@ struct ewdigraph_cycle {
  */
 #define EWDIGRAPH_CYCLE_GET(ewdc)	((ewdc)->cycle)
 
-#define EWDIGRAPH_CYCLE_CLEAR(ewdc)		do {	\
-	ALGFREE((ewdc)->marked);					\
-	ALGFREE((ewdc)->edgeto);					\
-	ALGFREE((ewdc)->onstack);					\
-	stack_clear((ewdc)->cycle);					\
-	ALGFREE((ewdc)->cycle);						\
+#define EWDIGRAPH_CYCLE_CLEAR(ewdc)	do {	\
+	ALGFREE((ewdc)->marked);		\
+	ALGFREE((ewdc)->edgeto);		\
+	ALGFREE((ewdc)->onstack);		\
+	stack_clear((ewdc)->cycle);		\
+	ALGFREE((ewdc)->cycle);			\
 } while (0)
 
 void ewdigraph_cycle_init(struct ewdigraph_cycle *ewdc,
-						const struct ewdigraph *g);
+			const struct ewdigraph *g);
 
 #endif	/* _EWDIGRAPHCYCLE_H_ */
