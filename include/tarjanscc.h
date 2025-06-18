@@ -36,10 +36,12 @@
 
 struct tarjan_scc {
 	bool *marked;		/* marked[v] = has v been visited? */
-	unsigned int *id;	/* id[v] = id of strong component containing v */
-	unsigned int *low;	/* low[v] = low number of v */
+	unsigned int *id;	/* id[v] = id of strong component
+				containing v */
+	unsigned int *low;		/* low[v] = low number of v */
 	unsigned int precounter;	/* preorder number counter */
-	unsigned int count;			/* number of strongly-connected components */
+	unsigned int count;		/* number of strongly-connected
+					components */
 	unsigned int vertices;		/* digraph of vertices */
 };
 
@@ -59,12 +61,12 @@ struct tarjan_scc {
 	(scc)->id[v] == (scc)->id[w] : false)
 
 #define TJSCC_CLEAR(scc)	do {	\
-	ALGFREE((scc)->marked);			\
-	ALGFREE((scc)->id);				\
-	ALGFREE((scc)->low);			\
-	(scc)->precounter = 0;			\
-	(scc)->count = 0;				\
-	(scc)->vertices = 0;			\
+	ALGFREE((scc)->marked);		\
+	ALGFREE((scc)->id);		\
+	ALGFREE((scc)->low);		\
+	(scc)->precounter = 0;		\
+	(scc)->count = 0;		\
+	(scc)->vertices = 0;		\
 } while(0)
 
 /* Computes the strong components of the digraph g */

@@ -57,10 +57,10 @@ struct kosaraju_sharir_scc {
 	((v) >= (scc)->vertices ? 0 : (scc)->id[v])
 
 #define KJSSCC_CLEAR(scc)	do {	\
-	ALGFREE((scc)->marked);			\
-	ALGFREE((scc)->id);				\
-	(scc)->count = 0;				\
-	(scc)->vertices = 0;			\
+	ALGFREE((scc)->marked);		\
+	ALGFREE((scc)->id);		\
+	(scc)->count = 0;		\
+	(scc)->vertices = 0;		\
 } while(0)
 
 /* Computes the strong components of the digraph g */

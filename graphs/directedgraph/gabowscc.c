@@ -32,8 +32,8 @@
 #include "gabowscc.h"
 #include "linearlist.h"
 
-static void dfs(struct gabow_scc *,	const struct digraph *, unsigned int,
-				struct stack *, struct stack *);
+static void dfs(struct gabow_scc *, const struct digraph *, unsigned int,
+	struct stack *, struct stack *);
 
 /* Computes the strong components of the digraph g */
 void 
@@ -48,7 +48,8 @@ gbscc_init(struct gabow_scc *scc, const struct digraph *g)
 
 	scc->marked = (bool *)algcalloc(DIGRAPH_VERTICES(g), sizeof(bool));
 	scc->id = (long *)algcalloc(DIGRAPH_VERTICES(g), sizeof(long));
-	scc->preorder = (unsigned int *)algcalloc(DIGRAPH_VERTICES(g), sizeof(int));
+	scc->preorder = (unsigned int *)
+		algcalloc(DIGRAPH_VERTICES(g), sizeof(int));
 
 	for (v = 0; v < DIGRAPH_VERTICES(g); v++) {
 		scc->marked[v] = false;

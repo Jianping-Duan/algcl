@@ -39,8 +39,9 @@ struct gabow_scc {
 	long *id;	/* id[v] = id of strong component containing v */
 	unsigned int *preorder;		/* preorder[v] = preorder of v */
 	unsigned int precounter;	/* preorder number counter */
-	unsigned int count;		/* number of strongly-connected components */
-	unsigned int vertices;	/* digraph of vertices */
+	unsigned int count;		/* number of strongly-connected
+					components */
+	unsigned int vertices;		/* digraph of vertices */
 };
 
 /* Returns the number of strong components. */
@@ -59,12 +60,12 @@ struct gabow_scc {
 	(scc)->id[v] == (scc)->id[w] : false)
 
 #define GBSCC_CLEAR(scc)	do {	\
-	ALGFREE((scc)->marked);			\
-	ALGFREE((scc)->id);				\
-	ALGFREE((scc)->preorder);		\
-	(scc)->precounter = 0;			\
-	(scc)->count = 0;				\
-	(scc)->vertices = 0;			\
+	ALGFREE((scc)->marked);		\
+	ALGFREE((scc)->id);		\
+	ALGFREE((scc)->preorder);	\
+	(scc)->precounter = 0;		\
+	(scc)->count = 0;		\
+	(scc)->vertices = 0;		\
 } while(0)
 
 /* Computes the strong components of the digraph g */
