@@ -47,14 +47,16 @@ fwsp_init(struct floyd_warshall_sp *sp, const struct adjmatrix_ewdigraph *g)
 	sp->vertices = ADJMATEWDG_VERTICES(g);
 	sp->negcycle = false;
 
-	sp->distto = (float **)algcalloc(ADJMATEWDG_VERTICES(g), sizeof(float *));
+	sp->distto = (float **)
+		algcalloc(ADJMATEWDG_VERTICES(g), sizeof(float *));
 	sp->edgeto = (struct diedge **)
 		algcalloc(ADJMATEWDG_VERTICES(g), sizeof(struct diedge *));
 	for (v = 0; v < ADJMATEWDG_VERTICES(g); v++) {
 		sp->distto[v] = (float *)
 			algcalloc(ADJMATEWDG_VERTICES(g), sizeof(float));
 		sp->edgeto[v] = (struct diedge *)
-			algcalloc(ADJMATEWDG_VERTICES(g), sizeof(struct diedge));
+			algcalloc(ADJMATEWDG_VERTICES(g),
+			sizeof(struct diedge));
 	}
 
 	/* initialize distances to infinity */
@@ -70,7 +72,8 @@ fwsp_init(struct floyd_warshall_sp *sp, const struct adjmatrix_ewdigraph *g)
 		for (w = 0; w < ADJMATEWDG_VERTICES(g); w++) {
 			e = adj[w];
 			if (diedge_isvalid(&e)) {
-				sp->distto[DIEDGE_FROM(&e)][DIEDGE_TO(&e)] = DIEDGE_WEIGHT(&e);
+				sp->distto[DIEDGE_FROM(&e)][DIEDGE_TO(&e)] =
+					DIEDGE_WEIGHT(&e);
 				sp->edgeto[DIEDGE_FROM(&e)][DIEDGE_TO(&e)] = e;
 			}
 		}
@@ -92,8 +95,10 @@ fwsp_init(struct floyd_warshall_sp *sp, const struct adjmatrix_ewdigraph *g)
 			if (!diedge_isvalid(&(sp->edgeto[v][i])))
 				continue;	/* optimization */
 			for (w = 0; w < ADJMATEWDG_VERTICES(g); w++)
-				if (sp->distto[v][w] > sp->distto[v][i] + sp->distto[i][w]) {
-					sp->distto[v][w] = sp->distto[v][i] + sp->distto[i][w];
+				if (sp->distto[v][w] > sp->distto[v][i] +
+					sp->distto[i][w]) {
+					sp->distto[v][w] = sp->distto[v][i] +
+						sp->distto[i][w];
 					sp->edgeto[v][w] = sp->edgeto[i][w];
 				}
 
@@ -108,7 +113,7 @@ fwsp_init(struct floyd_warshall_sp *sp, const struct adjmatrix_ewdigraph *g)
 /* Returns a shortest path from vertex s to vertex t*/
 void 
 fwsp_path_get(const struct floyd_warshall_sp *sp, unsigned int s,
-			unsigned int t, struct single_list *paths)
+	unsigned int t, struct single_list *paths)
 {
 	struct diedge e;
 

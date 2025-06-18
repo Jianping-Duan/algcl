@@ -37,19 +37,21 @@
 
 /* Floyd-Warshall shortest path */
 struct floyd_warshall_sp {
-	float **distto;			/* distTo[v][w] = length of shortest v->w path */
-	struct diedge **edgeto;	/* edgeTo[v][w] = last edge on shortest v->w path */
-	bool negcycle;			/* is there a negative cycle? */
+	float **distto;		/* distTo[v][w] = length of shortest
+				v->w path */
+	struct diedge **edgeto;	/* edgeTo[v][w] = last edge on shortest
+				v->w path */
+	bool negcycle;		/* is there a negative cycle? */
 	unsigned int vertices;	/* graph of vertices */
 };
 
 /* Is there a negative cycle? */
-#define FWSP_HAS_NEGATIVE_CYCLE(sp)		((sp)->negcycle)
+#define FWSP_HAS_NEGATIVE_CYCLE(sp)	((sp)->negcycle)
 
 /* Returns the length of a shortest path from vertex s to vertex t. */
 static inline float 
 fwsp_distto(const struct floyd_warshall_sp *sp, 
-			unsigned int s, unsigned int t)
+	unsigned int s, unsigned int t)
 {
 	if (s >= sp->vertices) {
 		errmsg_exit("vertex %u is not between 0 and %u.\n", s,
@@ -80,11 +82,11 @@ struct single_list;
  * it computes a negative cycle. 
  */
 void fwsp_init(struct floyd_warshall_sp *sp,
-			const struct adjmatrix_ewdigraph *g);
+		const struct adjmatrix_ewdigraph *g);
 
 /* Returns a shortest path from vertex s to vertex t. */
 void fwsp_path_get(const struct floyd_warshall_sp *sp, unsigned int s,
-				unsigned int t, struct single_list *paths);
+		unsigned int t, struct single_list *paths);
 
 /* Clears */
 void fwsp_clear(struct floyd_warshall_sp *sp);

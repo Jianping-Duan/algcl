@@ -59,17 +59,17 @@ main(int argc, char *argv[])
 	
 	while ((op = getopt(argc, argv, optstr)) != -1) {
 		switch (op) {
-			case 'v':
-				if (sscanf(optarg, "%u", &vs) != 1)
-					errmsg_exit("Illegal number. -v %s\n", optarg);
-				break;
-			case 'e':
-				if (sscanf(optarg, "%u", &es) != 1)
-					errmsg_exit("Illegal number. -e %s\n", optarg);
-				break;
-			default:
-				fprintf(stderr, "Parameters error.\n");
-				usage_info(argv[0]);
+		case 'v':
+			if (sscanf(optarg, "%u", &vs) != 1)
+				errmsg_exit("Illegal number. -v %s\n", optarg);
+			break;
+		case 'e':
+			if (sscanf(optarg, "%u", &es) != 1)
+				errmsg_exit("Illegal number. -e %s\n", optarg);
+			break;
+		default:
+			fprintf(stderr, "Parameters error.\n");
+			usage_info(argv[0]);
 		}
 	}
 	
@@ -91,27 +91,32 @@ main(int argc, char *argv[])
 		printf("%6d: ", v);
 		for (w = 0; w < ADJMATEWDG_VERTICES(&g); w++)
 			if (FWSP_HAS_PATH(&sp, v, w))
-				printf("%6.2f ", (double)fwsp_distto(&sp, v, w));
+				printf("%6.2f ",
+					(double)fwsp_distto(&sp, v, w));
 			else
 				printf("   Inf ");
 		printf("\n");
 	}
 
 	printf("Prints all-pairs shortest paths.\n");
-	if (!FWSP_HAS_NEGATIVE_CYCLE(&sp)) {
-		for (v = 0; v < ADJMATEWDG_VERTICES(&g); v++)
-			for (w = 0; w < ADJMATEWDG_VERTICES(&g); w++)
-				if (FWSP_HAS_PATH(&sp, v, w)) {
-					fwsp_path_get(&sp, v, w, &paths);
-					SLIST_FOREACH(&paths, nptr, struct diedge, e) {
-						DIEDGE_STRING(e, se);
-						printf("%s  ", se);
-					}
-					printf("\n");
-					slist_clear(&paths);
-				} else
-					printf("%u to %u no path.\n", v, w);
-	}
+	if (FWSP_HAS_NEGATIVE_CYCLE(&sp))
+		goto has_negcycle;
+
+	for (v = 0; v < ADJMATEWDG_VERTICES(&g); v++)
+		for (w = 0; w < ADJMATEWDG_VERTICES(&g); w++)
+			if (FWSP_HAS_PATH(&sp, v, w)) {
+				fwsp_path_get(&sp, v, w, &paths);
+				SLIST_FOREACH(&paths, nptr, struct diedge, e) {
+					DIEDGE_STRING(e, se);
+					printf("%s  ", se);
+				}
+				printf("\n");
+				slist_clear(&paths);
+			} else {
+				printf("%u to %u no path.\n", v, w);
+			}
+
+has_negcycle:
 	
 	adjmatewdg_clear(&g);
 	fwsp_clear(&sp);
@@ -124,6 +129,7 @@ usage_info(const char *pname)
 {
 	fprintf(stderr, "Usage: %s -v -e\n", pname);
 	fprintf(stderr, "-f: The data file for the edge-weighted digraph.\n");
-	fprintf(stderr, "-s: The soruce vertex of the edge-weighted digraph.\n");
+	fprintf(stderr, "-s: The soruce vertex of the edge-weighted "
+		"digraph.\n");
 	exit(EXIT_FAILURE);
 }
