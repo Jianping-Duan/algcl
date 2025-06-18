@@ -94,7 +94,10 @@ ewdtplg_use_queue(const struct ewdigraph *g, struct single_list *order)
 	ALGFREE(indegree);
 	queue_clear(&qu);
 
-	/* There is a directed cycle in subgraph of vertices with indegree >= 1. */
+	/* 
+	 * There is a directed cycle in subgraph of vertices with
+	 * indegree >= 1. 
+	 */
 	if (cnt != EWDIGRAPH_VERTICES(g))
 		slist_clear(order);
 }
