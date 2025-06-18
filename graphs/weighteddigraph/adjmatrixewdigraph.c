@@ -86,7 +86,7 @@ adjmatewdg_add_edge(struct adjmatrix_ewdigraph *g, const struct diedge *e)
 /* Initializes a random edge-weighted digraph with vs vertices and es edges. */
 void 
 adjmatewdg_init_randomly(struct adjmatrix_ewdigraph *g, unsigned int vs,
-						unsigned int es)
+			unsigned int es)
 {
 	unsigned int v, w, cnt = 0;;
 	float wt;

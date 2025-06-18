@@ -53,17 +53,17 @@ main(int argc, char *argv[])
 	
 	while ((op = getopt(argc, argv, optstr)) != -1) {
 		switch (op) {
-			case 'v':
-				if (sscanf(optarg, "%u", &vs) != 1)
-					errmsg_exit("Illegal number. -v %s\n", optarg);
-				break;
-			case 'e':
-				if (sscanf(optarg, "%u", &es) != 1)
-					errmsg_exit("Illegal number. -e %s\n", optarg);
-				break;
-			default:
-				fprintf(stderr, "Parameters error.\n");
-				usage_info(argv[0]);
+		case 'v':
+			if (sscanf(optarg, "%u", &vs) != 1)
+				errmsg_exit("Illegal number. -v %s\n", optarg);
+			break;
+		case 'e':
+			if (sscanf(optarg, "%u", &es) != 1)
+				errmsg_exit("Illegal number. -e %s\n", optarg);
+			break;
+		default:
+			fprintf(stderr, "Parameters error.\n");
+			usage_info(argv[0]);
 		}
 	}
 	
@@ -82,6 +82,7 @@ usage_info(const char *pname)
 {
 	fprintf(stderr, "Usage: %s -v -e\n", pname);
 	fprintf(stderr, "-f: The data file for the edge-weighted digraph.\n");
-	fprintf(stderr, "-s: The soruce vertex of the edge-weighted digraph.\n");
+	fprintf(stderr, "-s: The soruce vertex of the edge-weighted "
+		"digraph.\n");
 	exit(EXIT_FAILURE);
 }

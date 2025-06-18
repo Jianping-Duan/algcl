@@ -36,8 +36,8 @@
 #include <math.h>	/* isnan() */
 
 struct diedge {
-	long v;			/* one vertex */
-	long w;			/* other vertex */
+	long v;		/* one vertex */
+	long w;		/* other vertex */
 	float weight;	/* weight of this edge */
 };
 
@@ -77,8 +77,8 @@ diedge_isvalid(const struct diedge *e)
 }
 
 /* Returns a string representation of this edge. */
-#define DIEDGE_STRING(edge, str)	do {	\
-	sprintf((str), "%ld->%ld %5.3f",		\
+#define DIEDGE_STRING(edge, str)	do {				\
+	sprintf((str), "%ld->%ld %5.3f",				\
 		(edge)->v, (edge)->w, (double)((edge)->weight));	\
 } while (0)
 
@@ -113,7 +113,7 @@ void adjmatewdg_add_edge(struct adjmatrix_ewdigraph *g, const struct diedge *e);
  * Initializes a random edge-weighted digraph with vs vertices and es edges.
  */
 void adjmatewdg_init_randomly(struct adjmatrix_ewdigraph *g, unsigned int vs,
-							unsigned int es);
+			unsigned int es);
 
 /* Prints this graph. */
 void adjmatewdg_print(const struct adjmatrix_ewdigraph *g);
