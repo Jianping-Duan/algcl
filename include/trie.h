@@ -48,17 +48,17 @@ struct trie_node {
 
 struct trie {
 	struct trie_node *root;	/* R-way trie node */
-	long size;				/* number of keys in trie */
+	long size;		/* number of keys in trie */
 };
 
 /* Initializes an empty set of strings. */
 #define TRIE_INIT(t)	do {	\
-	(t)->root = NULL;			\
-	(t)->size = 0;				\
+	(t)->root = NULL;	\
+	(t)->size = 0;		\
 } while (0)
 
 /* Returns the number of strings in the set. */
-#define TRIE_SIZE(t)	((t)->size)
+#define TRIE_SIZE(t)		((t)->size)
 
 /* Is the set empty? */
 #define TRIE_ISEMPTY(t)		((t)->size == 0)
@@ -80,14 +80,14 @@ void trie_delete(struct trie *t, const char *key);
 
 /* Returns all of the keys in the set that start with prefix */
 void trie_keys_prefix(const struct trie *t, const char *prefix,
-					struct single_list *keys);
+		struct single_list *keys);
 
 /* 
  * Returns all of the keys in the set that match pattern,
  * where the character '.' is interpreted as a wildcard character.
  */
 void trie_keys_match(const struct trie *t, const char *pattern,
-					struct single_list *keys);
+		struct single_list *keys);
 
 /* 
  * Returns the string in the set that is the longest prefix of query,

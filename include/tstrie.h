@@ -42,24 +42,24 @@
 
 /* ternary search trie node */
 struct tstrie_node {
-	int ch;						/* character */
+	int ch;				/* character */
 	struct tstrie_node *left;	/* left subtries */
 	struct tstrie_node *mid;	/* middle subtries */
 	struct tstrie_node *right;	/* right substries */
-	int value;					/* value associated with string */
-	long height;				/* height of subtire */
+	int value;			/* value associated with string */
+	long height;			/* height of subtire */
 };
 
 /* ternary search trie */
 struct tstrie {
 	struct tstrie_node *root;	/* root of trie */
-	long size;	/* size of trie */
+	long size;			/* size of trie */
 };
 
 /* Initialize an empty TST */
 #define	TSTRIE_INIT(tst)	do {	\
-	(tst)->root = NULL;				\
-	(tst)->size = 0;				\
+	(tst)->root = NULL;		\
+	(tst)->size = 0;		\
 } while (0)
 
 /* Returns the number of keys in this TST */
@@ -82,14 +82,14 @@ void tstrie_keys(const struct tstrie *tst, struct single_list *keys);
 
 /* Returns all of the keys in the set that start with prefix. */
 void tstrie_keys_prefix(const struct tstrie *tst, const char *prefix, 
-						struct single_list *keys);
+			struct single_list *keys);
 
 /* 
  * Returns all of the keys in the symbol table that match pattern,
  * where the character '.' is interpreted as a wildcard character.
  */
 void tstrie_keys_match(const struct tstrie *tst, const char *pattern, 
-					struct single_list *keys);
+			struct single_list *keys);
 
 /* 
  * Returns the string in the symbol table that is the longest prefix of query,

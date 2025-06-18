@@ -35,7 +35,7 @@
 int 
 main(void)
 {
-	const char * const sa[8] = {"she", "sells", "sea", 
+	const char * const sa[8] = {"she", "sells", "sea",
 		"shells", "by", "the", "are", "shore"};
 
 	struct tstrie t;

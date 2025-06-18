@@ -91,7 +91,7 @@ tstrie_keys(const struct tstrie *tst, struct single_list *keys)
 /* Returns all of the keys in the set that start with prefix. */
 void 
 tstrie_keys_prefix(const struct tstrie *tst, const char *prefix,
-				struct single_list *keys)
+		struct single_list *keys)
 {
 	const struct tstrie_node *node;
 	char *buf;
@@ -118,7 +118,7 @@ tstrie_keys_prefix(const struct tstrie *tst, const char *prefix,
  */
 void 
 tstrie_keys_match(const struct tstrie *tst, const char *pattern, 
-				struct single_list *keys)
+		struct single_list *keys)
 {
 	char *buf;
 
@@ -141,7 +141,8 @@ tstrie_longest_prefix(const struct tstrie *tst, const char *query)
 	char *prefix;
 
 	if (query == NULL)
-		errmsg_exit("calls tstrie_longest_prefix() argument query is null.\n");
+		errmsg_exit("calls tstrie_longest_prefix() argument query "
+			"is null.\n");
 
 	if (strlen(query) == 0)
 		return NULL;
@@ -252,7 +253,8 @@ put(struct tstrie_node *node, const char *key, int val, int d)
 	else
 		node->value = val;
 
-	mh = MAX(TSTRIE_HEIGHT_NODE(node->left), TSTRIE_HEIGHT_NODE(node->right));
+	mh = MAX(TSTRIE_HEIGHT_NODE(node->left),
+		TSTRIE_HEIGHT_NODE(node->right));
 	node->height = 1 + MAX(mh, TSTRIE_HEIGHT_NODE(node->mid));
 
 	return node;
@@ -261,7 +263,7 @@ put(struct tstrie_node *node, const char *key, int val, int d)
 /* all keys in subtrie rooted at node with given prefix */
 static void 
 collect(const struct tstrie_node *node, char *prefix,
-		struct single_list *result)
+	struct single_list *result)
 {
 	char s[2], *rstr;
 
@@ -284,7 +286,7 @@ collect(const struct tstrie_node *node, char *prefix,
 
 static void 
 collect_pat(const struct tstrie_node *node, char *prefix, int d, 
-		const char *pat, struct single_list *result)
+	const char *pat, struct single_list *result)
 {
 	int c;
 	char s[2], *rstr;
@@ -308,7 +310,8 @@ collect_pat(const struct tstrie_node *node, char *prefix, int d,
 		}
 		
 		if (d < (int)strlen(pat) - 1) {
-			collect_pat(node->mid, strcat(prefix, s), d + 1, pat, result);
+			collect_pat(node->mid, strcat(prefix, s), d + 1, pat,
+				result);
 			delete_char_at(prefix, (int)strlen(prefix) - 1);
 		}
 	}
@@ -343,7 +346,7 @@ delete_node(struct tstrie_node *node, const char *key, int d)
 			}
 
 			if (node->mid == NULL && node->left == NULL &&
-			   node->right == NULL) {
+				node->right == NULL) {
 				ALGFREE(node);
 				return NULL;
 			}
@@ -362,7 +365,8 @@ delete_node(struct tstrie_node *node, const char *key, int d)
 		}
 	}
 
-	mh = MAX(TSTRIE_HEIGHT_NODE(node->left), TSTRIE_HEIGHT_NODE(node->right));
+	mh = MAX(TSTRIE_HEIGHT_NODE(node->left),
+		TSTRIE_HEIGHT_NODE(node->right));
 	node->height = 1 + MAX(mh, TSTRIE_HEIGHT_NODE(node->mid));
 
 	return node;

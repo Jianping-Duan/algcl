@@ -118,7 +118,7 @@ trie_keys_prefix(const struct trie *t, const char *prefix,
  */
 void 
 trie_keys_match(const struct trie *t, const char *pattern,
-				struct single_list *keys)
+		struct single_list *keys)
 {
 	char *buf;
 	int len;
@@ -142,7 +142,8 @@ trie_longest_prefix(const struct trie *t, const char *query, char *tgstr)
 	int len;
 
 	if (query == NULL)
-		errmsg_exit("The argument query is null for trie_longest_prefix().\n");
+		errmsg_exit("The argument query is null for "
+			"trie_longest_prefix().\n");
 
 	if ((len = longest_prefix(t->root, query, 0, -1)) == -1)
 		*tgstr = '\0';
@@ -221,7 +222,7 @@ delete(struct trie *t, struct trie_node *node, const char *key, int d)
 		if (node->next[ch] != NULL)
 			return node;
 
-	ALGFREE(node); /* node->next[ch] == NULL && !node->isstring */
+	ALGFREE(node);	/* node->next[ch] == NULL && !node->isstring */
 	return NULL;
 }
 
@@ -237,7 +238,7 @@ collect(const struct trie_node *node, char *prefix, struct single_list *result)
 	if (node->value != TRIE_VALUE_NULL)
 		slist_append(result, prefix);
 
-	for (c = 1; c < STRING_RADIX; c++) { /* exclusion c = 0 ('\0') */
+	for (c = 1; c < STRING_RADIX; c++) {	/* exclusion c = 0 ('\0') */
 		s[0] = (char)c,	s[1] = '\0';
 		strcat(prefix, s);
 		collect(node->next[c], prefix, result);
@@ -247,7 +248,7 @@ collect(const struct trie_node *node, char *prefix, struct single_list *result)
 
 static void 
 collect_pat(const struct trie_node *node, char *prefix, const char *pat, 
-			struct single_list *result)
+	struct single_list *result)
 {
 	int c, ch, len1, len2;
 	char s[2];
