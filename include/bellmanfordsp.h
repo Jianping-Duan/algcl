@@ -40,11 +40,12 @@ struct queue;
 struct singlelist;
 
 struct bellmanford_sp {
-	float *distto;			/* distTo[v] = distance of shortest s->v path */
-	struct diedge **edgeto;	/* edgeTo[v] = last edge on shortest s->v path */
-	bool *onqueue;			/* onQueue[v] = is v currently on the queue? */
-	struct queue *quvr;		/* queue of vertices to relax */
-	unsigned int cost;		/* number of calls to relax() */
+	float *distto;		/* distTo[v] = distance of shortest s->v path */
+	struct diedge **edgeto;	/* edgeTo[v] = last edge on shortest
+				s->v path */
+	bool *onqueue;		/* onQueue[v] = is v currently on the queue? */
+	struct queue *quvr;	/* queue of vertices to relax */
+	unsigned int cost;	/* number of calls to relax() */
 	struct stack *cycle;	/* negative cycle (or null if no such cycle) */
 	unsigned int vertices;	/* edge-weighted digraph of vertices */
 };
@@ -75,17 +76,16 @@ bmfsp_distto(const struct bellmanford_sp *sp,
 }
 
 /* Is there a path from the source s to vertex v? */
-#define BMFSP_HAS_PATHTO(sp, v)	\
-	(bmfsp_distto(sp, v) < INFINITY)
+#define BMFSP_HAS_PATHTO(sp, v)		(bmfsp_distto(sp, v) < INFINITY)
 
 #define BMFSP_CLEAR(sp)		do {	\
-	ALGFREE((sp)->distto);			\
-	ALGFREE((sp)->edgeto);			\
-	ALGFREE((sp)->onqueue);			\
-	queue_clear((sp)->quvr);		\
-	ALGFREE((sp)->quvr);			\
-	stack_clear((sp)->cycle);		\
-	ALGFREE((sp)->cycle);			\
+	ALGFREE((sp)->distto);		\
+	ALGFREE((sp)->edgeto);		\
+	ALGFREE((sp)->onqueue);		\
+	queue_clear((sp)->quvr);	\
+	ALGFREE((sp)->quvr);		\
+	stack_clear((sp)->cycle);	\
+	ALGFREE((sp)->cycle);		\
 } while (0)
 
 /* 
@@ -93,10 +93,10 @@ bmfsp_distto(const struct bellmanford_sp *sp,
  * edge-weighted digraph g. 
  */
 void bmfsp_init(struct bellmanford_sp *sp, const struct ewdigraph *g,
-				unsigned int s);
+		unsigned int s);
 
 /* Gets a shortest path from the source s to vertex v. */
 void bmfsp_paths_get(const struct bellmanford_sp *sp, unsigned int v,
-					struct single_list *paths);
+		struct single_list *paths);
 
 #endif	/* _BELLMANFORDSP_H_ */

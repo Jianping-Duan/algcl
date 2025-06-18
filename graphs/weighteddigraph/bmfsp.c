@@ -61,16 +61,16 @@ main(int argc, char *argv[])
 	
 	while ((op = getopt(argc, argv, optstr)) != -1) {
 		switch (op) {
-			case 'f':
-				fname = optarg;
-				break;
-			case 's':
-				if (sscanf(optarg, "%u", &s) != 1)
-					errmsg_exit("Illegal number. -s %s\n", optarg);
-				break;
-			default:
-				fprintf(stderr, "Parameters error.\n");
-				usage_info(argv[0]);
+		case 'f':
+			fname = optarg;
+			break;
+		case 's':
+			if (sscanf(optarg, "%u", &s) != 1)
+				errmsg_exit("Illegal number. -s %s\n", optarg);
+			break;
+		default:
+			fprintf(stderr, "Parameters error.\n");
+			usage_info(argv[0]);
 		}
 	}
 	
@@ -112,15 +112,17 @@ main(int argc, char *argv[])
 		printf("Prints it shortest path.\n");
 		for (v = 0; v < EWDIGRAPH_VERTICES(&g); v++) {
 			if (BMFSP_HAS_PATHTO(&sp, v)) {
-				printf("%u %u (%.3f)  ", s, v, (double)bmfsp_distto(&sp, v));
+				printf("%u %u (%.3f)  ", s, v,
+					(double)bmfsp_distto(&sp, v));
 				bmfsp_paths_get(&sp, v, &paths);
 				SLIST_FOREACH(&paths, nptr, struct diedge, e) {
 					DIEDGE_STRING(e, se);
 					printf("%s  ", se);
 				}
 				printf("\n");
-			} else
+			} else {
 				printf("%u to %u no path.\n", s, v); 
+			}
 		}
 		slist_clear(&paths);
 	}
@@ -139,6 +141,7 @@ usage_info(const char *pname)
 {
 	fprintf(stderr, "Usage: %s -f -s\n", pname);
 	fprintf(stderr, "-f: The data file for the edge-weighted digraph.\n");
-	fprintf(stderr, "-s: The soruce vertex of the edge-weighted digraph.\n");
+	fprintf(stderr, "-s: The soruce vertex of the edge-weighted "
+		"digraph.\n");
 	exit(EXIT_FAILURE);
 }

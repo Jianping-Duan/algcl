@@ -43,12 +43,12 @@ static void relax(struct bellmanford_sp *, const struct ewdigraph *,
  */
 void 
 bmfsp_init(struct bellmanford_sp *sp, const struct ewdigraph *g,
-		unsigned int s)
+	unsigned int s)
 {
 	unsigned int v, *w;
 
 	if (s >= EWDIGRAPH_VERTICES(g)) {
-		errmsg_exit("vertex %u is not between 0 and %u.\n", s, 
+		errmsg_exit("vertex %u is not between 0 and %u.\n", s,
 			EWDIGRAPH_VERTICES(g) - 1);
 	}
 
@@ -86,12 +86,12 @@ bmfsp_init(struct bellmanford_sp *sp, const struct ewdigraph *g,
 /* Gets a shortest path from the source s to vertex v. */
 void 
 bmfsp_paths_get(const struct bellmanford_sp *sp, unsigned int v,
-				struct single_list *paths)
+		struct single_list *paths)
 {
 	struct diedge *e;
 
 	if (v >= sp->vertices) {
-		errmsg_exit("vertex %u is not between 0 and %u.\n", v, 
+		errmsg_exit("vertex %u is not between 0 and %u.\n", v,
 			sp->vertices - 1);
 	}
 	if (BMFSP_HAS_NEGATIVE_CYCLE(sp))
