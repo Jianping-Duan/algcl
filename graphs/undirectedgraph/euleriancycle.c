@@ -73,16 +73,17 @@ eulcycle_get(struct stack *cycle, const struct graph *g)
 	 * Necessary condition: 
 	 * all vertices have even degree.
 	 */
-    for (v = 0; v < GRAPH_VERTICES(g); v++)
+	for (v = 0; v < GRAPH_VERTICES(g); v++)
 		if (GRAPH_DEGREE(g, v) % 2 != 0)
 			return;
 		
 	/* 
-	 * Create local view of adjacency lists, to iterate one vertex at a time.
-     * The helper Edge data type is used to avoid exploring
-	 * both copies of an edge v-w. 
+	 * Create local view of adjacency lists, to iterate one vertex at a
+	 * time. The helper Edge data type is used to avoid exploring both
+	 * copies of an edge v-w. 
 	 */
-	adjs = (struct queue *)algmalloc(GRAPH_VERTICES(g) * sizeof(struct queue));
+	adjs = (struct queue *)
+		algmalloc(GRAPH_VERTICES(g) * sizeof(struct queue));
 	for (v = 0; v < GRAPH_VERTICES(g); v++)
 		QUEUE_INIT(&adjs[v], 0);
 	

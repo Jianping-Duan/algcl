@@ -67,7 +67,7 @@ eulpath_get(struct stack *path, const struct graph *g)
 	
 	/* 
 	 * find vertex from which to start potential Eulerian path:
-     * a vertex v with odd degree(v) if it exits;
+	 * a vertex v with odd degree(v) if it exits;
 	 * otherwise a vertex with degree(v) > 0.
 	 */
 	ns = nonisolated_vertex(g);
@@ -92,11 +92,12 @@ eulpath_get(struct stack *path, const struct graph *g)
 		ns = 0;
 		
 	/* 
-	 * Create local view of adjacency lists, to iterate one vertex at a time.
-     * the helper Edge data type is used to avoid exploring
-	 * both copies of an edge v-w. 
+	 * Create local view of adjacency lists, to iterate one vertex at a
+	 * time. The helper Edge data type is used to avoid exploring both
+	 * copies of an edge v-w. 
 	 */
-	adjs = (struct queue *)algmalloc(GRAPH_VERTICES(g) * sizeof(struct queue));
+	adjs = (struct queue *)
+		algmalloc(GRAPH_VERTICES(g) * sizeof(struct queue));
 	for (v = 0; v < GRAPH_VERTICES(g); v++)
 		QUEUE_INIT(&adjs[v], 0);
 	
@@ -129,7 +130,10 @@ eulpath_get(struct stack *path, const struct graph *g)
 	STACK_INIT(&st, sizeof(long));
 	stack_push(&st, &ns);
 	
-	/* Greedily search through edges in iterative depth-first search style */
+	/* 
+	 * Greedily search through edges in iterative depth-first 
+	 * search style 
+	 */
 	w = (unsigned int *)algmalloc(sizeof(int));
 	while (!STACK_ISEMPTY(&st)) {
 		stack_pop(&st, (void **)&w);
