@@ -37,16 +37,16 @@
 /* Hopcroft-Karp bipartite matching */
 struct hopcroft_karp {
 	unsigned int vertices;	/* number of vertices in the graph */
-	struct bipartite_graph_bfs *bigraph; /* bipartition */
+	struct bipartite_graph_bfs *bigraph;	/* bipartition */
 	unsigned int cardinality;	/* cardinality of current matching */
 	long *mate;	/* mate[v] =  w if v-w is an edge in current matching,
-				   mate[v] =  w if v-w is an edge in current matching,
-				   = -1 if v is not in current matching. */
+			   mate[v] =  w if v-w is an edge in current matching,
+			   = -1 if v is not in current matching. */
 	bool *mincover;	/* mincover[v] = true iff v is in min vertex cover */
 	bool *marked;	/* marked[v] = true iff v is reachable via alternating
-					   path */
+			   path */
 	unsigned int *distto;	/* distto[v] = number of edges on shortest path
-							   to v */
+				   to v */
 };
 
 #ifdef BIPARTITE_UNMATCHED
@@ -87,15 +87,15 @@ struct hopcroft_karp {
 #define HKBIPMATCH_MIN_COVER(bm, v)	\
 	((v) >= (bm)->vertices ? false : (bm)->mincover[v])
 
-#define HKBIPMATCH_CLEAR(bm)	do {	\
-	(bm)->vertices = 0;					\
-	(bm)->cardinality = 0;				\
+#define HKBIPMATCH_CLEAR(bm)	do {		\
+	(bm)->vertices = 0;			\
+	(bm)->cardinality = 0;			\
 	BIGRAPHBFS_CLEAR((bm)->bigraph);	\
-	ALGFREE((bm)->bigraph);				\
-	ALGFREE((bm)->mate);				\
-	ALGFREE((bm)->mincover);			\
-	ALGFREE((bm)->marked);				\
-	ALGFREE((bm)->distto);				\
+	ALGFREE((bm)->bigraph);			\
+	ALGFREE((bm)->mate);			\
+	ALGFREE((bm)->mincover);		\
+	ALGFREE((bm)->marked);			\
+	ALGFREE((bm)->distto);			\
 } while (0)
 
 /* 

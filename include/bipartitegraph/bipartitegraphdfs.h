@@ -40,7 +40,7 @@ struct bipartite_graph_dfs {
 	bool *color;	/* color[v] gives vertices on one side of bipartition */
 	bool *marked;	/* marked[v] = true iff v has been visited in DFS */
 	long *edgeto;	/* edgeTo[v] = last edge on path to v */
-	struct stack cycle;		/* odd-length cycle */
+	struct stack cycle;	/* odd-length cycle */
 	unsigned int vertices;	/* graph of vertices */
 };
 
@@ -48,14 +48,14 @@ struct bipartite_graph_dfs {
 #define BIGRAPHDFS_ISBIPARTITE(bg)	((bg)->isbipartite)
 
 /* Returns an odd-length cycle if the graph is not bipartite. */
-#define BIGRAPHDFS_ODDCYCLE(bg)	((bg)->cycle)
+#define BIGRAPHDFS_ODDCYCLE(bg)		((bg)->cycle)
 
 #define BIGRAPHDFS_CLEAR(bg)	do {	\
-	ALGFREE((bg)->color);				\
-	ALGFREE((bg)->marked);				\
-	ALGFREE((bg)->edgeto);				\
-	(bg)->vertices = 0;					\
-	(bg)->isbipartite = false;			\
+	ALGFREE((bg)->color);		\
+	ALGFREE((bg)->marked);		\
+	ALGFREE((bg)->edgeto);		\
+	(bg)->vertices = 0;		\
+	(bg)->isbipartite = false;	\
 } while (0)
 
 /* 

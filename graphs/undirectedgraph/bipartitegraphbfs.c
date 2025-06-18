@@ -109,9 +109,11 @@ bfs(struct bipartite_graph_bfs *bg, const struct graph *g, unsigned int s)
 				bg->isbipartite = false;
 				
 				/* 
-				 * To form odd cycle, consider s-v path and s-w path and let x
-				 * be closest node to v and w common to two paths then
-				 * (w-x path) + (x-v path) + (edge v-w) is an odd-length cycle.
+				 * To form odd cycle, consider s-v path and
+				 * s-w path and let x be closest node to v and w
+				 * common to two paths then (w-x path) +
+				 * (x-v path) + (edge v-w) is an odd-length
+				 * cycle.
 				 * Note: distTo[v] == distTo[w];
 				 */
 				STACK_INIT(&st, sizeof(int));

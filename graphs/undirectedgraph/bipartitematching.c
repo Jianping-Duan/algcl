@@ -81,7 +81,8 @@ bipmatch_init(struct bipartite_matching *bm, const struct graph *g)
 			}
 
 		/* 
-		 * update the matching according to alternating path in edgeto[] array.
+		 * update the matching according to alternating path in
+		 * edgeto[] array.
 		 */
 		for (v = t; v != -1; v = bm->edgeto[bm->edgeto[v]]) {
 			w = bm->edgeto[v];
@@ -94,10 +95,14 @@ bipmatch_init(struct bipartite_matching *bm, const struct graph *g)
 
 	/* find min vertex cover from marked[] array */
 	for (v = 0; v < GRAPH_VERTICES(g); v++) {
-		if (bigraphbfs_color(bm->bigraph, (unsigned)v) && !bm->marked[v])
+		if (bigraphbfs_color(bm->bigraph, (unsigned)v) &&
+			!bm->marked[v]) {
 			bm->mincover[v] = true;
-		if (!bigraphbfs_color(bm->bigraph, (unsigned)v) && bm->marked[v])
+		}
+		if (!bigraphbfs_color(bm->bigraph, (unsigned)v) &&
+			bm->marked[v]) {
 			bm->mincover[v] = true;
+		}
 	}
 }
 
@@ -109,7 +114,7 @@ bipmatch_init(struct bipartite_matching *bm, const struct graph *g)
  */
 static bool 
 is_residual_edge(const struct bipartite_matching *bm, unsigned int v,
-				unsigned int w)
+		unsigned int w)
 {
 	if (bm->mate[v] != w && bigraphbfs_color(bm->bigraph, v))
 		return true;
@@ -144,12 +149,13 @@ has_augment_path(struct bipartite_matching *bm,	const struct graph *g)
 	struct slist_node *nptr;
 
 	/* 
-	 * breadth-first search (starting from all unmatched vertices on one side
-	 * of bipartition)
+	 * breadth-first search (starting from all unmatched vertices on one
+	 * side of bipartition)
 	 */
 	QUEUE_INIT(&qu, sizeof(int));
 	for (v = 0; v < bm->vertices; v++)
-		if (bigraphbfs_color(bm->bigraph, v) && !BIPMATCH_ISMATCHED(bm, v)) {
+		if (bigraphbfs_color(bm->bigraph, v) &&
+			!BIPMATCH_ISMATCHED(bm, v)) {
 			enqueue(&qu, &v);
 			bm->marked[v] = true;
 		}

@@ -56,25 +56,25 @@ main(int argc, char *argv[])
 	
 	while ((op = getopt(argc, argv, optstr)) != -1) {
 		switch (op) {
-			case 'v':
-				if (sscanf(optarg, "%u", &v1) != 1)
-					errmsg_exit("Illegal number. -v %s\n", optarg);
-				break;
-			case 'V':
-				if (sscanf(optarg, "%u", &v2) != 1)
-					errmsg_exit("Illegal number. -V %s\n", optarg);
-				break;
-			case 'e':
-				if (sscanf(optarg, "%u", &e) != 1)
-					errmsg_exit("Illegal number. -e %s\n", optarg);
-				break;
-			case 'E':
-				if (sscanf(optarg, "%u", &f) != 1)
-					errmsg_exit("Illegal number. -E %s\n", optarg);
-				break;
-			default:
-				fprintf(stderr, "Parameters error.\n");
-				usage_info(argv[0]);
+		case 'v':
+			if (sscanf(optarg, "%u", &v1) != 1)
+				errmsg_exit("Illegal number. -v %s\n", optarg);
+			break;
+		case 'V':
+			if (sscanf(optarg, "%u", &v2) != 1)
+				errmsg_exit("Illegal number. -V %s\n", optarg);
+			break;
+		case 'e':
+			if (sscanf(optarg, "%u", &e) != 1)
+				errmsg_exit("Illegal number. -e %s\n", optarg);
+			break;
+		case 'E':
+			if (sscanf(optarg, "%u", &f) != 1)
+				errmsg_exit("Illegal number. -E %s\n", optarg);
+			break;
+		default:
+			fprintf(stderr, "Parameters error.\n");
+			usage_info(argv[0]);
 		}
 	}
 	
@@ -97,7 +97,8 @@ main(int argc, char *argv[])
 		printf("Graph is bipartite.\n");
 		for (v = 0; v < GRAPH_VERTICES(&g); v++) {
 			printf("%u: %s\n", v, 
-				bigraphbfs_color(&bg, v) == BLACK ? "Black" : "White");
+				bigraphbfs_color(&bg, v) == BLACK ?
+				"Black" : "White");
 		}
 	} else {
 		printf("Graph has an odd-length cycle:\n");
@@ -121,9 +122,9 @@ main(int argc, char *argv[])
 static void usage_info(const char *pname)
 {
 	fprintf(stderr, "Usage %s -v -V -e -E.\n", pname);
-	fprintf(stderr, "Create random bipartite graph with 'v' vertices on left "
-		"side,\n");
-	fprintf(stderr, "'V' vertices on right side, and 'e' edges; then add 'E' "
-		"random edges.\n");
+	fprintf(stderr, "Create random bipartite graph with 'v' vertices on "
+		"left side,\n");
+	fprintf(stderr, "'V' vertices on right side, and 'e' edges; then "
+		"add 'E' random edges.\n");
 	exit(EXIT_FAILURE);
 }

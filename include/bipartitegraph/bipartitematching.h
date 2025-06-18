@@ -64,13 +64,13 @@
 
 struct bipartite_matching {
 	unsigned int vertices;	/* number of vertices in the graph */
-	struct bipartite_graph_bfs *bigraph; /* bipartition */
+	struct bipartite_graph_bfs *bigraph;	/* bipartition */
 	unsigned int cardinality;	/* cardinality of current matching */
 	long *mate;	/* mate[v] = w if v-w is an edge in current matching,
-				   = -1 if v is not in current matching */
+			   = -1 if v is not in current matching */
 	bool *mincover;	/* mincover[v] = true iff v is in min vertex cover */
 	bool *marked;	/* marked[v] = true iff v is reachable via alternating
-					   path */
+			   path */
 	long *edgeto;	/* edgeTo[v] = last edge on alternating path to v */
 };
 
@@ -98,8 +98,7 @@ struct bipartite_matching {
  * That is, the number of edges in a maximum matching is equal to one half of
  * the number of vertices in the graph (so that every vertex is matched). 
  */
-#define BIPMATCH_ISPERFECT(bm)	\
-	((bm)->cardinality * 2 == (bm)->vertices)
+#define BIPMATCH_ISPERFECT(bm)	((bm)->cardinality * 2 == (bm)->vertices)
 
 /* 
  * Returns true if the specified vertex is in the minimum
@@ -109,14 +108,14 @@ struct bipartite_matching {
 	((v) >= (bm)->vertices ? false : (bm)->mincover[v])
 
 #define BIPMATCH_CLEAR(bm)		do {	\
-	(bm)->vertices = 0;					\
-	(bm)->cardinality = 0;				\
+	(bm)->vertices = 0;			\
+	(bm)->cardinality = 0;			\
 	BIGRAPHBFS_CLEAR((bm)->bigraph);	\
-	ALGFREE((bm)->bigraph);				\
-	ALGFREE((bm)->mate);				\
-	ALGFREE((bm)->mincover);			\
-	ALGFREE((bm)->marked);				\
-	ALGFREE((bm)->edgeto);				\
+	ALGFREE((bm)->bigraph);			\
+	ALGFREE((bm)->mate);			\
+	ALGFREE((bm)->mincover);		\
+	ALGFREE((bm)->marked);			\
+	ALGFREE((bm)->edgeto);			\
 } while (0)
 
 /* 
