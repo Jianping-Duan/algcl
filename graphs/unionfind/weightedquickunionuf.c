@@ -118,5 +118,6 @@ static void
 validate(const struct wquick_union_uf *uf, long p)
 {
 	if (p < 0 || p >= (long)uf->len)
-		errmsg_exit("index %ld is not between 0 and %ld.\n", p, uf->len - 1);
+		errmsg_exit("index %ld is not between 0 and %ld.\n", p,
+			uf->len - 1);
 }

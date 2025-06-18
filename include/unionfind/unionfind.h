@@ -54,19 +54,19 @@
 struct union_find {
 	long *parent;	/* parent[i] = parent of i */
 	short *rank;	/* rank[i] = rank of subtree rooted
-					   at i (never more than 31) */
-	unsigned long len;		/* the parent array of length */
+			   at i (never more than 31) */
+	unsigned long len;	/* the parent array of length */
 	unsigned long count;	/* number of components */
 };
 
 /* Returns the number of sets. */
 #define UF_COUNT(uf)	((uf)->count)
 
-#define UF_CLEAR(uf)		do {	\
-	ALGFREE((uf)->parent);			\
-	ALGFREE((uf)->rank);			\
-	(uf)->len = 0;					\
-	(uf)->count = 0;				\
+#define UF_CLEAR(uf)	do {	\
+	ALGFREE((uf)->parent);	\
+	ALGFREE((uf)->rank);	\
+	(uf)->len = 0;		\
+	(uf)->count = 0;	\
 } while (0)
 
 /* 

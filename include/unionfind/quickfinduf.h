@@ -52,8 +52,8 @@
  */
 
 struct quick_find_uf {
-	long *id;				/* id[i] = component identifier of i */
-	unsigned long len;		/* the id array of length */
+	long *id;		/* id[i] = component identifier of i */
+	unsigned long len;	/* the id array of length */
 	unsigned long count;	/* number of components */
 };
 
@@ -61,9 +61,9 @@ struct quick_find_uf {
 #define QFUF_COUNT(uf)	((uf)->count)
 
 #define QFUF_CLEAR(uf)	do {	\
-	ALGFREE((uf)->id);			\
-	(uf)->len = 0;				\
-	(uf)->count = 0;			\
+	ALGFREE((uf)->id);	\
+	(uf)->len = 0;		\
+	(uf)->count = 0;	\
 } while (0)
 
 /* 

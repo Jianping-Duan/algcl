@@ -52,18 +52,18 @@
  */
 
 struct quick_union_uf {
-	long *parent;			/* parent[i] = parent of i */
-	unsigned long len;		/* the parent array of length */
+	long *parent;		/* parent[i] = parent of i */
+	unsigned long len;	/* the parent array of length */
 	unsigned long count;	/* number of components */
 };
 
 /* Returns the number of sets. */
-#define QUUF_COUNT(uf)	((uf)->count)
+#define QUUF_COUNT(uf)		((uf)->count)
 
 #define QUUF_CLEAR(uf)		do {	\
-	ALGFREE((uf)->parent);			\
-	(uf)->len = 0;					\
-	(uf)->count = 0;				\
+	ALGFREE((uf)->parent);		\
+	(uf)->len = 0;			\
+	(uf)->count = 0;		\
 } while (0);
 
 /* 

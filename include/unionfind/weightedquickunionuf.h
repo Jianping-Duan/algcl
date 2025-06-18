@@ -51,20 +51,21 @@
  */
 
 struct wquick_union_uf {
-	long *parent;	/* parent[i] = parent of i */
-	long *size;		/* size[i] = number of elements in subtree rooted at i */
-	unsigned long len;		/* the parent array of length */
+	long *parent;		/* parent[i] = parent of i */
+	long *size;		/* size[i] = number of elements in subtree
+				rooted at i */
+	unsigned long len;	/* the parent array of length */
 	unsigned long count;	/* number of components */
 };
 
 /* Returns the number of sets. */
-#define WQUUF_COUNT(uf)	((uf)->count)
+#define WQUUF_COUNT(uf)		((uf)->count)
 
 #define WQUUF_CLEAR(uf)		do {	\
-	ALGFREE((uf)->parent);			\
-	ALGFREE((uf)->size);			\
-	(uf)->len = 0;					\
-	(uf)->count = 0;				\
+	ALGFREE((uf)->parent);		\
+	ALGFREE((uf)->size);		\
+	(uf)->len = 0;			\
+	(uf)->count = 0;		\
 } while (0)
 
 
