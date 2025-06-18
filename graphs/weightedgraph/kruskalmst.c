@@ -56,7 +56,8 @@ kruskal_mst_get(const struct ewgraph *g, struct single_list *mst)
 	slist_init(mst, 0, NULL);
 
 	/* create array of edges, sorted by weight */
-	edges = (struct edge **)algcalloc(EWGRAPH_EDGES(g), sizeof(struct edge *));
+	edges = (struct edge **)
+		algcalloc(EWGRAPH_EDGES(g), sizeof(struct edge *));
 	for (i = 0; i < EWGRAPH_EDGES(g); i++)
 		edges[i] = NULL;
 

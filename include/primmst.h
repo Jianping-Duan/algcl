@@ -39,7 +39,7 @@ struct single_list;
 
 struct prim_mst {
 	struct edge **edgeto;	/* edgeTo[v] = shortest edge from tree vertex to
-							   non-tree vertex */
+				   non-tree vertex */
 	float *distto;	/* distTo[v] = weight of shortest such edge */
 	bool *marked;	/* marked[v] = true if v on tree, false otherwise */
 	struct index_pheap *pq;	/* edge of weight, index is vertex */ 
@@ -47,12 +47,12 @@ struct prim_mst {
 };
 
 #define PMST_CLEAR(pmst)	do {	\
-	ALGFREE((pmst)->edgeto);		\
-	ALGFREE((pmst)->distto);		\
-	ALGFREE((pmst)->marked);		\
-	ipheap_clear((pmst)->pq);		\
-	ALGFREE((pmst)->pq);			\
-	(pmst)->vertices = 0;			\
+	ALGFREE((pmst)->edgeto);	\
+	ALGFREE((pmst)->distto);	\
+	ALGFREE((pmst)->marked);	\
+	ipheap_clear((pmst)->pq);	\
+	ALGFREE((pmst)->pq);		\
+	(pmst)->vertices = 0;		\
 } while (0)
 
 

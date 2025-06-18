@@ -49,8 +49,10 @@ lpmst_init(struct lazy_prim_mst *lpmst, const struct ewgraph *g)
 	unsigned int v;
 
 	lpmst->marked = (bool *)algcalloc(EWGRAPH_VERTICES(g), sizeof(bool));
-	lpmst->mst = (struct single_list *)algmalloc(sizeof(struct single_list));
-	lpmst->pq = (struct pairing_heap *)algmalloc(sizeof(struct pairing_heap));
+	lpmst->mst = (struct single_list *)
+		algmalloc(sizeof(struct single_list));
+	lpmst->pq = (struct pairing_heap *)
+		algmalloc(sizeof(struct pairing_heap));
 
 	pheap_init(lpmst->pq, 0, lessequal);
 	slist_init(lpmst->mst, sizeof(struct edge), edge_equals);
@@ -117,13 +119,13 @@ prim(struct lazy_prim_mst *lpmst, const struct ewgraph *g, unsigned int s)
 		if (lpmst->marked[v] && lpmst->marked[w])
 			continue;
 
-		slist_append(lpmst->mst, e); /* add e to MST */
+		slist_append(lpmst->mst, e);	/* add e to MST */
 		lpmst->weight += EDGE_WEIGHT(e);
 
 		if (!lpmst->marked[v])
-			scan(lpmst, g, v); /* v becomes part of tree */
+			scan(lpmst, g, v);	/* v becomes part of tree */
 
 		if (!lpmst->marked[w])
-			scan(lpmst, g, w); /* w becomes part of tree */
+			scan(lpmst, g, w);	/* w becomes part of tree */
 	}
 }

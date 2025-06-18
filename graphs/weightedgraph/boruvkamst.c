@@ -64,8 +64,8 @@ boruvka_mst_get(const struct ewgraph *g, struct single_list *mst)
 		k += k) {
 
 		/* 
-		 * Foreach tree in forest, find closest edge if edge weights are equal,
-		 * ties are broken in favor of first edge in edgeset.
+		 * Foreach tree in forest, find closest edge if edge weights
+		 * are equal, ties are broken in favor of first edge in edgeset.
 		 */
 		ewgraph_edges_get(g, &edgeset);
 		SLIST_FOREACH(&edgeset, nptr, struct edge, e) {

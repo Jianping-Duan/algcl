@@ -38,8 +38,8 @@ struct single_list;
 struct pairing_heap;
 
 struct lazy_prim_mst {
-	bool *marked;		/* marked[v] = true iff v on tree */
-	float weight;		/* total weight of MST */
+	bool *marked;	/* marked[v] = true iff v on tree */
+	float weight;	/* total weight of MST */
 	struct single_list *mst;	/* edges in the MST */
 	struct pairing_heap *pq;	/* edges with one endpoint in tree */
 };
@@ -51,12 +51,12 @@ struct lazy_prim_mst {
 #define LPMST_WEIGHT_GET(lpmst)		((lpmst)->weight)
 
 #define LPMST_CLEAR(lpmst)	do {	\
-	ALGFREE((lpmst)->marked);		\
-	slist_clear((lpmst)->mst);		\
-	ALGFREE((lpmst)->mst);			\
-	pheap_clear((lpmst)->pq);		\
-	ALGFREE((lpmst)->pq);			\
-	(lpmst)->weight = 0.0;			\
+	ALGFREE((lpmst)->marked);	\
+	slist_clear((lpmst)->mst);	\
+	ALGFREE((lpmst)->mst);		\
+	pheap_clear((lpmst)->pq);	\
+	ALGFREE((lpmst)->pq);		\
+	(lpmst)->weight = 0.0;		\
 } while (0)
 
 /* Compute a minimum spanning tree (or forest) of an edge-weighted graph. */
