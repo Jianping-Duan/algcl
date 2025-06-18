@@ -36,8 +36,9 @@
 #include <math.h>	/* INFINITY */
 
 struct acyclicsp {
-	float *distto;	/* distto[v] = distance of shortest s->v path */
-	struct diedge **edgeto;	/* edgeTo[v] = last edge on shortest s->v path */
+	float *distto;		/* distto[v] = distance of shortest s->v path */
+	struct diedge **edgeto;	/* edgeTo[v] = last edge on shortest
+				s->v path */
 	unsigned int vertices;	/* edge-weighted digraph of vertices */
 };
 
@@ -60,9 +61,9 @@ acycsp_distto(struct acyclicsp *sp, unsigned int v)
 	(acycsp_distto(sp, v) < INFINITY)
 
 #define ACYCSP_CLEAR(sp)	do {	\
-	ALGFREE((sp)->distto);			\
-	ALGFREE((sp)->edgeto);			\
-	(sp)->vertices = 0;				\
+	ALGFREE((sp)->distto);		\
+	ALGFREE((sp)->edgeto);		\
+	(sp)->vertices = 0;		\
 } while(0)
 
 struct single_list;
@@ -72,10 +73,10 @@ struct single_list;
  * the directed acyclic graph g. 
  */
 void acycsp_init(struct acyclicsp *sp, const struct ewdigraph *g,
-				unsigned int s);
+		unsigned int s);
 
 /* Gets a shortest path from the source vertex s to vertex v. */
 void acycsp_paths_get(const struct acyclicsp *sp, unsigned int v, 
-					struct single_list *paths);
+		struct single_list *paths);
 
 #endif	/* _ACYCLICSP_H_ */
