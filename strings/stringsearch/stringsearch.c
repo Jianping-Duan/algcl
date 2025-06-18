@@ -38,7 +38,7 @@ static long hash(const char *, int, int);
 static int check(const char *, int, const char *, int);
 
 /* 
- * String violence search. returns the index of the first occurrence 
+ * String violence search. returns the index of the first occurrence
  * of the pattern string in the text string.
  */
 int 
@@ -49,7 +49,8 @@ string_violence_search(const char *pat, const char *txt)
 	tlen = (int)strlen(txt), plen = (int)strlen(pat);
 	for (i = 0; i <= tlen - plen; i++) {
 		for (j = 0; j < plen; j++)
-			if (string_char_at(txt, i + j) != string_char_at(pat, j))
+			if (string_char_at(txt, i + j) !=
+				string_char_at(pat, j))
 				break;
 
 		if (j == plen)	/* have found */
@@ -71,7 +72,7 @@ violence_search_back(const char *pat, const char *txt)
 		if (string_char_at(txt, i) == string_char_at(pat, j))
 			j++;	/* match next */
 		else {
-			i -= j; /* back to not matched location */
+			i -= j;	/* back to not matched location */
 			j = 0;	/* reset pattern index */
 		}
 	}
@@ -102,8 +103,10 @@ string_kmp_search(const char *pat, const char *txt)
 	for (x = 0, j = 1; j < plen; j++) {
 		for (c = 0; c < STRING_RADIX; c++)
 			dfa[c][j] = dfa[c][x];	/* copy mismatch cases */
-		dfa[string_char_at(pat, j)][j] = j + 1;	/* set match case. */
-		x = dfa[string_char_at(pat, j)][x];	/* update restart state. */
+		/* set match case. */
+		dfa[string_char_at(pat, j)][j] = j + 1;
+		/* update restart state. */
+		x = dfa[string_char_at(pat, j)][x];
 	}
 
 	for (i = 0, j = 0; i < tlen && j < plen; i++)
@@ -137,8 +140,10 @@ boyer_moore_search(const char *pat, const char *txt)
 	for (i = 0, skip = -1; i <= tlen - plen; i += skip) {
 		skip = 0;
 		for (j = plen - 1; j >= 0; j--)
-			if (string_char_at(pat, j) != string_char_at(txt, i + j)) {
-				skip = MAX(1, j - right[string_char_at(txt, i + j)]);
+			if (string_char_at(pat, j) !=
+				string_char_at(txt, i + j)) {
+				skip = MAX(1, j - right[string_char_at(txt,
+					i + j)]);
 				break;
 			}
 
@@ -200,13 +205,14 @@ static inline int
 get_prime_number(void)
 {
 	const int primes[] = {
-			  2147483647, 2147483629, 2147483587, 2147483579, 2147483563,
-			  2147483549, 2147483543, 2147483497, 2147483489, 2147483477,
-			  2147483423, 2147483399, 2147483353, 2147483323, 2147483269,
-			  2147483249, 2147483237, 2147483179, 2147483171, 2147483137,
-			  2147483123, 2147483077, 2147483069, 2147483059, 2147483053,
-			  2147483033, 2147483029, 2147482951, 2147482949, 2147482943,
-			  2147482937, 2147482921
+			  2147483647, 2147483629, 2147483587, 2147483579,
+			  2147483563, 2147483549, 2147483543, 2147483497,
+			  2147483489, 2147483477, 2147483423, 2147483399,
+			  2147483353, 2147483323, 2147483269, 2147483249,
+			  2147483237, 2147483179, 2147483171, 2147483137,
+			  2147483123, 2147483077, 2147483069, 2147483059,
+			  2147483053, 2147483033, 2147483029, 2147482951,
+			  2147482949, 2147482943, 2147482937, 2147482921
 			 };
 	int i = rand_range_integer(0, 32);
 

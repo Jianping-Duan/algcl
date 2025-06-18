@@ -53,27 +53,29 @@ main(int argc, char *argv[])
 	
 	while ((op = getopt(argc, argv, optstr)) != -1) {
 		switch (op) {
-			case 'f':
-				if (sscanf(optarg, "%d", &flag) != 1)
-					errmsg_exit("Illegal number. -n %s\n",	optarg);
-				switch (flag) {
-					case 1:
-					case 2:
-					case 3:
-					case 4:
-					case 5: break;
-					default: errmsg_exit("Illegal function.\n");
-				}
-				break;
-			case 'p':
-				pat = optarg;
-				break;
-			case 't':
-				txt = optarg;
+		case 'f':
+			if (sscanf(optarg, "%d", &flag) != 1)
+				errmsg_exit("Illegal number. -n %s\n",	optarg);
+			switch (flag) {
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
 				break;
 			default:
-				fprintf(stderr, "Parameters error.\n");
-				usage_info(argv[0]);
+				errmsg_exit("Illegal function.\n");
+			}
+			break;
+		case 'p':
+			pat = optarg;
+			break;
+		case 't':
+			txt = optarg;
+			break;
+		default:
+			fprintf(stderr, "Parameters error.\n");
+			usage_info(argv[0]);
 		}
 	}
 
@@ -96,23 +98,23 @@ static int
 strsearch(int flag, const char *pat, const char *txt)
 {
 	switch (flag) {
-		case 1:
-			search_fptr = string_violence_search;
-			break;
-		case 2:
-			search_fptr = violence_search_back;
-			break;
-		case 3:
-			search_fptr = string_kmp_search;
-			break;
-		case 4:
-			search_fptr = boyer_moore_search;
-			break;
-		case 5:
-			search_fptr = rabin_karp_search;
-			break;
-		default:
-			errmsg_exit("Unknown search function\n");
+	case 1:
+		search_fptr = string_violence_search;
+		break;
+	case 2:
+		search_fptr = violence_search_back;
+		break;
+	case 3:
+		search_fptr = string_kmp_search;
+		break;
+	case 4:
+		search_fptr = boyer_moore_search;
+		break;
+	case 5:
+		search_fptr = rabin_karp_search;
+		break;
+	default:
+		errmsg_exit("Unknown search function\n");
 	}
 
 	return search_fptr(pat, txt);
