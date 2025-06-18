@@ -1,4 +1,4 @@
 SUBDIRS = bsearchtree redblackbst avltree balancedtree \
-		  splaytree
+	splaytree
 
 .include "../algdirs.mk"

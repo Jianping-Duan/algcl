@@ -1,4 +1,4 @@
 SUBDIRS = binarypq indexbinarypq binomialpq indexbinompq \
-		  fibonaccipq indexfibpq pairingheap indexpairheap
+	fibonaccipq indexfibpq pairingheap indexpairheap
 
 .include "../algdirs.mk"
