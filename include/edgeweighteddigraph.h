@@ -45,11 +45,11 @@ struct single_list;
 
 /* edge-weighted digraph */
 struct ewdigraph {
-	unsigned int vertices;	/* number of vertices in this digraph */
+	unsigned int vertices;		/* number of vertices in this digraph */
 	unsigned int edges;		/* number of edges in this digraph */
 	struct single_list **adjlist;	/* ajdlist[v] = adjacency,
-									   list for vertex v */
-	int *indegree;	/* indegree[v] = indegree of vertex v */
+					list for vertex v */
+	int *indegree;			/* indegree[v] = indegree of vertex v */
 };
 
 #define FLOATING_POINT_EPSILON	1.OE-6
@@ -99,10 +99,10 @@ diedge_equals(const void *k1, const void *k2)
 }
 
 /* Returns a string representation of this edge. */
-#define DIEDGE_STRING(edge, str)	do {	\
-	sprintf((str), "%u->%u %5.3f",			\
+#define DIEDGE_STRING(edge, str)	do {				\
+	sprintf((str), "%u->%u %5.3f",					\
 		(edge)->v, (edge)->w, (double)((edge)->weight));	\
-} while(0)
+} while (0)
 
 /* Returns the number of vertices in this edge-weighted graph. */
 #define EWDIGRAPH_VERTICES(g)	((g)->vertices)
@@ -130,7 +130,7 @@ void ewdigraph_add_edge(struct ewdigraph *g, const struct diedge *e);
 
 /* Initializes a random edge-weighted digraph with vs vertices and es edges. */
 void ewdigraph_init_randomly(struct ewdigraph *g, unsigned int vs,
-							unsigned int es);
+			unsigned int es);
 
 /* 
  * Initializes an edge-weighted digraph from an file input stream.
@@ -149,7 +149,7 @@ void ewdigraph_print(const struct ewdigraph *g);
 
 /* Gets all edges in this edge-weighted graph. */
 void ewdigraph_edges_get(const struct ewdigraph *g,
-						struct single_list *edgeset);
+			struct single_list *edgeset);
 
 /* Clears this edge-weighted digraph. */
 void ewdigraph_clear(struct ewdigraph *g);

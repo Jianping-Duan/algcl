@@ -137,7 +137,10 @@ ewdigraph_clone(const struct ewdigraph *sg, struct ewdigraph *tg)
 
 	STACK_INIT(&rg, 0);
 	for (v = 0; v < EWDIGRAPH_VERTICES(sg); v++) {
-		/* Reverse so that adjacency list is in same order as original. */
+		/* 
+		 * Reverse so that adjacency list is in same order
+		 * as original.
+		 */
 		adj = EWDIGRAPH_ADJLIST(sg, v);
 		SLIST_FOREACH(adj, nptr, struct diedge, se) {
 			te = make_diedge(se->v, se->w, se->weight);
