@@ -42,12 +42,13 @@ static void gbfs(struct digraph_bfsp *, unsigned int, const struct digraph *);
  */
 void 
 digraph_bfsp_init(struct digraph_bfsp *bfs, unsigned int s,
-				const struct digraph *g)
+		const struct digraph *g)
 {
 	unsigned int i;
 	
 	if (s >= g->vertices)
-		errmsg_exit("vertex %u is not between 0 and %u\n", s, g->vertices - 1);
+		errmsg_exit("vertex %u is not between 0 and %u\n", s,
+			g->vertices - 1);
 	
 	bfs->vertices = g->vertices;
 	
@@ -70,12 +71,13 @@ digraph_bfsp_init(struct digraph_bfsp *bfs, unsigned int s,
  */
 void 
 digraph_bfsp_paths(const struct digraph_bfsp *bfs, unsigned int v,
-				struct stack *paths)
+		struct stack *paths)
 {
 	long w;
 	
 	if (v >= bfs->vertices)
-		errmsg_exit("vertex %u is not between 0 and %u\n", v, bfs->vertices - 1);
+		errmsg_exit("vertex %u is not between 0 and %u\n", v,
+			bfs->vertices - 1);
 	
 	STACK_INIT(paths, sizeof(long));
 

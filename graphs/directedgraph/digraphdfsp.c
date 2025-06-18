@@ -41,12 +41,13 @@ static void gdfs(struct digraph_dfsp *, unsigned int, const struct digraph *);
  */
 void 
 digraph_dfsp_init(struct digraph_dfsp *dfs, unsigned int s, 
-				const struct digraph *g)
+		const struct digraph *g)
 {
 	unsigned int i;
 	
 	if (s > g->vertices)
-		errmsg_exit("vertex %u is not between 0 and %u\n", s, g->vertices - 1);
+		errmsg_exit("vertex %u is not between 0 and %u\n", s,
+			g->vertices - 1);
 	
 	dfs->sv = s;
 	dfs->vertices = g->vertices;
@@ -68,7 +69,7 @@ digraph_dfsp_init(struct digraph_dfsp *dfs, unsigned int s,
  */
 void 
 digraph_dfsp_paths(struct digraph_dfsp *dfs, unsigned int v,
-				struct stack *paths)
+		struct stack *paths)
 {
 	long x, s;
 	

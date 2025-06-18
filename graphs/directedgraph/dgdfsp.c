@@ -57,16 +57,16 @@ main(int argc, char *argv[])
 	
 	while ((op = getopt(argc, argv, optstr)) != -1) {
 		switch (op) {
-			case 'f':
-				fname = optarg;
-				break;
-			case 's':
-				if (sscanf(optarg, "%u", &s) != 1)
-					errmsg_exit("Illegal number. -s %s\n", optarg);
-				break;
-			default:
-				fprintf(stderr, "Parameters error.\n");
-				usage_info(argv[0]);
+		case 'f':
+			fname = optarg;
+			break;
+		case 's':
+			if (sscanf(optarg, "%u", &s) != 1)
+				errmsg_exit("Illegal number. -s %s\n", optarg);
+			break;
+		default:
+			fprintf(stderr, "Parameters error.\n");
+			usage_info(argv[0]);
 		}
 	}
 	
@@ -96,8 +96,9 @@ main(int argc, char *argv[])
 			}
 			stack_clear(&paths);
 			printf("\n");
-		} else
+		} else {
 			printf("%u to %u: not connected.\n", s, v);
+		}
 	}
 	
 	ALGFREE(w);

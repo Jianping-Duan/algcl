@@ -37,8 +37,8 @@
 struct digraph_dfsp {
 	bool *marked;	/* marked[v] = is there an sv-v path? */
 	long *edgeto;	/* edgeto[v] = last edge on sv-v path,
-					   default edgeto[v] = -1 */
-	unsigned int sv;		/* source vertex */
+			default edgeto[v] = -1 */
+	unsigned int sv;	/* source vertex */
 	unsigned int vertices;	/* digraph of vertices */
 };
 
@@ -47,22 +47,22 @@ struct digraph_dfsp {
 	((v) >= (dfs)->vertices ? false : (dfs)->marked[v])
 
 #define DIGRAPH_DFSP_CLEAR(dfs)	do {	\
-	ALGFREE((dfs)->marked);				\
-	ALGFREE((dfs)->edgeto);				\
-	(dfs)->vertices = 0;				\
+	ALGFREE((dfs)->marked);		\
+	ALGFREE((dfs)->edgeto);		\
+	(dfs)->vertices = 0;		\
 } while (0)
 
 struct stack;
 
 /* Computes a path between s and every other vertex in digraph g. */
 void digraph_dfsp_init(struct digraph_dfsp *dfs, unsigned int s,
-					const struct digraph *g);
+			const struct digraph *g);
 
 /* 
  * Returns a path between the source vertex sv and vertex v,
  * or if no such path. 
  */
 void digraph_dfsp_paths(struct digraph_dfsp *dfs, unsigned int v, 
-						struct stack *paths);
+			struct stack *paths);
 
 #endif	/* _DIGRAPHDFSP_H_ */

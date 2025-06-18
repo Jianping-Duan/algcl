@@ -45,7 +45,8 @@ digraph_dfso_init(struct digraph_dfso *dfs, const struct digraph *g)
 	dfs->pre = (unsigned int *)algcalloc(DIGRAPH_VERTICES(g), sizeof(int));
 	dfs->post = (unsigned int *)algcalloc(DIGRAPH_VERTICES(g), sizeof(int));
 
-	dfs->preorder = (struct single_list *)algmalloc(sizeof(struct single_list));
+	dfs->preorder = (struct single_list *)
+		algmalloc(sizeof(struct single_list));
 	dfs->postorder = (struct single_list *)
 		algmalloc(sizeof(struct single_list));
 	

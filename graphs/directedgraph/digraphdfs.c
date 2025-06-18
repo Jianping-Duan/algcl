@@ -40,7 +40,7 @@ static void dfs(struct digraph_dfs *, const struct digraph *, unsigned int);
  */
 void 
 digraph_dfs_init(struct digraph_dfs *ddfs, const struct digraph *g,
-				unsigned int s)
+		unsigned int s)
 {
 	unsigned int v;
 
@@ -64,7 +64,7 @@ digraph_dfs_init(struct digraph_dfs *ddfs, const struct digraph *g,
  */
 void 
 digraph_dfs_svset(struct digraph_dfs *ddfs, const struct digraph *g,
-				const struct single_list *svset)
+		const struct single_list *svset)
 {
 	unsigned int i, *v;
 	struct slist_node *nptr;

@@ -66,22 +66,24 @@ main(int argc, char *argv[])
 
 	while ((op = getopt(argc, argv, optstr)) != -1) {
 		switch (op) {
-			case 'f':
-				fname = optarg;
-				break;
-			case 'S':
-				for (i = optind - 1, j = 0; (i < argc && argv[i][0] != '-') &&
-					j < argc - 4; i++, j++) {
-					if (sscanf(argv[i], "%u", &s) == 1) {
-						vset[j] = s;
-						cnt++;
-					} else
-						errmsg_exit("Illegal number. -S %s\n", argv[i]);
+		case 'f':
+			fname = optarg;
+			break;
+		case 'S':
+			for (i = optind - 1, j = 0; (i < argc &&
+				argv[i][0] != '-') && j < argc - 4; i++, j++) {
+				if (sscanf(argv[i], "%u", &s) == 1) {
+					vset[j] = s;
+					cnt++;
+				} else {
+					errmsg_exit("Illegal number. -S %s\n",
+						argv[i]);
 				}
-				break;
-			default:
-				fprintf(stderr, "Parameters error.\n");
-				usage_info(argv[0]);
+			}
+			break;
+		default:
+			fprintf(stderr, "Parameters error.\n");
+			usage_info(argv[0]);
 		}
 	}
 	

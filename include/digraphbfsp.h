@@ -54,10 +54,10 @@ struct digraph_bfsp {
 	((v) >= (bfs)->vertices ? (-1) : (bfs)->distto[v])
 
 #define DIGRAPH_BFSP_CLEAR(bfs)		do {	\
-	ALGFREE((bfs)->marked);					\
-	ALGFREE((bfs)->edgeto);					\
-	ALGFREE((bfs)->distto);					\
-	(bfs)->vertices = 0;					\
+	ALGFREE((bfs)->marked);			\
+	ALGFREE((bfs)->edgeto);			\
+	ALGFREE((bfs)->distto);			\
+	(bfs)->vertices = 0;			\
 } while (0)
 
 struct stack;
@@ -67,13 +67,13 @@ struct stack;
  * and every other vertex in the digraph g. 
  */
 void digraph_bfsp_init(struct digraph_bfsp *bfs, unsigned int s,
-					const struct digraph *g);
+			const struct digraph *g);
 
 /* 
  * Gets a shortest path between the source vertex s and v,
  * or if no such path. 
  */
 void digraph_bfsp_paths(const struct digraph_bfsp *bfs, unsigned int v,
-						struct stack *paths);
+			struct stack *paths);
 
 #endif	/* _DIGRAPHBFSP_H_ */
