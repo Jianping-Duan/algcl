@@ -1,4 +1,4 @@
 SUBDIRS = unionfind undirectedgraph directedgraph \
-		  weightedgraph weighteddigraph
+	weightedgraph weighteddigraph
 
 .include "../algdirs.mk"
