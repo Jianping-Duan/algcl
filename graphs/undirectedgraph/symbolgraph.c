@@ -128,7 +128,8 @@ sybgraph_init(struct symbol_graph *sg, const char *filename,
 			for (i = 1; i < sz; i++) {
 				strncpy(el.key, tokens[i], MAX_KEY_LEN);
 				el.value = -1;
-				if((el3 = (struct element *)avlbst_get(sg->st, &el)) != NULL) {
+				el3 = (struct element *)avlbst_get(sg->st, &el);
+				if(el3 != NULL) {
 					w = (unsigned int)el3->value;
 					graph_add_edge(sg->g, v, w);
 				}

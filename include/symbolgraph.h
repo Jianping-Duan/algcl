@@ -38,8 +38,8 @@ struct avl_tree;
 
 struct symbol_graph {
 	struct avl_tree *st;	/* symbol table, string -> index */
-	char **keys;			/* index -> string */
-	struct graph *g;		/* the underlying graph */
+	char **keys;		/* index -> string */
+	struct graph *g;	/* the underlying graph */
 };
 
 /* Returns the name of the vertex associated with the integer v. */
@@ -62,7 +62,7 @@ struct symbol_graph {
  * separated by the delimiter. 
  */
 void sybgraph_init(struct symbol_graph *sg, const char *filename,
-				const char *delimiter);
+		const char *delimiter);
 
 /* Does the symbol graph contain the vertex named s */
 int sybgraph_contains(const struct symbol_graph *sg, const char *s);
