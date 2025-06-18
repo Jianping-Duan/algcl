@@ -135,7 +135,10 @@ ewgraph_clone(const struct ewgraph *sg, struct ewgraph *tg)
 
 	STACK_INIT(&rg, 0);
 	for (v = 0; v < EWGRAPH_VERTICES(sg); v++) {
-		/* Reverse so that adjacency list is in same order as original. */
+		/* 
+		 * Reverse so that adjacency list is in 
+		 * same order as original.
+		 */
 		adj = EWGRAPH_ADJLIST(sg, v);
 		SLIST_FOREACH(adj, nptr, struct edge, se) {
 			te = make_edge(se->v, se->w, se->weight);
@@ -164,7 +167,8 @@ ewgraph_edges_get(const struct ewgraph *g, struct single_list *edgeset)
 		selfloops = 0;
 		adj = EWGRAPH_ADJLIST(g, v);
 		SLIST_FOREACH(adj, nptr, struct edge, e) {
-			if (edge_other(e, v) > v) /* avoid cycle */
+			/* avoid cycle */
+			if (edge_other(e, v) > v)
 				slist_append(edgeset, e);
 			/* free only one copy of each self loop */
 			else if (edge_other(e, v) == v) {
@@ -185,7 +189,8 @@ ewgraph_print(const struct ewgraph *g)
 	struct slist_node *nptr;
 	struct edge *e;
 
-	printf("%u vertices, %u edges.\n", EWGRAPH_VERTICES(g), EWGRAPH_EDGES(g));
+	printf("%u vertices, %u edges.\n", EWGRAPH_VERTICES(g),
+		EWGRAPH_EDGES(g));
 	for (v = 0; v < EWGRAPH_VERTICES(g); v++) {
 		printf("%u: ", v);
 		adj = EWGRAPH_ADJLIST(g, v);

@@ -45,8 +45,8 @@ struct edge {
 
 /* edge-weighted graph */
 struct ewgraph {
-	unsigned int vertices;			/* edge-weighted graph of vertices */
-	unsigned int edges;				/* edge-weighted graph of edges */
+	unsigned int vertices;		/* edge-weighted graph of vertices */
+	unsigned int edges;		/* edge-weighted graph of edges */
 	struct single_list **adjlist;	/* adjacent list */
 };
 
@@ -112,9 +112,9 @@ edge_equals(const void *k1, const void *k2)
 }
 
 /* Returns a string representation of this edge. */
-#define EDGE_STRING(edge, str)	do {					\
+#define EDGE_STRING(edge, str)	do {				\
 	sprintf((str), "%u-%u %.5f", (edge)->v, (edge)->w,	\
-		(double)((edge)->weight));						\
+		(double)((edge)->weight));			\
 } while (0)
 
 /* Returns the number of vertices in this edge-weighted graph. */
