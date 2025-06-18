@@ -39,8 +39,9 @@ struct index_pheap;
 struct single_list;
 
 struct dijkstra_sp {
-	float *distto;			/* distTo[v] = distance of shortest s->v path */
-	struct diedge **edgeto;	/* edgeTo[v] = last edge on shortest s->v path */
+	float *distto;		/* distTo[v] = distance of shortest s->v path */
+	struct diedge **edgeto;	/* edgeTo[v] = last edge on shortest
+				s->v path */
 	struct index_pheap *pq;	/* priority queue of vertices */
 	unsigned int vertices;	/* edge-weighted digraph of vertices */
 };
@@ -57,11 +58,11 @@ struct dijkstra_sp {
 	((v) >= (sp)->vertices ? false : (sp)->distto[v] < INFINITY)
 
 #define DIJKSTRASP_CLEAR(sp)	do {	\
-	ALGFREE((sp)->distto);				\
-	ALGFREE((sp)->edgeto);				\
-	ipheap_clear((sp)->pq);				\
-	ALGFREE((sp)->pq);					\
-	(sp)->vertices = 0;					\
+	ALGFREE((sp)->distto);		\
+	ALGFREE((sp)->edgeto);		\
+	ipheap_clear((sp)->pq);		\
+	ALGFREE((sp)->pq);		\
+	(sp)->vertices = 0;		\
 } while (0)
 
 /* 
@@ -69,10 +70,10 @@ struct dijkstra_sp {
  * to every other vertex in the edge-weighted digraph g.
  */
 void dijkstrasp_init(struct dijkstra_sp *sp, const struct ewdigraph *g,
-					unsigned int s);
+		unsigned int s);
 
 /* Gets a shortest path from the source vertex s to vertex v. */
 void dijkstrasp_pathto(const struct dijkstra_sp *sp, unsigned int v, 
-						struct single_list *paths);
+		struct single_list *paths);
 
 #endif	/* _DIJKSTRASP_H_ */

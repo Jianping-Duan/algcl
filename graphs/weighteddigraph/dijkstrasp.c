@@ -43,7 +43,7 @@ static void relax(struct dijkstra_sp *, const struct diedge *);
  */
 void 
 dijkstrasp_init(struct dijkstra_sp *sp, const struct ewdigraph *g,
-				unsigned int s)
+		unsigned int s)
 {
 	struct single_list edgeset, *adj;
 	struct slist_node *nptr;
@@ -91,7 +91,7 @@ dijkstrasp_init(struct dijkstra_sp *sp, const struct ewdigraph *g,
  */
 void 
 dijkstrasp_pathto(const struct dijkstra_sp *sp, unsigned int v,
-				struct single_list *paths)
+		struct single_list *paths)
 {
 	struct diedge *e;
 

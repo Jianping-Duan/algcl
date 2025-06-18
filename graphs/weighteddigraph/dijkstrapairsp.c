@@ -58,7 +58,7 @@ djkr_pairsp_init(struct dijkstra_pair_sp *psp, const struct ewdigraph *g)
 /* Returns a shortest path from vertex s to vertex t. */
 struct single_list * 
 djkr_pairsp_path(const struct dijkstra_pair_sp *psp, unsigned int s,
-				unsigned int t)
+		unsigned int t)
 {
 	struct single_list *path;
 
@@ -76,7 +76,7 @@ djkr_pairsp_path(const struct dijkstra_pair_sp *psp, unsigned int s,
  */
 float 
 djkr_pairsp_dist(const struct dijkstra_pair_sp *psp, unsigned int s,
-				unsigned int t)
+		unsigned int t)
 {
 	validate(psp, s);
 	validate(psp, t);

@@ -54,11 +54,11 @@ void djkr_pairsp_init(struct dijkstra_pair_sp *psp, const struct ewdigraph *g);
 /* Returns a shortest path from vertex s to vertex t. */
 struct single_list * 
 djkr_pairsp_path(const struct dijkstra_pair_sp *psp, unsigned int s,
-				unsigned int t);
+		unsigned int t);
 
 /* Returns the length of a shortest path from vertex s to vertex t. */
 float djkr_pairsp_dist(const struct dijkstra_pair_sp *psp, unsigned int s,
-					unsigned int t);
+		unsigned int t);
 
 /* Clear operstion. */
 void djkr_pairsp_clear(struct dijkstra_pair_sp *psp);
