@@ -39,7 +39,7 @@ struct stack;
 struct digraph_cycle {
 	bool *marked;	/* marked[v] = has vertex v been marked? */
 	long *edgeto;	/* edgeto[v] = last edge on digraph cycle path,
-					   default edgeto[v] = -1 */
+			   default edgeto[v] = -1 */
 	bool *onstack;	/* onStack[v] = is vertex on the stack? */
 	struct stack *cycle;	/* digraph of cycle */
 };
@@ -51,11 +51,11 @@ struct digraph_cycle {
 #define DIGRAPH_CYCLE_GET(gc)	((gc)->cycle)
 
 #define DIGRAPH_CYCLE_CLEAR(gc)		do {	\
-	ALGFREE((gc)->marked);					\
-	ALGFREE((gc)->edgeto);					\
-	ALGFREE((gc)->onstack);					\
-	stack_clear((gc)->cycle);				\
-	ALGFREE((gc)->cycle);					\
+	ALGFREE((gc)->marked);			\
+	ALGFREE((gc)->edgeto);			\
+	ALGFREE((gc)->onstack);			\
+	stack_clear((gc)->cycle);		\
+	ALGFREE((gc)->cycle);			\
 } while (0)
 
 /* 
