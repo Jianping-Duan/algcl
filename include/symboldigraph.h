@@ -38,8 +38,8 @@ struct skip_list;
 
 struct symbol_digraph {
 	struct skip_list *st;	/* symbol table, string -> index */
-	char **keys;			/* index -> string */
-	struct digraph *dg;		/* the underlying digraph */
+	char **keys;		/* index -> string */
+	struct digraph *dg;	/* the underlying digraph */
 };
 
 /* Returns the name of the vertex associated with the integer v. */
@@ -62,7 +62,7 @@ struct symbol_digraph {
  * separated by the delimiter.
  */
 void sybdigraph_init(struct symbol_digraph *sg, const char *filename,
-					const char *delimiter);
+		const char *delimiter);
 
 /* Does the symbol digraph contain the vertex named s */
 int sybdigraph_contains(const struct symbol_digraph *sg, const char *s);

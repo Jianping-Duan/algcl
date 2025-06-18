@@ -60,7 +60,7 @@ sybcmp(const void *key1, const void *key2)
  */
 void 
 sybdigraph_init(struct symbol_digraph *sg, const char *filename,
-				const char *delimiter)
+		const char *delimiter)
 {
 	FILE *fin;
 	char line[MAX_LINE_LENGTH], **tokens;
@@ -127,7 +127,8 @@ sybdigraph_init(struct symbol_digraph *sg, const char *filename,
 			for(i = 1; i < sz; i++) {
 				strncpy(el.key, tokens[i], MAX_KEY_LEN);
 				el.value = -1;
-				if((el3 = (struct element *)skipl_get(sg->st, &el)) != NULL) {
+				el3 = (struct element *)skipl_get(sg->st, &el);
+				if(el3 != NULL) {
 					w = (unsigned int)el3->value;
 					digraph_add_edge(sg->dg, v, w);
 				}
