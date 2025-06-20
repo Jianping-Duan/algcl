@@ -71,20 +71,20 @@ main(int argc, char *argv[])
 	
 	while ((op = getopt(argc, argv, optstr)) != -1) {
 		switch (op) {
-			case 'f':
-				fname = optarg;
-				break;
-			case 'n':
-				if (sscanf(optarg, "%d", &sz) != 1)
-					errmsg_exit("Illegal number. -n %s\n",	optarg);
-				if (sz <= 0) {
-					errmsg_exit("The number of characters must be "
-						"greater than 0.\n");
-				}
-				break;
-			default:
-				fprintf(stderr, "Parameters error.\n");
-				usage_info(argv[0]);
+		case 'f':
+			fname = optarg;
+			break;
+		case 'n':
+			if (sscanf(optarg, "%d", &sz) != 1)
+				errmsg_exit("Illegal number. -n %s\n",	optarg);
+			if (sz <= 0) {
+				errmsg_exit("The number of characters must be "
+					"greater than 0.\n");
+			}
+			break;
+		default:
+			fprintf(stderr, "Parameters error.\n");
+			usage_info(argv[0]);
 		}
 	}
 
