@@ -49,7 +49,8 @@ main(int argc, char *argv[])
 	int i, n;
 
 	if (argc != 4) {
-		fprintf(stderr, "Usage: %s <ops> <infile> <outfile>\n", argv[0]);
+		fprintf(stderr, "Usage: %s <ops> <infile> <outfile>\n",
+			argv[0]);
 		fprintf(stderr, "********** OPS **********\n");
 		fprintf(stderr, "* c or C: compress the file. \n");
 		fprintf(stderr, "* e or E: expand the file. \n");

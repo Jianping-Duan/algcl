@@ -37,9 +37,9 @@
 
 /* Huffman trie node */
 struct huffman_node {
-	int ch;						/* need to to encoded character */
-	int freq;					/* character frequency */
-	unsigned int size;			/* number of nodes in subtree */
+	int ch;				/* need to to encoded character */
+	int freq;			/* character frequency */
+	unsigned int size;		/* number of nodes in subtree */
 	struct huffman_node *left;	/* left subtrees*/
 	struct huffman_node *right;	/* right subtrees */
 };
@@ -47,8 +47,7 @@ struct huffman_node {
 /* extended ASCII alphabet size */
 #define RADIX	256
 
-#define HUFFMAN_CODE_SIZE(node)	\
-	((node) == NULL ? 0 : (node)->size)
+#define HUFFMAN_CODE_SIZE(node)	((node) == NULL ? 0 : (node)->size)
 
 static inline int huffman_isleaf(const struct huffman_node *);
 static int compare(const void *, const void *);
@@ -115,14 +114,14 @@ huffman_compress(const char *infile, const char *outfile)
 		clen = strlen(code);
 		for (j = 0; j < clen; j++)
 			switch (code[j]) {
-				case '0':
-					boutput_write_bool(&bo, false);
-					break;
-				case '1':
-					boutput_write_bool(&bo, true);
-					break;
-				default:
-					errmsg_exit("Illegal state.\n");
+			case '0':
+				boutput_write_bool(&bo, false);
+				break;
+			case '1':
+				boutput_write_bool(&bo, true);
+				break;
+			default:
+				errmsg_exit("Illegal state.\n");
 			}
 	}
 
@@ -247,12 +246,14 @@ build_trie(const int *freqs)
 		left = (struct huffman_node *)fibpq_delete(&pq);
 		right = (struct huffman_node *)fibpq_delete(&pq);
 
-		parent = (struct huffman_node *)algmalloc(sizeof(struct huffman_node));
+		parent = (struct huffman_node *)
+			algmalloc(sizeof(struct huffman_node));
 		parent->ch = '\0';
 		parent->freq = left->freq + right->freq;
 		parent->left = left;
 		parent->right = right;
-		parent->size = 2 + HUFFMAN_CODE_SIZE(left) + HUFFMAN_CODE_SIZE(right);
+		parent->size = 2 + HUFFMAN_CODE_SIZE(left) +
+			HUFFMAN_CODE_SIZE(right);
 
 		fibpq_insert(&pq, parent);
 	}

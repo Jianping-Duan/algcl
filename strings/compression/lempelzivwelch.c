@@ -35,13 +35,13 @@
 #include "tstrie.h"
 
 /* number of input chars */
-#define RADIX	128
+#define RADIX		128
 
 /* number of codewords = 2^W */
-#define LENGTH	4096
+#define LENGTH		4096
 
 /* codeword width */
-#define WIDTH	12
+#define WIDTH		12
 
 /* max string length */
 #define MAX_STRLEN	64
