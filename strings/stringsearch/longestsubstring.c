@@ -91,7 +91,7 @@ string_lrs(const char *text)
 	for (i = 1; i < tlen; i++) 
 		if ((slen = strsuffix_lcp(&ss, i)) > (long)strlen(lrs)) 
 			lrs = substring(text, strsuffix_index(&ss, i), 
-					strsuffix_index(&ss, i) + slen);
+				strsuffix_index(&ss, i) + slen);
 
 	STRSUFFIX_CLEAR(&ss);
 
@@ -112,7 +112,8 @@ compare(const char *s1, long p, const char *s2, long q)
 
 	for (i = 0; i < n; i++)
 		if (string_char_at(s1, p + i) != string_char_at(s2, q + i))
-			return string_char_at(s1, p + i) - string_char_at(s2, q + i);
+			return string_char_at(s1, p + i) -
+				string_char_at(s2, q + i);
 
 	/* 
 	 * iff left characters all equally, 

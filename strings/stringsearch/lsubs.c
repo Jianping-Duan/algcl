@@ -53,7 +53,7 @@ main(int argc, char *argv[])
 	end_time = clock();
 	printf("%s\n", lcs);
 	printf("Estimated time(s): %.3f\n", 
-			(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
+		(double)(end_time - start_time) / (double)CLOCKS_PER_SEC);
 	printf("\n");
 
 	printf("Longest repeat substring in text file1:\n");
