@@ -44,15 +44,15 @@
 
 struct nfa_regexp {
 	struct digraph *eptran;	/* digraph of epsilon transitions */
-	char *regexp;			/* regular expression */
-	unsigned int rlen;		/* number of characters in regular expression */
+	char *regexp;		/* regular expression */
+	unsigned int rlen;	/* number of characters in regular expression */
 };
 
 #define NFA_REGEXP_CLEAR(nr)	do {	\
-	digraph_clear((nr)->eptran);		\
-	ALGFREE((nr)->eptran);				\
-	ALGFREE((nr)->regexp);				\
-	(nr)->rlen = 0;						\
+	digraph_clear((nr)->eptran);	\
+	ALGFREE((nr)->eptran);		\
+	ALGFREE((nr)->regexp);		\
+	(nr)->rlen = 0;			\
 } while(0)
 
 /* Initializes the NFA from the specified regular expression. */

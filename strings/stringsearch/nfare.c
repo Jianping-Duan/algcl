@@ -52,15 +52,15 @@ main(int argc, char *argv[])
 	
 	while ((op = getopt(argc, argv, optstr)) != -1) {
 		switch (op) {
-			case 'p':
-				pat = optarg;
-				break;
-			case 't':
-				txt = optarg;
-				break;
-			default:
-				fprintf(stderr, "Parameters error.\n");
-				usage_info(argv[0]);
+		case 'p':
+			pat = optarg;
+			break;
+		case 't':
+			txt = optarg;
+			break;
+		default:
+			fprintf(stderr, "Parameters error.\n");
+			usage_info(argv[0]);
 		}
 	}
 

@@ -58,73 +58,73 @@ nfa_regexp_init(struct nfa_regexp *nr, const char *regexp)
 		*lp = i;
 
 		switch (nr->regexp[i]) {
-			case '(':
-			case '|':
-				if (nr->regexp[i] == '(')
-					lpcnt++;
-				stack_push(&ops, &i);
-				break;
-			case ')': {
-				rpcnt++;
+		case '(':
+		case '|':
+			if (nr->regexp[i] == '(')
+				lpcnt++;
+			stack_push(&ops, &i);
+			break;
+		case ')':
+			rpcnt++;
 
-				while (!STACK_ISEMPTY(&ops)) {
-					stack_pop(&ops, (void **)&or);
+			while (!STACK_ISEMPTY(&ops)) {
+				stack_pop(&ops, (void **)&or);
 
-					switch (nr->regexp[*or]) {
-						case '|':
-							digraph_add_edge(nr->eptran, *or, i);
-							ornext = (*or) + 1;
-							stack_push(&orpath, &ornext);
-							break;
-						case '(':
-							*lp = *or;
-							/* only matchs first left parenthesis */
-							/* in this stack */
-							break;
-						default:	/* none of others */
-							assert(0);
-					}
+				switch (nr->regexp[*or]) {
+				case '|':
+					digraph_add_edge(nr->eptran, *or, i);
+					ornext = (*or) + 1;
+					stack_push(&orpath, &ornext);
+					break;
+				case '(':
+					*lp = *or;
+					/* only matchs first left parenthesis */
+					/* in this stack */
+					break;
+				default:	/* none of others */
+					assert(0);
 				}
-
-				/* other edges */
-				while (!STACK_ISEMPTY(&orpath)) {
-					stack_pop(&orpath, (void **)&orv);
-					digraph_add_edge(nr->eptran, *lp, *orv);
-				}
-
-				break;
 			}
-			default:
-				break;
+
+			/* other edges */
+			while (!STACK_ISEMPTY(&orpath)) {
+				stack_pop(&orpath, (void **)&orv);
+				digraph_add_edge(nr->eptran, *lp, *orv);
+			}
+
+			break;
+		default:
+			break;
 		}
 			
 		/* closure operator (uses 1-character lookahead) */
-		if (i < (int)nr->rlen - 1)
+		if (i < (int)nr->rlen - 1) {
 			switch (nr->regexp[i + 1]) {
-				case '*':
-					digraph_add_edge(nr->eptran, *lp, i + 1);
-					digraph_add_edge(nr->eptran, i + 1, *lp);
-					break;
-				case '+':
-					digraph_add_edge(nr->eptran, i + 1, *lp);
-					break;
-				case '?':	/* may has a bug. */
-					digraph_add_edge(nr->eptran, *lp, i + 1);
-					break;
-				default:
-					break;
-			}
-
-		switch (nr->regexp[i]) {
-			case '(':
 			case '*':
+				digraph_add_edge(nr->eptran, *lp, i + 1);
+				digraph_add_edge(nr->eptran, i + 1, *lp);
+				break;
 			case '+':
-			case '?':
-			case ')':
-				digraph_add_edge(nr->eptran, i, i + 1);
+				digraph_add_edge(nr->eptran, i + 1, *lp);
+				break;
+			case '?':	/* may has a bug. */
+				digraph_add_edge(nr->eptran, *lp, i + 1);
 				break;
 			default:
 				break;
+			}
+		}
+
+		switch (nr->regexp[i]) {
+		case '(':
+		case '*':
+		case '+':
+		case '?':
+		case ')':
+			digraph_add_edge(nr->eptran, i, i + 1);
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -161,14 +161,15 @@ nfa_regexp_recog(const struct nfa_regexp *nr, const char *txt)
 	tlen = strlen(txt);
 	for (i = 0; i < tlen; i++) {
 		switch (txt[i]) {
-			case '*':
-			case '+':
-			case '|':
-			case '(':
-			case ')':
-				errmsg_exit("text contains the metacharacter '%c'\n", txt[i]);
-			default:
-				break;
+		case '*':
+		case '+':
+		case '|':
+		case '(':
+		case ')':
+			errmsg_exit("text contains the metacharacter '%c'\n",
+				txt[i]);
+		default:
+			break;
 		}
 
 		SLIST_FOREACH(&pc, nptr, unsigned int, w) {
