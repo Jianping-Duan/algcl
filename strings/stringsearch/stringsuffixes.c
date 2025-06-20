@@ -35,7 +35,8 @@ long
 strsuffix_lcp(const struct string_suffixes *ss, long i)
 {
 	if (i < 1 || i >= ss->tlen)
-		errmsg_exit("Index %ld is not between 1 and %ld.\n", i, ss->tlen - 1);
+		errmsg_exit("Index %ld is not between 1 and %ld.\n", i,
+			ss->tlen - 1);
 
 	return lcp(ss, ss->index[i], ss->index[i - 1]);
 }

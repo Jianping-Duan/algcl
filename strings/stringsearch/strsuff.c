@@ -49,10 +49,12 @@ main(void)
 		rank = strsuffix_rank(&ss, rs);
 
 		if (i == 0)
-			printf("%3ld %3ld %3s %3ld   %s\n", i, index, "-", rank, ith);
+			printf("%3ld %3ld %3s %3ld   %s\n", i, index, "-",
+				rank, ith);
 		else {
 			lcp = strsuffix_lcp(&ss, i);
-			printf("%3ld %3ld %3ld %3ld   %s\n", i, index, lcp, rank, ith);
+			printf("%3ld %3ld %3ld %3ld   %s\n", i, index, lcp,
+				rank, ith);
 		}
 
 		ALGFREE(ith);
