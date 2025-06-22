@@ -128,8 +128,7 @@ static void
 usage_info(const char *pname)
 {
 	fprintf(stderr, "Usage: %s -v -e\n", pname);
-	fprintf(stderr, "-f: The data file for the edge-weighted digraph.\n");
-	fprintf(stderr, "-s: The soruce vertex of the edge-weighted "
-		"digraph.\n");
+	fprintf(stderr, "-v: The verticex for the edge-weighted digraph.\n");
+	fprintf(stderr, "-e: The edges for the edge-weighted digraph.\n");
 	exit(EXIT_FAILURE);
 }
